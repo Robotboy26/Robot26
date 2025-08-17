@@ -30,7 +30,6 @@ public class AlgaeManipulator extends SubsystemBase {
     public double algCurrent;
 
     public AlgaeManipulator(){
-        //algaeConfig.idleMode(IdleMode.kBrake);
 
         algaeMotor.configure(algaeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
@@ -46,9 +45,7 @@ public class AlgaeManipulator extends SubsystemBase {
         pivotDown();
         retractIn();
 
-        // runDefault();
-
-        // isAlgaeMotorRunning = true;
+        
         algaePivotStatus = false;
         algaeExtendStatus = false;
 

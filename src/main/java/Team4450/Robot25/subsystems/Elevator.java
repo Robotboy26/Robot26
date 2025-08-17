@@ -29,8 +29,6 @@ public class Elevator extends SubsystemBase {
 
     //We use a ProfiledPIDController for acceleration and deceleration control
     private ProfiledPIDController mainPID;
-    // private ProfiledPIDController slowPID;
-
     private RelativeEncoder mainEncoder;
     private RelativeEncoder followerEncoder;
 
@@ -65,10 +63,6 @@ public class Elevator extends SubsystemBase {
         mainPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(
                 (0.8125/ -ELEVATOR_WINCH_FACTOR), 2 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
             ));
-
-        // slowPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(
-        //         (2.5 / -ELEVATOR_WINCH_FACTOR), 8 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
-        //     ));
 
         // PID constants, but also the motion profiling constraints
     
@@ -107,14 +101,6 @@ public class Elevator extends SubsystemBase {
         //which has units of rotations. 
         // double nonclamped = 0.0; // Initialize nonclamped with a default value
 
-
-        // if (targetPosition > this.getElevatorPosition()) {
-        //     mainPID.setGoal(targetPosition);
-        //     nonclamped = mainPID.calculate(mainEncoder.getPosition());
-        // } else if (targetPosition < this.getElevatorPosition()) {
-        //     slowPID.setGoal(targetPosition);
-        //     nonclamped = slowPID.calculate(mainEncoder.getPosition());
-        // }
         mainPID.setGoal(targetPosition);
         double nonclamped = mainPID.calculate(mainEncoder.getPosition());
 
@@ -128,7 +114,6 @@ public class Elevator extends SubsystemBase {
             SmartDashboard.putString("Elevator Position Phase", "Slowing Down Elevator");
         } else {
             motorOutput = Util.clampValue(nonclamped, 0.40);
-            // motorOutput = Util.clampValue(nonclamped, 0.40);
 
         }
         
@@ -136,13 +121,6 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("Elevator Speed", motorOutput);
         motorMain.set(motorOutput);
         SmartDashboard.putNumber("Elevator Amperage", motorMain.getOutputCurrent());
-
-        
-        // if (!driveBase.slowModeEnabled && this.getElevatorHeight() == 0.99) {
-        //     driveBase.speedLimiter = 0.45;
-        //     driveBase.rotSpeedLimiter = 0.65;
-        //     Util.consoleLog("%.2f %.2f", driveBase.speedLimiter, driveBase.rotSpeedLimiter);
-        // }
 
         // height 0.59 L2 1 drive speed and rotation speed
         // height 0.99 L3 0.48 drive speed and 0.68 rotation speed
