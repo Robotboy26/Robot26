@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "VR25-03.02.25";
+	public static String		PROGRAM_NAME = "VR25-08.17.25";
 
 	public static Robot			robot;
 
@@ -44,9 +44,6 @@ public final class Constants
     public static final int     CORAL_MANIPULATOR = 9;
     public static final int     ALGAE_MANIPULATOR = 10;
     public static final int     ALGAE_GROUND_INTAKE = 13;
-    public static final int     CORAL_GROUND_PIVOT = 14;
-    public static final int     CORAL_GROUND_INTAKE = 15;
-    public static final int     CORAL_GROUND_FEED = 16;
 
     //ELEVATOR:
     public static final int     ELEVATOR_LEFT = 11;
@@ -74,48 +71,6 @@ public final class Constants
     
     // CAMERAS 
 
-    public static Transform3d   CORAL_CAMERA_TAG_LEFT_TRANSFORM = new Transform3d(
-        new Translation3d(-0.15, 0.18, 0.31), // change last value to height in METERS of lens
-        new Rotation3d(0, 0, Math.toRadians(90)) // keep the 180, the -10 is the camera angle (negative!)
-    );
-
-    public static Transform3d   CORAL_CAMERA_TAG_RIGHT_TRANSFORM = new Transform3d(
-        new Translation3d(0.22, 0.18, 0.27), // change last value to height in METERS of lens
-        new Rotation3d(0, 0, Math.toRadians(90)) // keep the 180, the -10 is the camera angle (negative!)
-    );
-
-    public static Transform3d ALGAE_CAMERA_TAG_TRANSFORM = new Transform3d(
-        new Translation3d(0.18, 0.21, 0.60),
-        new Rotation3d(0, 0, Math.toRadians(90))
-    );
-
-    public static double robotCoralLongitudinalScoringDistance = 0.0; // 0.3 meters distance from the tag for scoring coral.
-    public static double robotCoralLateralScoringOffset = 0.0; // Added to the target position if scoring left and subtracted if scoring right.
-
-    public static double maxVisionDistance = 3.0; // meters
-    
-    public static double xCameraOffset = 0;
-    public static double yCameraOffset = 0;
-
-    // the names of the cameras in the PhotonVision software
-    public static String        ALGAE_CAMERA_TAG = "Arducam_OV9782_USB_Camera";
-    public static String        CORAL_CAMERA_TAG_LEFT = "HD_USB_Camera";
-    public static String        CORAL_CAMERA_TAG_RIGHT = "CORAL_RIGHT_USB";
-
-    //Limelight Constants:
-    public static final double X_REEF_ALIGNMENT_P = 0.05;
-	public static final double Y_REEF_ALIGNMENT_P = 0.05;
-	public static final double ROT_REEF_ALIGNMENT_P = 0.03;
-
-	public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;  // Rotation (Needs to be changed to our value)
-	public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 1;
-	public static final double X_SETPOINT_REEF_ALIGNMENT = -0.34;  // Vertical pose (Needs to be changed to our value)
-	public static final double X_TOLERANCE_REEF_ALIGNMENT = 0.02;
-	public static final double Y_SETPOINT_REEF_ALIGNMENT = 0.16;  // Horizontal pose (Needs to be changed to our value)
-	public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0.02; 
-
-	public static final double DONT_SEE_TAG_WAIT_TIME = 1;
-	public static final double POSE_VALIDATION_TIME = 0.3;
 
     public static final int     REV_PDB = 20;
     public static final int     CTRE_CANDLE = 21;
@@ -140,22 +95,16 @@ public final class Constants
         // Driving Parameters - These are the maximum capable speeds of
         // the robot.
 
-        public static final double kMaxSpeedMetersPerSecond = 4.92;  // 1.0; Speed limited for demos.
-        //public static final double kMaxSpeedMetersPerSecond = ModuleConstants.kDriveWheelFreeSpeedRps; // max speed
+        public static final double kMaxSpeedMetersPerSecond = 4.92; 
         public static final double kMaxAngularSpeed = 1.5 * (2 * Math.PI); // radians per second (1.5 rots / sec)
         public static final double kSlowModeFactor = .20; // 50% of normal.
         public static final double kRotSlowModeFactor = .20; // 20% of normal.
 
-        // For vision testing only!!!
-        //public static final double kSlowModeFactor = .05; // 50% of normal.
-        //public static final double kRotSlowModeFactor = .10; // 20% of normal.
                                                              //
         public static final double kElevatorModeFactor = .030; // 0.03% of normal.
         public static final double kRotElevatorModeFactor = .020; // 0.02% of normal.
         
         //TrackingMode Speed:
-        public static final double kAlgaeTrackingModeFactor = 0.25;
-        public static final double kAlgaeRotTrackingModeFactor = 0.25;
         public static final double kTrackingModeFactor = 0.20;
         public static final double kRotTrackingModeFactor = 0.20;
 

@@ -869,7 +869,8 @@ public class DriveBase extends SubsystemBase {
 
     updateDS();
   }
-  public void enableCoralTrackingSlowMode(){
+  
+  public void enableTrackingSlowMode(){
 
     slowModeEnabled = true;
     magLimiter = new SlewRateLimiter((DriveConstants.kMagnitudeSlewRate)/10, Double.NEGATIVE_INFINITY, 0);
@@ -881,18 +882,6 @@ public class DriveBase extends SubsystemBase {
   
   }
 
-  public void enableAlgaeTrackingSlowMode(){
-
-    slowModeEnabled = true;
-    magLimiter = new SlewRateLimiter((DriveConstants.kMagnitudeSlewRate)/10, Double.NEGATIVE_INFINITY, 0);
-    speedLimiter = DriveConstants.kAlgaeTrackingModeFactor;
-    rotSpeedLimiter = DriveConstants.kAlgaeRotTrackingModeFactor;
-  
-    Util.consoleLog("%.2f %.2f", speedLimiter, rotSpeedLimiter);
-    updateDS();
-  
-  }
-  
   public void disableTrackingSlowMode(){
     
     slowModeEnabled = false;
@@ -907,26 +896,7 @@ public class DriveBase extends SubsystemBase {
     updateDS();
     
   }
-   /**
-   * Set max drivebase speed based on the height of the elevator. Height 0 will set speed to 1.
-   */
-  // public void setElevatorHeightSpeed(double height)
-  // {
-  //   // Change to based on height
-  //   if (!slowModeEnabled && height == 0.99) {
-  //       speedLimiter = 0.45;
-  //       rotSpeedLimiter = 0.65;
-  //       Util.consoleLog("%.2f %.2f", speedLimiter, rotSpeedLimiter);
-  //       updateDS();
-  //   }
-  //   if (!slowModeEnabled && height >= 1.0) {
-  //       speedLimiter = Math.pow(2, -(1.2 * height));
-  //       rotSpeedLimiter = Math.pow(2, -(1.2 * height)) + 0.2;
-  //       Util.consoleLog("%.2f %.2f", speedLimiter, rotSpeedLimiter);
-  //       updateDS();
-  //   }
-  // }
-
+ 
   /**
    * Sets an override rotation joystick value for tracking to objects or tags. Must call enableTracking first!
    * Setting commandedRotation as NaN temporarily disables tracking without a call to disableTrackiing.
@@ -945,75 +915,7 @@ public class DriveBase extends SubsystemBase {
     drive(0, 0, 0, false);
   }
 
-  /**
-   * Used by vision system to update the odometry tracking in this
-   * class with vision estimates of robot position. It is expected 
-   * the vision code will use this method to regularly update the
-   * odometry object to enhance position tracking accuracy.
-   * @param pose The vision estimated current pose of the robot.
-   * @param timestamp The exact timestamp at which the vision measurement was taken.
-   */
-  public void updateOdometryVision(Pose2d pose, double timestamp) {
-    odometry.addVisionMeasurement(pose, timestamp);
-  }
 
-  private double goalPitch;
-  private double goalYaw;
-
-  private Pose2d targetPose = new Pose2d(0,0, new Rotation2d(0));
-  private int targetID = 0;
-  private boolean rotatedToTargetPose = false;
-
-  public void setTargetPose(Pose2d targetPose) {
-    this.targetPose = targetPose;
-    this.rotatedToTargetPose = false;
-    Util.consoleLog("target pose:" + targetPose.toString());
-  }
-
-  public Pose2d getTargetPose() {
-    if (this.targetPose == null) {
-      return new Pose2d(0, 0, new Rotation2d(0));
-    } 
-    else {
-      return this.targetPose;
-    }
-  }
-
-  public void setTargetID(int targetID){
-    this.targetID = targetID;
-  }
-
-  public int getTargetID(){
-    if(this.targetID == 0){
-      return 0;
-    }
-    else {
-      return this.targetID;
-    }
-  }
-
-  public void setRotatedToTargetPose(boolean isRotatedToTargetPose) {
-    this.rotatedToTargetPose = true;
-}
-
-  public boolean getRotatedToTargetPose() {
-    return this.rotatedToTargetPose;
-  }
-  public void setTargetPitch(double targetPitch){
-    goalPitch = targetPitch;
-  }
-
-  public double getTargetPitch(){
-    return goalPitch;
-  }
-
-  public void setTargetYaw(double targetYaw){
-    goalYaw = targetYaw;
-  }
-
-  public double getTargetYaw(){
-    return goalYaw;
-  }
   /**
    * Configures the PathPlanner auto generation of paths/autos by telling
    * PathPlaner about our the drive train.
