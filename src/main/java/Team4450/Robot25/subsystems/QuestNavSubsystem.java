@@ -31,7 +31,7 @@ public class QuestNavSubsystem extends SubsystemBase {
   QuestNav questNav;
    Transform2d ROBOT_TO_QUEST = new Transform2d(-0.32, -0.29, Rotation2d.k180deg); //Original was -0.32, -0.29
   // Transform2d ROBOT_TO_QUEST = new Transform2d(0, 0, Rotation2d.kZero); //Use for characterization
-  Pose2d robotPose = new Pose2d(0, 0, Rotation2d.kZero);
+  Pose2d robotPose = DriveConstants.DEFAULT_STARTING_POSE;
   final Pose2d nullPose = new Pose2d(-1, -1, Rotation2d.kZero);
 
   
@@ -59,7 +59,7 @@ public class QuestNavSubsystem extends SubsystemBase {
     // .rotateBy(Rotation2d.fromDegrees(angle))));
     System.out.println("Quest Robot Pose: " + 
         java.util.Objects.requireNonNullElse(getQuestRobotPose(),"").toString());
-    System.out.println("QAngle: " + angle);
+    SmartDashboard.putNumber("QAngle: " , angle);
     System.out.println("New QAngle: " + (Rotation2d.fromDegrees(angle).
         minus(getQuestRobotPose().getRotation())).getDegrees());
     
@@ -151,7 +151,7 @@ public class QuestNavSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("TimeStamp: ", getQTimeStamp());
       SmartDashboard.putNumber("TimeStampA: ", getQAppTimeStamp());
       SmartDashboard.putNumber("TimeStampFPGS: ", (getQTimeStamp()));
-      // SmartDashboard.putString("Quest Tracking)
+      SmartDashboard.putString("Is Tracking", questNav.isTracking() ? "True" : "False");
       questNav.commandPeriodic();
 
       //update pose Frames
@@ -162,19 +162,21 @@ public class QuestNavSubsystem extends SubsystemBase {
         for (PoseFrame questFrame : poseFrames) {
           
           // Get the pose of the Quest
-          Pose2d questPose = questFrame.questPose();
+          // Pose2d questPose = questFrame.questPose();
           // Get timestamp for when the data was sent
           double timestamp = questFrame.dataTimestamp();
 
           // Transform by the mount pose to get your robot pose
-          Pose2d robotPose = questPose.transformBy(ROBOT_TO_QUEST.inverse());
+          // Pose2d robotPose = questPose.transformBy(ROBOT_TO_QUEST.inverse());
 
           // You can put some sort of filtering here if you would like!
 
           // Add the measurement to our estimator
-          RobotContainer.driveBase.updateOdometryQuest(robotPose, timestamp);
+          RobotContainer.driveBase.updateOdometryQuest(getQuestRobotPose(), timestamp);
 
-          SmartDashboard.putData("Quest Pose",(Sendable) this.robotPose);
+          
+
+        
         }
       }
     }
