@@ -15,7 +15,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import Team4450.Lib.Util;
@@ -141,6 +143,7 @@ public class QuestNavSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
     if (questNav.isTracking()) {
       // This method will be called once per scheduler run
       SmartDashboard.putString("qTranformedPose: ", getQuestRobotPose().toString());
@@ -148,7 +151,8 @@ public class QuestNavSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("TimeStamp: ", getQTimeStamp());
       SmartDashboard.putNumber("TimeStampA: ", getQAppTimeStamp());
       SmartDashboard.putNumber("TimeStampFPGS: ", (getQTimeStamp()));
-
+      // SmartDashboard.putString("Quest Tracking)
+      questNav.commandPeriodic();
 
       //update pose Frames
       poseFrames = questNav.getAllUnreadPoseFrames();
@@ -156,6 +160,7 @@ public class QuestNavSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("qFrames", poseFrames.length);
       if(DriveConstants.ODOMETRY_UPDATE_FROM_QUESTNAV) {
         for (PoseFrame questFrame : poseFrames) {
+          
           // Get the pose of the Quest
           Pose2d questPose = questFrame.questPose();
           // Get timestamp for when the data was sent
@@ -168,6 +173,8 @@ public class QuestNavSubsystem extends SubsystemBase {
 
           // Add the measurement to our estimator
           RobotContainer.driveBase.updateOdometryQuest(robotPose, timestamp);
+
+          SmartDashboard.putData("Quest Pose",(Sendable) this.robotPose);
         }
       }
     }
