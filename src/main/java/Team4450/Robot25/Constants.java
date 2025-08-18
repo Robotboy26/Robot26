@@ -94,7 +94,6 @@ public final class Constants
     public static final class DriveConstants {
         // Driving Parameters - These are the maximum capable speeds of
         // the robot.
-
         public static final double kMaxSpeedMetersPerSecond = 4.92; 
         public static final double kMaxAngularSpeed = 1.5 * (2 * Math.PI); // radians per second (1.5 rots / sec)
         public static final double kSlowModeFactor = .20; // 50% of normal.
@@ -156,6 +155,8 @@ public final class Constants
         // public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(.697, 7.153, Rotation2d.fromDegrees(0));
         public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(7.473, .559, Rotation2d.fromDegrees(0));
         //public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
+
+        public static final boolean ODOMETRY_UPDATE_FROM_QUESTNAV = true; // If true, use QuestNav for odometry updates.
     }
 
     public static final class ModuleConstants {

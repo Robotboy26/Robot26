@@ -205,6 +205,7 @@ public class DriveBase extends SubsystemBase {
   public void periodic() {
     // Update the odometry (robot position on field).
     // combined with poseesitmator this merges with vision
+
     Pose2d currentPose = odometry.update(
         Rotation2d.fromDegrees(getGyroYaw()),   //gyro.getAngle()),
         new SwerveModulePosition[] {
@@ -830,6 +831,9 @@ public class DriveBase extends SubsystemBase {
     updateDS();
   }
 
+  public void updateOdometryQuest(Pose2d lastPose, double timestamp) {
+    odometry.addVisionMeasurement(lastPose, currentRotation);
+  }
   /**
    * Disables tracking
    */

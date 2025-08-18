@@ -27,6 +27,7 @@ import Team4450.Robot25.subsystems.ShuffleBoard;
 import Team4450.Robot25.subsystems.ElevatedManipulator.PresetPosition;
 import Team4450.Robot25.subsystems.ElevatedManipulator;
 import Team4450.Robot25.subsystems.Elevator;
+import Team4450.Robot25.subsystems.QuestNavSubsystem;
 import Team4450.Robot25.subsystems.Climber;
 
 import Team4450.Lib.MonitorPDP;
@@ -80,6 +81,7 @@ public class RobotContainer
 	public static AlgaeGroundIntake		algaeGroundIntake;
 	public static CoralManipulator		coralManipulator;
 	public static Climber 				climber;
+	public static QuestNavSubsystem		questNavSubsystem;
 
 	// Subsystem Default Commands.
 
@@ -202,6 +204,7 @@ public class RobotContainer
 														algaeGroundIntake, 
 														elevator);
 		
+		questNavSubsystem = new QuestNavSubsystem();
 		// if (RobotBase.isReal()) 
 		// {
 		// 	candle = new Candle(CTRE_CANDLE, 8+26);
