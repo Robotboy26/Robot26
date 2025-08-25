@@ -195,8 +195,7 @@ public class Robot extends TimedRobot
    * should be nothing here.
    */
   @Override
-  public void disabledPeriodic() 
-  {
+  public void disabledPeriodic() {
   }
 
   /**
