@@ -3,6 +3,7 @@ package Team4450.Robot25;
 
 import java.util.Properties;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -223,6 +224,10 @@ public final class Constants
         public static final double kPThetaController = 1;
 
         public static final double kHolonomicPathFollowerP = 5.0;
+
+        public static PathConstraints constraints = new PathConstraints(1.5, 0.25, 
+        Units.degreesToRadians(180), Units.degreesToRadians(360));
+
         
         // Constraint for the motion profiled robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

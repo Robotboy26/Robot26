@@ -29,15 +29,19 @@ public class CoralManipulator extends SubsystemBase {
         coralConfig.idleMode(IdleMode.kBrake);
 
         coralMotor.configure(coralConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-
+    
+       
         coralPivot.setName("coralPivot");
 
 
         Util.consoleLog("Coral Manipulator Initialized");
     }
-    
+
+
     public void intialize(){
         Util.consoleLog();
+
+        
 
         pivotDown();
 

@@ -402,10 +402,7 @@ public class RobotContainer
     		.onTrue(new RetractClimber(climber));
 
         new Trigger(() -> driverController.getXButton())
-            .onTrue(new IntakeAlgaeGround(elevatedManipulator));
-
-		new Trigger(() -> driverController.getYButton())
-			.onTrue(new Preset(elevatedManipulator, PresetPosition.RESET));
+			.whileTrue(driveBase.pathfindToPose(() -> new Pose2d(7.83, 0.859, new Rotation2d(90))));
 		
 			
 		// -------- Utility pad buttons ----------

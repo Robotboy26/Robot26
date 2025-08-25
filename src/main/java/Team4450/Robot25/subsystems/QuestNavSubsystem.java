@@ -174,8 +174,6 @@ public class QuestNavSubsystem extends SubsystemBase {
           // Add the measurement to our estimator
           RobotContainer.driveBase.updateOdometryQuest(getQuestRobotPose(), timestamp);
 
-          
-
         
         }
       }

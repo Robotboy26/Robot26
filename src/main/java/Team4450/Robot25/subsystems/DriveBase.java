@@ -7,7 +7,10 @@ package Team4450.Robot25.subsystems;
 
 import static Team4450.Robot25.Constants.alliance;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.studica.frc.AHRS;
@@ -15,9 +18,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-//import com.pathplanner.lib.util.ReplanningConfig;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.pathfinding.Pathfinder;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-//import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 
 import Team4450.Robot25.Constants.AutoConstants;
 import Team4450.Robot25.Constants.DriveConstants;
@@ -50,6 +56,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveBase extends SubsystemBase {
@@ -833,7 +841,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void updateOdometryQuest(Pose2d lastPose, double timestamp) {
-    odometry.addVisionMeasurement(lastPose, currentRotation);
+    odometry.addVisionMeasurement(lastPose, timestamp);
   }
   /**
    * Disables tracking
@@ -961,7 +969,8 @@ public class DriveBase extends SubsystemBase {
               return alliance == DriverStation.Alliance.Red;
             },
             this // Reference to this subsystem to set requirements
-    );
+            
+            );
   }
 
   /**
@@ -983,4 +992,40 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void clearPPRotationOverride() {pathplannerOverride = Optional.empty();}
+
+public PathPlannerPath createPath(Pose2d currentPose, Pose2d alignPose, Pose2d endPose){
+        double c = (currentPose.getX() - alignPose.getX()) /
+                    (currentPose.getY() - alignPose.getY());
+        double heading = -Math.atan(c) + (Math.PI / 2);
+        
+        heading = currentPose.getX() > alignPose.getX() ? heading : -heading;
+
+
+        System.out.println("Heading: " + heading);
+
+        // The rotation component in these poses represents the direction of travel
+        Pose2d startPose = new Pose2d(currentPose.getTranslation(), new Rotation2d(heading));
+        Pose2d alignPose2 = new Pose2d(alignPose.getTranslation(), new Rotation2d(heading));
+    
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPose, alignPose2, endPose);
+        PathPlannerPath path = new PathPlannerPath(waypoints, 
+            AutoConstants.constraints,
+            null, // Ideal starting state can be null for on-the-fly paths
+            new GoalEndState(0.0, endPose.getRotation())
+        );
+
+
+    
+        path.preventFlipping = true;
+
+        System.out.println("Path Created!");
+        return path;
+    }
+
+  public Command pathfindToPose(Supplier<Pose2d> poseSupplier) {
+    return new DeferredCommand(
+      () -> AutoBuilder.pathfindToPose(poseSupplier.get(), AutoConstants.constraints),
+      Set.of(this)
+    );  
+}
 }
