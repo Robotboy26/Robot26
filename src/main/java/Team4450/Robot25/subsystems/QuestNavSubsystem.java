@@ -25,10 +25,8 @@ import Team4450.Robot25.RobotContainer;
 import Team4450.Robot25.Constants.DriveConstants;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
-import Team4450.Robot25.subsystems.LimelightHelpers;
 
 public class QuestNavSubsystem extends SubsystemBase {
-  private boolean limelightEnabled = true;
   private boolean allianceRed = false; // Set to true if the robot is on the red alliance
   QuestNav questNav;
    Transform2d ROBOT_TO_QUEST = new Transform2d(-0.32, -0.29, Rotation2d.k180deg); //Original was -0.32, -0.29
@@ -145,16 +143,6 @@ public class QuestNavSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-      // https://github.com/LimelightVision/limelight-examples/tree/main/java-wpilib/swerve-megatag-odometry
-      // https://docs.limelightvision.io/docs/docs-limelight/getting-started/summary
-      SmartDashboard.putBoolean("LimelightEnabled: ", limelightEnabled);
-      if (limelightEnabled) {
-          LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-          if (mt1.tagCount >= 2) {  // Only trust measurement if we see multiple tags
-              RobotContainer.driveBase.updateOdometryLimelight(mt1.pose, mt1.timestampSeconds);
-              Util.consoleLog("Because the limelight sees 2 or more tags with will set the robot position with the limelight position.");
-          }
-      }
 
     if (questNav.isTracking()) {
       // This method will be called once per scheduler run

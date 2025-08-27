@@ -841,7 +841,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void updateOdometryQuest(Pose2d lastPose, double timestamp) {
-    odometry.addVisionMeasurement(lastPose, currentRotation);
+    odometry.addVisionMeasurement(lastPose, timestamp);
   }
   /**
    * Disables tracking
