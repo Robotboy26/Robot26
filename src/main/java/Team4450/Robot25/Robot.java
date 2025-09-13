@@ -88,7 +88,7 @@ public class Robot extends TimedRobot
       if (RobotBase.isSimulation()) Util.consoleLog("Simulated Robot");
       if (RobotBase.isReal()) Util.consoleLog("Real Robot");
 
-      // Create SendableVersion object so it can be sent to the dashboard and also
+      // Create SendableVersion object so it can be sent to the dashboard and
       // log some of it's information.
 
       SendableVersion.INSTANCE.init(PROGRAM_NAME);
@@ -97,8 +97,6 @@ public class Robot extends TimedRobot
       Util.consoleLog("%s compiled by %s at %s (branch=%s, commit=%s)", SendableVersion.INSTANCE.getProgramVersion(),
           SendableVersion.INSTANCE.getUser(), SendableVersion.INSTANCE.getTime(), SendableVersion.INSTANCE.getBranch(),
           SendableVersion.INSTANCE.getCommit());
-
-      //Util.consoleLog("manifest path=%s", SendableVersion.INSTANCE.getPath());
 
       // Send program version to the dashboard.
       SmartDashboard.putString("Program", PROGRAM_NAME);
@@ -140,7 +138,6 @@ public class Robot extends TimedRobot
    * this for items like diagnostics that you want run during disabled,
    * autonomous, teleoperated and test.
    *
-   * <p>
    * This runs after the mode specific periodic functions, but before LiveWindow
    * and SmartDashboard integrated updating.
    */
@@ -170,7 +167,7 @@ public class Robot extends TimedRobot
       this.endCompetition();
     }
 
-		if (tracing & isEnabled()) FunctionTracer.INSTANCE.exitFunction("Robot.robotPeriodic");
+    if (tracing & isEnabled()) FunctionTracer.INSTANCE.exitFunction("Robot.robotPeriodic");
   }
 
   /**
@@ -218,13 +215,12 @@ public class Robot extends TimedRobot
     robotContainer.getMatchInformation();
 
     robotContainer.resetFaults();
-    RobotContainer.elevator.limiter = false;
     
     // RobotContainer function determines which auto command is selected to run.
 
     Command autonomousCommand = robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
+    // Schedule the autonomous command (example)
 
     try {
       if (autonomousCommand != null) autonomousCommand.schedule();
@@ -246,7 +242,7 @@ public class Robot extends TimedRobot
   }
 
   /**
-   * This function is called once at the start of teleop mode.
+   * This function is called once at the start of Teleop mode.
    */
   @Override
   public void teleopInit() 
@@ -257,8 +253,7 @@ public class Robot extends TimedRobot
 
     LCD.clearAll();
 
-    LCD.printLine(LCD_1, "Mode: Teleop  All=%s, Start=%d, FMS=%b, msg=%s", alliance.name(), location,
-                  DriverStation.isFMSAttached(), gameMessage);
+    LCD.printLine(LCD_1, "Mode: Teleop  All=%s, Start=%d, FMS=%b, msg=%s", alliance.name(), location, DriverStation.isFMSAttached(), gameMessage);
 
     SmartDashboard.putBoolean("Disabled", false);
     SmartDashboard.putBoolean("Teleop Mode", true);
@@ -266,11 +261,7 @@ public class Robot extends TimedRobot
     robotContainer.resetFaults();
     robotContainer.fixPathPlannerGyro(); // Because of this only use blue alliance during practice
 
-    RobotContainer.algaeManipulator.intialize();
-    RobotContainer.algaeGroundIntake.intialize();
-    RobotContainer.coralManipulator.intialize();
     RobotContainer.driveBase.setFieldRelative(true);
-    RobotContainer.elevator.limiter = true;
     // Driving handled by DriveCommand which is default command for the DriveBase.
     // Other commands scheduled by joystick buttons.
 
@@ -280,7 +271,7 @@ public class Robot extends TimedRobot
   }
 
   /**
-   * This function is called periodically during teleop. Technically there should
+   * This function is called periodically during Teleop. Technically there should
    * be nothing here.
    */
   @Override
@@ -305,10 +296,10 @@ public class Robot extends TimedRobot
 
     CommandScheduler.getInstance().cancelAll();
 
-    // Next two lines launch teleop mode, but since we are in test
+    // Next two lines launch Teleop mode, but since we are in test
     // mode, LiveWindow will be enabled to display test data to the
     // outlineviewer and shuffleboard. Our "test" mode is the regular
-    // telop with LW enabled. Our code displays more detailed test/debug
+    // Telop with LW enabled. Our code displays more detailed test/debug
     // data in LW mode.
 
     LiveWindow.enableAllTelemetry();

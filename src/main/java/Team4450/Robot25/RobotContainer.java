@@ -7,28 +7,11 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import Team4450.Robot25.commands.DriveCommand;
-import Team4450.Robot25.commands.ExtendClimber;
-import Team4450.Robot25.commands.IntakeCoral;
-import Team4450.Robot25.commands.OuttakeCoral;
-import Team4450.Robot25.commands.OuttakeProcessor;
-import Team4450.Robot25.commands.IntakeAlgaeGround;
-import Team4450.Robot25.commands.Preset;
-import Team4450.Robot25.commands.RemoveAlgae;
-import Team4450.Robot25.commands.RetractClimber;
-import Team4450.Robot25.commands.OuttakeAlgae;
 
 
-import Team4450.Robot25.subsystems.AlgaeManipulator;
-import Team4450.Robot25.subsystems.AlgaeGroundIntake;
-import Team4450.Robot25.subsystems.Candle;
-import Team4450.Robot25.subsystems.CoralManipulator;
 import Team4450.Robot25.subsystems.DriveBase;
 import Team4450.Robot25.subsystems.ShuffleBoard;
-import Team4450.Robot25.subsystems.ElevatedManipulator.PresetPosition;
-import Team4450.Robot25.subsystems.ElevatedManipulator;
-import Team4450.Robot25.subsystems.Elevator;
 import Team4450.Robot25.subsystems.QuestNavSubsystem;
-import Team4450.Robot25.subsystems.Climber;
 
 import Team4450.Lib.MonitorPDP;
 import Team4450.Lib.NavX;
@@ -38,7 +21,6 @@ import Team4450.Lib.XboxController;
 import Team4450.Lib.MonitorCompressorPH;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -48,24 +30,19 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer 
@@ -73,14 +50,7 @@ public class RobotContainer
 	// Subsystems.
 
 	public static ShuffleBoard			shuffleBoard;
-	public static DriveBase 			  driveBase;
-	private Candle        				candle = null;
-	public static Elevator				elevator;
-	public static ElevatedManipulator	elevatedManipulator;
-	public static AlgaeManipulator 		algaeManipulator;
-	public static AlgaeGroundIntake		algaeGroundIntake;
-	public static CoralManipulator		coralManipulator;
-	public static Climber 				climber;
+	public static DriveBase 			driveBase;
 	public static QuestNavSubsystem		questNavSubsystem;
 
 	// Subsystem Default Commands.
@@ -95,7 +65,7 @@ public class RobotContainer
 	// scheduler list and on next run, execute is called followed by isFinished. If isFinished
 	// returns true, the end method is called and the command is removed from the scheduler list.
 	// Now if you create another instance with new, you get the constructor again. But if you 
-	// are re-scheduling an existing command instance (like the ones above), you do not get the
+	// are re-scheduling an existing command instance (like the ones above), You do not get the
 	// constructor called, but you do get initialize called again and then on to execute & etc.
 	// So this means you have to be careful about command initialization activities as a persistent
 	// command in effect has two lifetimes (or scopes): Class global and each new time the command
@@ -108,28 +78,19 @@ public class RobotContainer
 	private XboxController			driverController =  new XboxController(DRIVER_PAD);
 	public static XboxController	utilityController = new XboxController(UTILITY_PAD);
 
-	// private PowerDistribution	pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kCTRE);
 	private PowerDistribution		pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kRev);
-
-	// Compressor class controls the CTRE/REV Pneumatics control Module.
-	private Compressor				pcm = new Compressor(PneumaticsModuleType.REVPH);
 
 	// Navigation board.
 	public static NavX			navx;
 
-	private MonitorPDP     		monitorPDPThread;
-	private MonitorCompressorPH	monitorCompressorThread;
     private CameraFeed			cameraFeed;
     
-	// Trajectories we load manually.
-	//public static PathPlannerTrajectory	ppTestTrajectory;
-
 	private static SendableChooser<Command>	autoChooser;
 	
 	private static String 					autonomousCommandName = "none";
 
 	/**
-	 * The container for the robot. Contains subsystems, Opertor Interface devices, and commands.
+	 * The container for the robot. Contains subsystems, Operator Interface devices, and commands.
 	 */
 	public RobotContainer() throws Exception
 	{
@@ -155,17 +116,6 @@ public class RobotContainer
 		else
 			isClone = true;
  		
-		// Set compressor enabled switch on dashboard from properties file.
-		// Later code will read that setting from the dashboard and turn 
-		// compressor on or off in response to dashboard setting.
- 		
-		boolean compressorEnabled = true;	// Default if no property.
-
-		if (robotProperties != null) 
-			compressorEnabled = Boolean.parseBoolean(robotProperties.getProperty("CompressorEnabledByDefault"));
-		
-		SmartDashboard.putBoolean("CompressorEnabled", compressorEnabled);
-
 		// Reset PDB & PCM sticky faults.
     
 		resetFaults();
@@ -179,6 +129,9 @@ public class RobotContainer
 		// manipulating the navx (as opposed to just reading data) may crash the swerve drive code.
 
 		navx = NavX.getInstance();
+        Util.consoleLog("Waiting for NavX to init.");
+        Thread.sleep(1000);
+        Util.consoleLog("NavX is ready.");
 
 		// Add navx as a Sendable. Updates the dashboard heading indicator automatically.
  		
@@ -194,33 +147,14 @@ public class RobotContainer
 
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
-		algaeManipulator = new AlgaeManipulator();
-		coralManipulator = new CoralManipulator();
-		elevator = new Elevator(driveBase);
-		climber = new Climber();
-		algaeGroundIntake = new AlgaeGroundIntake();
-		elevatedManipulator = new ElevatedManipulator(coralManipulator, 
-														algaeManipulator, 
-														algaeGroundIntake, 
-														elevator);
-		
 		questNavSubsystem = new QuestNavSubsystem();
-		// if (RobotBase.isReal()) 
-		// {
-		// 	candle = new Candle(CTRE_CANDLE, 8+26);
-		// 	candle.setDefaultCommand(new UpdateCandle(candle));
-		// }
 
 		// Create any persistent commands.
 
 		// Set any subsystem Default commands.
 
-		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
-	    // with AprilTags (if it sees them). (As well as vision simulator)
-
-
 		// Set the default drive command. This command will be scheduled automatically to run
-		// every teleop period and so use the gamepad joy sticks to drive the robot. 
+		// every Teleop period and so use the gamepad joy sticks to drive the robot. 
 
 		// We pass the GetY() functions on the Joysticks as a DoubleSuppier. The point of this 
 		// is removing the direct connection between the Drive and XboxController classes. We
@@ -257,22 +191,7 @@ public class RobotContainer
 									driverController.getRightXDS(),
 									driverController));
 		
-		elevator.setDefaultCommand(new RunCommand(
-		 	()->{elevator.move(-MathUtil.applyDeadband(utilityController.getLeftY() * 0.5, DRIVE_DEADBAND));
-		 	}, elevator));
-		//Start the compressor, PDP and camera feed monitoring Tasks.
-
-   		//monitorCompressorThread = MonitorCompressorPH.getInstance(pcm);
-   		//monitorCompressorThread.setDelay(1.0);
-   		//monitorCompressorThread.SetLowPressureAlarm(50);
-   		//monitorCompressorThread.start();
-   		//
-   		//monitorPDPThread = MonitorPDP.getInstance(pdp);
-   		//monitorPDPThread.start();
-   		//
-		//pdp.setSwitchableChannel(true);
-		
-		// Start camera server thread using our class for usb cameras.
+		// Start camera server thread using our class for USB cameras.
     
 		if (RobotBase.isReal())
 		{
@@ -313,31 +232,11 @@ public class RobotContainer
 		
         configureButtonBindings();
         
-        // Load any trajectory files in a separate thread on first scheduler run.
-        // We do this because trajectory loads can take up to 10 seconds to load so we want this
-        // being done while we are getting started up. Hopefully will complete before we are ready to
-        // use the trajectory.
-		
-		// NotifierCommand loadTrajectory = new NotifierCommand(this::loadTestTrajectory, 0);
-        // loadTrajectory.setRunWhenDisabled(true);
-        // CommandScheduler.getInstance().schedule(loadTrajectory);
-		
-		// //testTrajectory = loadTrajectoryFile("Slalom-1.wpilib.json");
-		
-		// loadTrajectory = new NotifierCommand(this::loadPPTestTrajectory, 0);
-        // loadTrajectory.setRunWhenDisabled(true);
-        // CommandScheduler.getInstance().schedule(loadTrajectory);
-
-		//PathPlannerTrajectory ppTestTrajectory = loadPPTrajectoryFile("richard");
-
 		Util.consoleLog(functionMarker);
 	}
 
 	/**
 	 * Use this method to define your button->command mappings.
-     * 
-     * These buttons are for real robot driver station with 3 sticks and launchpad.
-	 * The launchpad makes the colored buttons look like a joystick.
 	 */
 	private void configureButtonBindings() 
 	{
@@ -364,120 +263,32 @@ public class RobotContainer
 				utilityController.setRumble(RumbleType.kBothRumble, 0);
 		}));
 
-		// holding top right bumper enables the alternate rotation mode in
-		// which the driver points stick to desired heading.
+		// Holding top right bumper enables the alternate rotation mode in
+		// Which the driver points stick to desired heading.
+        //
+        // This might not be correct!!!
+        // .getPOV == 0 is up d-pad
+        // .getPOV == 90 is right d-pad
 
-		//new Trigger(() -> driverController.getRightBumperButton())
-		//	.whileTrue(new PointToYaw(
-		//		()->PointToYaw.yawFromAxes(
-		//			-MathUtil.applyDeadband(driverController.getRightX(), Constants.DRIVE_DEADBAND),
-		//			-MathUtil.applyDeadband(driverController.getRightY(), Constants.DRIVE_DEADBAND)
-		//		), driveBase, false
-		//));
-
-		// toggle slow-mode
+		// Toggle slow-mode
 		new Trigger(() -> driverController.getLeftBumperButton())
 			.onTrue(new InstantCommand(driveBase::enableSlowMode))
 			.onFalse(new InstantCommand(driveBase::disableSlowMode));
 
-		// reset field orientation (direction).
+		// Reset field orientation (direction).
 		new Trigger(() -> driverController.getStartButton())
 			.onTrue(new InstantCommand(driveBase::zeroGyro));
 
-		// toggle field-oriented driving mode.
+		// Toggle field-oriented driving mode.
 		new Trigger(() -> driverController.getAButton())
 			.onTrue(new InstantCommand(driveBase::toggleFieldRelative));
 
-		//Holding Right D-Pad button sets X pattern to stop movement.
+		// Holding Right D-Pad button sets swerve modules to X pattern to stop movement.
 		new Trigger(() -> driverController.getPOV() == 90)
 				.onTrue(new RunCommand(() -> driveBase.setX(), driveBase));
 
-
-		new Trigger(() -> driverController.getBButton() && climber.pistonStatus() == false)
-			.onTrue(new ParallelCommandGroup(new InstantCommand(() -> elevatedManipulator.executeSetPosition(PresetPosition.CLIMB), elevatedManipulator),
-                new ExtendClimber(climber),
-				new InstantCommand(() -> algaeManipulator.extendOut())));
-
-		new Trigger(() -> driverController.getPOV() == 0)
-    		.onTrue(new RetractClimber(climber));
-
-        new Trigger(() -> driverController.getXButton())
-			.whileTrue(driveBase.pathfindToPose(() -> new Pose2d(7.83, 0.859, new Rotation2d(90))));
-		
-			
 		// -------- Utility pad buttons ----------
 
-		//Use Preset Command for the following:
-
-		// Moves the coral manipulator/elevator to the L1 Branch scoring position
-		new Trigger(() -> utilityController.getXButton())
-		.onTrue(new Preset(elevatedManipulator, PresetPosition.CORAL_SCORING_L1_NEW));
-
-		// Moves the coral manipulator/elevator to the L2 Branch scoring position.
-		new Trigger(() -> utilityController.getAButton())
-		.onTrue(new Preset(elevatedManipulator, PresetPosition.CORAL_SCORING_L2));
-
-		// Moves the coral manipulator/elevator to the L3 Branch scoring position.
-		new Trigger(() -> utilityController.getBButton())
-		.onTrue(new Preset(elevatedManipulator, PresetPosition.CORAL_SCORING_L3));
-
-		// Moves the coral manipulator/elevator to the L4 Branch scoring position.
-		new Trigger(() -> utilityController.getYButton())
-		.onTrue(new Preset(elevatedManipulator, PresetPosition.CORAL_SCORING_L4));
-
-
-		//Moves the algae Manipulator/elevator to the removing position for Algae on L3
-		new Trigger(()-> utilityController.getPOV() == 0)
-		// .onTrue(new ParallelCommandGroup(new Preset(elevatedManipulator, PresetPosition.ALGAE_REMOVE_L3), 
-		// 	new InstantCommand(() -> elevatedManipulator.intakeCoralInsteadOfAlgae = false)));
-			.onTrue(new Preset(elevatedManipulator, PresetPosition.ALGAE_REMOVE_L3));
-
-
-		//Moves the algae Manipulator/Elevator to the removing position for Algae on L2
-		new Trigger(()-> utilityController.getPOV() == 180)
-		.onTrue(new ParallelCommandGroup(new Preset(elevatedManipulator, PresetPosition.ALGAE_REMOVE_L2)));
-
-		//Moves the elevator and algae manipulator to the scoring position for the algae net.
-		new Trigger(()-> utilityController.getPOV() == 90)
-		.onTrue(new ParallelCommandGroup(new Preset(elevatedManipulator, PresetPosition.ALGAE_NET_SCORING)));
-		
-		//Moves the elevator and algae manipulator to the scoring position for the algae processor.
-		new Trigger(()-> utilityController.getPOV() == 270)
-		.onTrue(new Preset(elevatedManipulator, PresetPosition.ALGAE_LOLLIPOP));
-			// new InstantCommand(() -> elevatedManipulator.scoreCoralInsteadOfAlgae = false)));
-		
-		// Moves the coral manipulator/elevator to the intake position for the coral station and runs the intake until it has coral.
-		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new IntakeCoral(elevatedManipulator))
-			.onFalse(new InstantCommand(() -> elevatedManipulator.coralManipulator.stop()));
-		
-		//Runs coral outtake if the elevator and manipulator are in the correct position.
-		new Trigger(() -> utilityController.getRightTrigger())
-			.onTrue(new OuttakeCoral(elevatedManipulator));
-		
-		// Runs algae outtake if the elevator and manipulator are in the correct position.
-		new Trigger(() -> utilityController.getRightBumperButton() && !elevatedManipulator.outtakeProcessor)
-			.onTrue(new OuttakeAlgae(elevatedManipulator));
-
-		new Trigger(() -> utilityController.getRightBumperButton() && elevatedManipulator.outtakeProcessor)
-			.onTrue(new OuttakeProcessor(elevatedManipulator));
-
-		new Trigger(() -> utilityController.getLeftBumperButton())
-			.whileTrue(new RemoveAlgae(elevatedManipulator));
-
-		
-		 //Resets the manipulators and elevator to the default position.
-		new Trigger(() -> utilityController.getBackButton())
-			.onTrue(new Preset(elevatedManipulator, PresetPosition.RESET));
-		
-		new Trigger(() -> utilityController.getStartButton())
-			.onTrue(new InstantCommand(elevator::resetEncoders));
-
-		new Trigger(() -> utilityController.getRightStickButton())
-			.onTrue(new InstantCommand(() -> elevatedManipulator.algaeManipulator.pivotUp()))
-			.onFalse(new InstantCommand(() -> elevatedManipulator.algaeManipulator.pivotDown()));
-			
-		
 	}
 	/**
 	 * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -486,13 +297,11 @@ public class RobotContainer
 	 * @return The Command to run in autonomous.
 	 */
 	public Command getAutonomousCommand() {
-		// PathPlannerAuto  	ppAutoCommand;
 		Command				autoCommand;
 
 		autoCommand = autoChooser.getSelected();
 
-		if (autoCommand == null) 
-		{
+		if (autoCommand == null) {
 			autonomousCommandName = "none";
 
 			return autoCommand;
@@ -501,13 +310,6 @@ public class RobotContainer
 		autonomousCommandName = autoCommand.getName();
 
 		Util.consoleLog("auto name=%s", autonomousCommandName);
-
-		if (autoCommand instanceof PathPlannerAuto)
-		{
-			// ppAutoCommand = (PathPlannerAuto) autoCommand;
-	
-			// Util.consoleLog("pp starting pose=%s", PathPlannerAuto.getStaringPoseFromAutoFile(autoCommand.getName().toString()));
-		}
 
 		return autoCommand;
   	}
@@ -526,29 +328,10 @@ public class RobotContainer
 		
 		// Register commands called from PathPlanner Autos.
 
-		NamedCommands.registerCommand("Intake Coral", new IntakeCoral(elevatedManipulator));
-		NamedCommands.registerCommand("Outtake Coral", new OuttakeCoral(elevatedManipulator));
-		NamedCommands.registerCommand("Remove Algae", new RemoveAlgae(elevatedManipulator));
-		NamedCommands.registerCommand("Outtake Algae", new OuttakeAlgae(elevatedManipulator));
-		NamedCommands.registerCommand("Outtake Processor", new OuttakeProcessor(elevatedManipulator));
-		NamedCommands.registerCommand("Raise to L1", new ParallelCommandGroup(new InstantCommand(() -> elevatedManipulator.executeSetPosition(PresetPosition.CORAL_SCORING_L1_NEW), elevatedManipulator),
-				new InstantCommand(() -> coralManipulator.pivotUp())));
-		NamedCommands.registerCommand("Raise to L2", new ParallelCommandGroup(new InstantCommand(() -> elevatedManipulator.executeSetPosition(PresetPosition.CORAL_SCORING_L2), elevatedManipulator),
-				new InstantCommand(() -> coralManipulator.pivotDown())));
-		NamedCommands.registerCommand("Raise to L3", new ParallelCommandGroup(new InstantCommand(() -> elevatedManipulator.executeSetPosition(PresetPosition.CORAL_SCORING_L3), elevatedManipulator),
-				new InstantCommand(() -> coralManipulator.pivotDown())));
-		NamedCommands.registerCommand("Raise to L4", new ParallelCommandGroup(new InstantCommand(() -> elevatedManipulator.executeSetPosition(PresetPosition.CORAL_SCORING_L4), elevatedManipulator),
-				new InstantCommand(() -> coralManipulator.pivotDown())));
-		NamedCommands.registerCommand("Remove Algae L2", new Preset(elevatedManipulator, PresetPosition.ALGAE_REMOVE_L2));
-		NamedCommands.registerCommand("Remove Algae L3", new Preset(elevatedManipulator, PresetPosition.ALGAE_REMOVE_L3)); 
-		NamedCommands.registerCommand("Algae Net Scoring", new Preset(elevatedManipulator, PresetPosition.ALGAE_NET_SCORING)); 
-		NamedCommands.registerCommand("Algae Processor Scoring", new Preset(elevatedManipulator, PresetPosition.ALGAE_PROCESSOR_SCORING));
-		NamedCommands.registerCommand("Intake Algae Ground", new IntakeAlgaeGround(elevatedManipulator));
-		NamedCommands.registerCommand("Reset Elevator", new Preset(elevatedManipulator, PresetPosition.RESET));
-		NamedCommands.registerCommand("Algae Pivot Up", new InstantCommand(() -> algaeManipulator.pivotUp()));
-		NamedCommands.registerCommand("Climb", new Preset(elevatedManipulator, PresetPosition.CLIMB));
-		// Create a chooser with the PathPlanner Autos located in the PP
-		// folders.
+        // Left for an example
+		// NamedCommands.registerCommand("Intake Coral", new IntakeCoral(elevatedManipulator));
+
+		// Create a chooser with the PathPlanner Autos located in the PP folders
 
 	    autoChooser = AutoBuilder.buildAutoChooser();
 		
@@ -572,60 +355,15 @@ public class RobotContainer
 	}
 		
 	/**
-	 * Reset sticky faults in PDP and PCM and turn compressor on/off as
-	 * set by switch on DS.
+	 * Reset sticky faults in PDP and PCM and turn compressor on/off as set by switch on DS.
 	 */
 	public void resetFaults()
 	{
-		// This code turns on/off the automatic compressor management if requested by DS. Putting this
-		// here is a convenience since this function is called at each mode change.
-		if (SmartDashboard.getBoolean("CompressorEnabled", true)) 
-			pcm.enableDigital();
-		else
-			pcm.disable();
-		
 		pdp.clearStickyFaults();
 		//pcm.clearAllStickyFaults(); // Add back if we use a CTRE pcm.
-		
-		if (monitorPDPThread != null) monitorPDPThread.reset();
     }
 
 	public void fixPathPlannerGyro() {
 		driveBase.fixPathPlannerGyro();
 	}
-
-	/**
-     * Loads a PathPlanner path file into a path planner trajectory.
-     * @param fileName Name of file. Will automatically look in deploy directory and add the .path ext.
-     * @return The path's trajectory.
-     */
-    // public static PathPlannerTrajectory loadPPTrajectoryFile(String fileName)
-    // {
-    //     PathPlannerTrajectory  	trajectory;
-    //     Path        			trajectoryFilePath;
-
-	// 	// We fab up the full path for tracing but the loadPath() function does it's own
-	// 	// thing constructing a path from just the filename.
-	// 	trajectoryFilePath = Filesystem.getDeployDirectory().toPath().resolve("pathplanner/" + fileName + ".path");
-
-	// 	Util.consoleLog("loading PP trajectory: %s", trajectoryFilePath);
-		
-	// 	trajectory = PathPlanner.loadPath(fileName,
-	// 									  new PathConstraints(MAX_WHEEL_SPEED, MAX_WHEEL_ACCEL));
-
-	// 	if (trajectory == null) 
-	// 	{
-	// 		Util.consoleLog("Unable to open pp trajectory: " + fileName);
-	// 		throw new RuntimeException("Unable to open PP trajectory: " + fileName);
-	// 	}
-
-    //     Util.consoleLog("PP trajectory loaded: %s", fileName);
-
-    //     return trajectory;
-    // }
-
-	// private void loadPPTestTrajectory()
-	// {
-	// 	ppTestTrajectory = loadPPTrajectoryFile("Test-Path");
-	// }
 }
