@@ -34,8 +34,6 @@ public class QuestNavSubsystem extends SubsystemBase {
   Pose2d robotPose = DriveConstants.DEFAULT_STARTING_POSE;
   final Pose2d nullPose = new Pose2d(-1, -1, Rotation2d.kZero);
 
-  
-
   PoseFrame[] poseFrames;
 
   /** Creates a new QuestNavSubsystem. */
