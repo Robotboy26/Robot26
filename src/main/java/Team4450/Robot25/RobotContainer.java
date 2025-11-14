@@ -79,6 +79,12 @@ public class RobotContainer
 	public static XboxController	utilityController = new XboxController(UTILITY_PAD);
 
 	private PowerDistribution		pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kRev);
+    // Compressor class controls the CTRE/REV Pneumatics control Module.
+	public Compressor				pcm = new Compressor(PneumaticsModuleType.REVPH);
+	private boolean compressorEnabled = false; // Compressor is false for demo mode.
+                                               //
+    private MonitorPDP     		monitorPDPThread;
+    private MonitorCompressorPH	monitorCompressorThread;
 
 	// Navigation board.
 	public static NavX			navx;
@@ -132,6 +138,8 @@ public class RobotContainer
         Util.consoleLog("Waiting for NavX to init.");
         Thread.sleep(1000);
         Util.consoleLog("NavX is ready.");
+
+        SmartDashboard.putBoolean("CompressorEnabled", compressorEnabled);
 
 		// Add navx as a Sendable. Updates the dashboard heading indicator automatically.
  		
@@ -361,6 +369,13 @@ public class RobotContainer
 	{
 		pdp.clearStickyFaults();
 		//pcm.clearAllStickyFaults(); // Add back if we use a CTRE pcm.
+        //
+        if (SmartDashboard.getBoolean("CompressorEnabled", true)) 
+			pcm.enableDigital();
+		else
+			pcm.disable();
+
+        if (monitorPDPThread != null) monitorPDPThread.reset();
     }
 
 	public void fixPathPlannerGyro() {
