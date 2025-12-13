@@ -45,7 +45,7 @@ public class RobotContainer
 	public static ShuffleBoard			 shuffleBoard;
 	public static DriveBase				 driveBase;
 	public final DriveCommand			 driveCommand;
-	private Candle        				 candle = null;
+	//private Candle        				 candle = new Candle(CTRE_CANDLE);
 	
 	// Subsystem Default Commands.
 
@@ -240,8 +240,6 @@ public class RobotContainer
         configureButtonBindings();
 		
         // Warmup PathPlanner to avoid Java pauses.
-
-        //FollowPathCommand.warmupCommand().schedule();
 
 		CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 		

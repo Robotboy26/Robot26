@@ -1,4 +1,4 @@
-package Team4450.Robot26.commands;
+package Team4450.Robot26.commands.Utility;
 
 import static Team4450.Robot26.Constants.alliance;
 

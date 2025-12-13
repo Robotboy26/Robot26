@@ -1,4 +1,4 @@
-package Team4450.Robot26.commands;
+package Team4450.Robot26.commands.DrivingHelpers;
 // package Team4450.Robot26.commands;
 
 // import static Team4450.Robot26.Constants.robot;
@@ -22,17 +22,6 @@ package Team4450.Robot26.commands;
 // import Team4450.Robot26.subsystems.DriveBase;
 // import Team4450.Robot26.subsystems.PhotonVision;
 
-// /**
-//  * This class runs as the default command of a PhotonVision
-//  * subsystem and regularly updates the SwerveDrivePoseEstimator
-//  * object with timestamped vision poses. The pose estimator then
-//  * merges these observed poses with what the actual odometry on
-//  * the robot is doing and produces a smoothed "true" pose.
-//  * 
-//  * Also, this class updates the visionSim object with the robots
-//  * pose so that the visionSim can accurately calculate targets
-//  * in the simulator.
-//  */
 // public class RotateToTag extends Command {
 //     private DriveBase robotDrive;
 //     private double targetAngle;

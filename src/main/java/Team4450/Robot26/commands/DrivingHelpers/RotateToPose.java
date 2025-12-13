@@ -1,4 +1,4 @@
-package Team4450.Robot26.commands;
+package Team4450.Robot26.commands.DrivingHelpers;
 // package Team4450.Robot26.commands;
 
 // import Team4450.Lib.Util;
@@ -7,11 +7,8 @@ package Team4450.Robot26.commands;
 // import edu.wpi.first.wpilibj2.command.Command;
 
 // /**
-//    * This function uses the current robot position estimate that is build from odometry and apriltags to go to a location on the field.
-//    * Will return imidiatly when the location is reached.
-//    *
-//    * 
-//    * @return Void
+//    * This Command uses the current robot position estimate that is build from odometry and apriltags to 
+//    * go to a location on the field. Will return imediately when the location is reached.
 //    */
 
 // public class RotateToPose extends Command {
@@ -21,10 +18,10 @@ package Team4450.Robot26.commands;
 //     private boolean isFinished;
 //     private double toleranceRot = 4;
 //     private double sign;
+
 //     /**
 //      * @param robotDrive the drive subsystem
 //      */
-
 //     public RotateToPose (DriveBase robotDrive, boolean alsoDrive, boolean initialFieldRel) {
 //         this.robotDrive = robotDrive;
 //         this.alsoDrive = alsoDrive;
