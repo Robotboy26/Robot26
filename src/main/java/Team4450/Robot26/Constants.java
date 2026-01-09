@@ -20,8 +20,9 @@ import edu.wpi.first.wpilibj.DriverStation;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants {
-	public static String		PROGRAM_NAME = "ORF26-12.29.25";
+public final class Constants
+{
+	public static String		PROGRAM_NAME = "ORF26-01.08.26";
 
 	public static Robot			robot;
 
@@ -44,9 +45,9 @@ public final class Constants {
     
     // CAMERAS 
 
-    // the names of the cameras in the PhotonVision software
+    // The names of the cameras in the PhotonVision software
 
-    //Limelight Constants:
+    // Limelight Constants:
 	public static final double DONT_SEE_TAG_WAIT_TIME = 1;
 	public static final double POSE_VALIDATION_TIME = 0.3;
 

@@ -77,7 +77,8 @@ public class RobotContainer
 	private PowerDistribution		pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kRev);
 
 	// Compressor class controls the CTRE/REV Pneumatics control Module.
-	private Compressor				pcm = new Compressor(PneumaticsModuleType.REVPH);
+	// Note: When you add the compressor back in, look at resetFaults method.
+	//private Compressor				pcm = new Compressor(PneumaticsModuleType.REVPH);
 
 	private MonitorPDP     			monitorPDPThread;
 	private MonitorCompressorPH		monitorCompressorThread;
@@ -402,10 +403,10 @@ public class RobotContainer
 	{
 		// This code turns on/off the automatic compressor management if requested by DS. Putting this
 		// here is a convenience since this function is called at each mode change.
-		if (SmartDashboard.getBoolean("CompressorEnabled", true)) 
-			pcm.enableDigital();
-		else
-			pcm.disable();
+		// if (SmartDashboard.getBoolean("CompressorEnabled", true)) 
+		// 	pcm.enableDigital();
+		// else
+		// 	pcm.disable();
 		
 		pdp.clearStickyFaults();
 		//pcm.clearAllStickyFaults(); // Add back if we use a CTRE pcm.

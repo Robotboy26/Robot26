@@ -163,6 +163,9 @@ imgui.ini
 Drive Characterization/characterization-project/
 Shooter Characterization/characterization-project/
 
+# Added simgui files back due to 2026 changes and cleanup.
+# Want everyone to start fresh. May exclude them again later
+# to not overwrite individual programmer changes to the sim gui.
 # Misc temp files
 logging/logging.*.*
 logs/*
