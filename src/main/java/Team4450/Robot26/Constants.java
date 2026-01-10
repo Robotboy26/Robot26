@@ -61,6 +61,22 @@ public final class Constants
     public static String LIMELIGHT_ONE = "limelight-right";
     public static String LIMELIGHT_TWO = "limelight-left";
 
+    // Goal Positions
+    
+    // Blue
+    public static double GOAL_BLUE_X = 10;
+    public static double GOAL_BLUE_Y = 10;
+    // Red
+    public static double GOAL_RED_X = 10;
+    public static double GOAL_RED_Y = 10;
+
+    public static double FLYWHEEL_MAX_THEORETICAL_RPM = 4000;
+
+    // Interpolation table
+    public static double[] FLYWHEEL_SPEED_TABLE = {0.57, 0.595, 0.69, 0.715, 0.73, 0.82, 0.86};
+    public static double[] FLYWHEEL_SPEED_DISTANCE_TABLE = {40, 56, 90, 95, 103, 127, 152};
+
+    // What is the LCD
 	// LCD display line number constants showing class where the line is set.
 	public static final int		LCD_1 = 1;	    // Robot, Auto Commands.
 	public static final int		LCD_2 = 2;	    // Swerve Drive command.

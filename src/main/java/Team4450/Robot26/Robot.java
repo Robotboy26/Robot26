@@ -5,6 +5,7 @@ import static Team4450.Robot26.Constants.*;
 
 import Team4450.Lib.*;
 import Team4450.Robot26.wpilib.TimedRobot;
+import Team4450.Robot26.subsystems.LimelightHelpers;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -160,6 +161,24 @@ public class Robot extends TimedRobot
 
     // The try/catch will catch any exceptions thrown in the commands run by the
     // scheduler and record them in our log file then stops execution of this program.
+    //
+    // Limelight test
+    //
+    Util.consoleLog("Limelight One");
+    LimelightHelpers.LimelightResults resultOne = LimelightHelpers.getLatestResults(Constants.LIMELIGHT_ONE);
+    if (resultOne != null) {
+        Util.consoleLog("Limelight One see");
+    } else {
+        Util.consoleLog("Limelight One no see");
+    }
+    Util.consoleLog("Limelight Two");
+    LimelightHelpers.LimelightResults resultTwo = LimelightHelpers.getLatestResults(Constants.LIMELIGHT_TWO);
+    if (resultTwo != null) {
+        Util.consoleLog("Limelight Two see");
+    } else {
+        Util.consoleLog("Limelight Two no see");
+    }
+
 
     if (tracing & isEnabled()) FunctionTracer.INSTANCE.enterFunction("Robot.robotPeriodic");
 

@@ -278,17 +278,6 @@ public class RobotContainer
 				utilityController.setRumble(RumbleType.kBothRumble, 0);
 		}));
 
-        Util.consoleLog("Limelight One");
-        LimelightHelpers.LimelightResults resultOne = LimelightHelpers.getLatestResults(Constants.LIMELIGHT_ONE);
-        if (resultOne != null) {
-            Util.consoleLog("Limelight One see");
-        }
-        Util.consoleLog("Limelight Two");
-        LimelightHelpers.LimelightResults resultTwo = LimelightHelpers.getLatestResults(Constants.LIMELIGHT_TWO);
-        if (resultTwo != null) {
-            Util.consoleLog("Limelight Two see");
-        }
-
 		// holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
 
