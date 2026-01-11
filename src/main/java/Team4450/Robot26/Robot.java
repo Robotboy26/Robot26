@@ -164,20 +164,21 @@ public class Robot extends TimedRobot
     //
     // Limelight test
     //
-    Util.consoleLog("Limelight One");
-    LimelightHelpers.LimelightResults resultOne = LimelightHelpers.getLatestResults(Constants.LIMELIGHT_ONE);
-    if (resultOne != null) {
-        Util.consoleLog("Limelight One see");
-    } else {
-        Util.consoleLog("Limelight One no see");
-    }
-    Util.consoleLog("Limelight Two");
-    LimelightHelpers.LimelightResults resultTwo = LimelightHelpers.getLatestResults(Constants.LIMELIGHT_TWO);
-    if (resultTwo != null) {
-        Util.consoleLog("Limelight Two see");
-    } else {
-        Util.consoleLog("Limelight Two no see");
-    }
+    
+    // Util.consoleLog("Limelight One");
+    // LimelightHelpers.LimelightResults resultOne = LimelightHelpers.getLatestResults(Constants.LIMELIGHT_ONE);
+    // if (resultOne != null) {
+    //     Util.consoleLog("Limelight One see");
+    // } else {
+    //     Util.consoleLog("Limelight One no see");
+    // }
+    // Util.consoleLog("Limelight Two");
+    // LimelightHelpers.LimelightResults resultTwo = LimelightHelpers.getLatestResults(Constants.LIMELIGHT_TWO);
+    // if (resultTwo != null) {
+    //     Util.consoleLog("Limelight Two see");
+    // } else {
+    //     Util.consoleLog("Limelight Two no see");
+    // }
 
 
     if (tracing & isEnabled()) FunctionTracer.INSTANCE.enterFunction("Robot.robotPeriodic");

@@ -8,6 +8,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import Team4450.Robot26.commands.DriveCommand;
 import Team4450.Robot26.subsystems.Candle;
+import Team4450.Robot26.subsystems.TestSubsystem;
 import Team4450.Robot26.subsystems.DriveBase;
 import Team4450.Robot26.subsystems.ShuffleBoard;
 import Team4450.Robot26.subsystems.LimelightHelpers;
@@ -46,6 +47,7 @@ public class RobotContainer
 	public static ShuffleBoard			 shuffleBoard;
 	public static DriveBase				 driveBase;
 	public final DriveCommand			 driveCommand;
+    public TestSubsystem testSubsystem;
 	//private Candle        				 candle = new Candle(CTRE_CANDLE);
 	
 	// Subsystem Default Commands.
@@ -97,6 +99,8 @@ public class RobotContainer
 	public RobotContainer() throws Exception
 	{
 		Util.consoleLog();
+
+        this.testSubsystem = new TestSubsystem();
 		
 	    SendableRegistry.addLW(pdp, "PDH"); // Only sent to NT in Test mode.
 
@@ -200,6 +204,8 @@ public class RobotContainer
 
 		driveBase.setDefaultCommand(driveCommand);
 
+        SmartDashboard.putNumber("Test Motor Power", 0);
+
 		//Start the compressor, PDP and camera feed monitoring Tasks.
 
 		// monitorCompressorThread = MonitorCompressorPH.getInstance(pcm);
@@ -220,18 +226,20 @@ public class RobotContainer
 			cameraFeed.start();
 		} 
 
+
+
 		// Start a thread that will wait 30 seconds then disable the missing
 		// joystick warning. This is long enough for when the warning is valid
 		// but will stop flooding the console log when we are legitimately
 		// running without both joysticks plugged in.
 
-		new Thread(() -> {
-			try {
-				Timer.delay(30);    
-	  
-				DriverStation.silenceJoystickConnectionWarning(true);
-			} catch (Exception e) { }
-		  }).start();
+        new Thread(() -> {
+            try {
+                Timer.delay(30);    
+
+                DriverStation.silenceJoystickConnectionWarning(true);
+            } catch (Exception e) { }
+        }).start();
         
         // Configure autonomous routines and send to dashboard.
 		
@@ -290,23 +298,29 @@ public class RobotContainer
 		//));
 
 		// Toggle slow-mode
-		new Trigger(() -> driverController.getLeftBumperButton())  // rich
+		new Trigger(() -> driverController.getLeftBumperButton())  // Rich
 		 	.onChange(new InstantCommand(driveBase::toggleSlowMode));
 
 		// Reset field orientation (direction).
-		new Trigger(() -> driverController.getStartButton()) // rich
+		new Trigger(() -> driverController.getStartButton()) // Rich
 			.onTrue(new InstantCommand(driveBase::resetFieldOrientation));
 
 		// Toggle field-oriented driving mode.
-		new Trigger(() -> driverController.getAButton()) // rich
-		 	.onTrue(new InstantCommand(driveBase::toggleFieldRelativeDriving));
+		// new Trigger(() -> driverController.getAButton()) // Rich
+		//  	.onTrue(new InstantCommand(driveBase::toggleFieldRelativeDriving));
 
-		// Toggle motor brake mode.
-		new Trigger(() -> driverController.getBButton()) // rich
-		 	.onTrue(new InstantCommand(driveBase::toggleNeutralMode));
+		new Trigger(() -> driverController.getAButton())
+		 	.onTrue(new InstantCommand(testSubsystem::start));
+
+		new Trigger(() -> driverController.getBButton())
+		 	.onTrue(new InstantCommand(testSubsystem::stop));
+
+		// // Toggle motor brake mode.
+		// new Trigger(() -> driverController.getBButton()) // Rich
+		//  	.onTrue(new InstantCommand(driveBase::toggleNeutralMode));
 
 		// Right D-Pad button sets X pattern to stop movement.
-		new Trigger(() -> driverController.getPOV() == 90) // rich
+		new Trigger(() -> driverController.getPOV() == 90) // Rich
 			.onTrue(new InstantCommand(driveBase::setX));
 			
 		// -------- Utility controller buttons ----------
