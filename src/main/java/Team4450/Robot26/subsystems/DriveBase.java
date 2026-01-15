@@ -323,8 +323,8 @@ public class DriveBase extends SubsystemBase
 
         airTime = lowerTime + ((higherTime - lowerTime) * (distance - lowerPoint) / (higherPoint - lowerPoint));
 
-        double xVelocityOffset = ((driveField.VelocityX * airTime) / 100) * 2.54;
-        double yVelocityOffset = ((driveField.VelocityY * airTime) / 100) * 2.54;
+        double xVelocityOffset = ((driveField.VelocityX * airTime) / 100) / 2.54;
+        double yVelocityOffset = ((driveField.VelocityY * airTime) / 100) / 2.54;
         
         deltaX += xVelocityOffset;
         deltaY += yVelocityOffset;
