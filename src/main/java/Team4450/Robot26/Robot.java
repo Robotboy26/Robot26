@@ -24,8 +24,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * Main.java file in the project.
  */
 
-public class Robot extends TimedRobot 
-{
+public class Robot extends TimedRobot {
   private RobotContainer  robotContainer;
 
   /**
@@ -33,8 +32,7 @@ public class Robot extends TimedRobot
    * for any initialization code.
    */
   @Override
-  public void robotInit() 
-  {
+  public void robotInit() {
     try {
       robot = this;   // Stored in Constants.
 
@@ -144,8 +142,7 @@ public class Robot extends TimedRobot
    * and SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() 
-  {
+  public void robotPeriodic() {
     // This function is called approx every .02 second.
     // Runs the Scheduler. It is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
@@ -173,8 +170,7 @@ public class Robot extends TimedRobot
    * This function is called once each time the robot enters Disabled mode.
    */
   @Override
-  public void disabledInit()
-  {
+  public void disabledInit() {
     Util.consoleLog();
 
     LCD.printLine(LCD_1, "Mode: Disabled");
@@ -186,7 +182,7 @@ public class Robot extends TimedRobot
     //
     // Set Limelight IMU mode to 1
     // I don't really like calling this here, but something can only be disabled after enabled has ran so everything should exist
-    RobotOrientation rO = RobotContainer.driveBase.getRobotOrientation(); // IDK if RobotOrientation works correctly, look there to see
+    RobotOrientation rO = RobotContainer.drivebase.getRobotOrientation(); // IDK if RobotOrientation works correctly, look there to see
     RobotContainer.visionSubsystem.zeroLimelightIMU(rO);
 
     RobotContainer.shuffleBoard.resetLEDs();
@@ -199,8 +195,7 @@ public class Robot extends TimedRobot
    * should be nothing here.
    */
   @Override
-  public void disabledPeriodic() 
-  {
+  public void disabledPeriodic() {
   }
 
   /**
@@ -208,8 +203,7 @@ public class Robot extends TimedRobot
    * the autonomous command selected by your {@link RobotContainer} class.
    */
   @Override
-  public void autonomousInit() 
-  {
+  public void autonomousInit() {
     Util.consoleLog(functionMarker);
 
     LCD.clearAll();
@@ -249,8 +243,7 @@ public class Robot extends TimedRobot
    * This function is called once at the start of teleop mode.
    */
   @Override
-  public void teleopInit() 
-  {
+  public void teleopInit() {
     Util.consoleLog(functionMarker);
 
     robotContainer.getMatchInformation();
@@ -303,6 +296,7 @@ public class Robot extends TimedRobot
     // telop with LW enabled. Our code displays more detailed test/debug
     // data in LW mode.
 
+    // What is LiveWindow
     LiveWindow.enableAllTelemetry();
 
     teleopInit();
@@ -314,7 +308,6 @@ public class Robot extends TimedRobot
    * This function is called periodically during test mode.
    */
   @Override
-  public void testPeriodic() 
-  {
+  public void testPeriodic() {
   }
 }
