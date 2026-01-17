@@ -57,6 +57,36 @@ public class Turret extends SubsystemBase {
         updateMotion(ROBOT_PERIOD_SEC);
     }
 
+    public void updateLaunchValues(){
+        // Needed to calculate: IDK where to put these constants
+            public static double GRAVITY = 9.81;
+            public static double DESIRED_MAX_HEIGHT = 2.5; // meters (8.2 feet) seemed reasonable in the desmos predictions at this height the fuel never landed at an angle shallower than 31 degrees
+            public static double GOAL_HEIGHT = 1.8288; // meters (6 feet)
+            public static double FLYWHEEL_HEIGHT = 0.5334; // CAD needs to be finalized (this is 21 inches which is what jonathan told me)
+            public static double CONVERSION_FACTOR_MPS_TO_RPM = 10000 / 47.93; // imput rpm / output mps (Use https://www.reca.lc/flywheel rpm calculator to get this value)
+            public static double MOTOR_TICKS_PER_REVOLUTION = 2048; // for the falcon 500 I think I only need this for FTC though
+
+        // Calculate distance to goal
+        double xDiff = getGoalPose().getX() - driveBase.getPose().getX();
+        double yDiff = getGoalPose().getY() - driveBase.getPose().getY();
+        double distToGoal = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+        double desiredHeight = distToGoal > 6 ? DESIRED_MAX_HEIGHT : distToGoal / 6;
+
+        // Calculate time of flight and velocity vectors
+        double verticalVel = Math.sqrt(2 * GRAVITY * (desiredHeight - FLYWHEEL_HEIGHT));
+        double estimatedTime = (verticalVel + Math.sqrt(verticalVel - 2 * (GRAVITY) * (GOAL_HEIGHT - FLYWHEEL_HEIGHT))) / GRAVITY;
+        double horizonalVel = distToGoal / estimatedTime;
+
+        // Calculate hood angle and angle to face goal
+        double hoodAngle = Math.atan(verticalVel / horizonalVel);
+        double angleToFaceGoal = Math.atan2(yDiff, xDiff);
+        
+        // Calculate flywheel RPM needed
+        double initialVel = Math.sqrt(Math.pow((verticalVel), 2) * Math.pow((horizonalVel), 2));
+        double targetRpm = initialVel * CONVERSION_FACTOR_MPS_TO_RPM;
+        //targetVelocity = (rpm / 60) * Constants.Swerve.MOTOR_TICKS_PER_REVOLUTION; I think this is only needed for FTC
+        }
+
     public void aimTurret(Pose2d robotPosition) {
         setTargetAngle(getAngleToFaceGoalDegrees(robotPosition));
 
