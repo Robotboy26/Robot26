@@ -57,21 +57,21 @@ public class DriveCommand extends Command
     @Override
     public void execute() 
     {
-        LCD.printLine(2, "rx=%.3f  ry=%.3f  throttle=%.3f  strafe=%.3f  rotX=%.3f rotY=%.3f",
-            controller.getRightX(),
-            controller.getRightY(),
-            throttleSupplier.getAsDouble(),
-            strafeSupplier.getAsDouble(),
-            rotationXSupplier.getAsDouble(),
-            rotationYSupplier.getAsDouble()
-        );
+        // LCD.printLine(2, "rx=%.3f  ry=%.3f  throttle=%.3f  strafe=%.3f  rotX=%.3f rotY=%.3f",
+        //     controller.getRightX(),
+        //     controller.getRightY(),
+        //     throttleSupplier.getAsDouble(),
+        //     strafeSupplier.getAsDouble(),
+        //     rotationXSupplier.getAsDouble(),
+        //     rotationYSupplier.getAsDouble()
+        // );
 
-        LCD.printLine(3, "lx=%.3f  ly=%.3f", // yaw=%.3f",
-            controller.getLeftX(),
-            controller.getLeftY()
-            //driveBase.getGyroRotation2d().getDegrees(),
-            //driveBase.getGyroYaw() rich
-        );
+        // LCD.printLine(3, "lx=%.3f  ly=%.3f", // yaw=%.3f",
+        //     controller.getLeftX(),
+        //     controller.getLeftY()
+        //     driveBase.getGyroRotation2d().getDegrees(),
+        //     driveBase.getGyroYaw() // rich
+        // );
 
         // This is the default command for the DriveBase. When running in autonmous, the auto commands
         // require DriveBase, which preempts the default DriveBase command. However, if our auto code ends 
@@ -114,7 +114,7 @@ public class DriveCommand extends Command
             targetHeading = Math.toDegrees(Math.atan2(rotationYSupplier.getAsDouble(), rotationXSupplier.getAsDouble()));
         }
 
-        double rotation = -headingPID.calculate(driveBase.getYaw180(), -targetHeading);
+        double rotation = headingPID.calculate(driveBase.getYaw180(), targetHeading);
         double throttle = throttleSupplier.getAsDouble();
         double strafe = strafeSupplier.getAsDouble();
 

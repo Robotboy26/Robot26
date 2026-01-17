@@ -58,7 +58,7 @@ public class PIDDriveCommand extends Command
         
         double throttle = throttlePID.calculate(driveBase.getPose().getX(), targetX);
         double strafe = strafePID.calculate(driveBase.getPose().getY(), targetY);
-        double rotation = -headingPID.calculate(driveBase.getYaw180(), -targetHeading);
+        double rotation = headingPID.calculate(driveBase.getYaw180(), targetHeading);
         driveBase.drive(throttle, strafe, rotation);
     }
 
