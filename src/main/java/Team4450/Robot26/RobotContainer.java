@@ -191,6 +191,7 @@ public class RobotContainer {
 									driverController.getRightXDS(),
 									driverController.getRightYDS(),
 									driverController, headingPID);
+
 		drivebase.setDefaultCommand(driveCommand);
 
         // Create a new pid drive command when going to another target, it is then killed by force or once target is reached

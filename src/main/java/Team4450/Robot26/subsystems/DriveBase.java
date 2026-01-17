@@ -16,6 +16,7 @@ import Team4450.Robot26.subsystems.SDS.Telemetry;
 import Team4450.Robot26.subsystems.SDS.TunerConstants;
 import Team4450.Robot26.utility.AdvantageScope;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -34,7 +35,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class DriveBase extends SubsystemBase {
     private CommandSwerveDrivetrain     sdsDriveBase = TunerConstants.createDrivetrain();
 
-    public PigeonWrapper                gyro = new PigeonWrapper(sdsDriveBase.getPigeon2());
+    public PigeonWrapper pigeonWrapper = new PigeonWrapper(sdsDriveBase.getPigeon2());
     public Pose2d robotPose = new Pose2d(0, 0, Rotation2d.kZero);
     
     private final Telemetry     		logger = new Telemetry(kMaxSpeed);
@@ -47,9 +48,6 @@ public class DriveBase extends SubsystemBase {
     private boolean                     neutralModeBrake = true;
     private double                      maxSpeed = kMaxSpeed * kDriveReductionPct; 
     private double                      maxRotRate = kMaxAngularRate * kRotationReductionPct;
-
-    private boolean swivalTracking;
-    private double headingTarget;
 
     private final SwerveRequest.SwerveDriveBrake driveBrake = new SwerveRequest.SwerveDriveBrake();
 
@@ -66,16 +64,14 @@ public class DriveBase extends SubsystemBase {
     public DriveBase() {
         Util.consoleLog();
 
-        // Add gyro as a Sendable. Updates the dashboard heading indicator automatically.
+        // Add pigeon gyro as a Sendable. Updates the dashboard heading indicator automatically.
 
-		SmartDashboard.putData("Gyro2", gyro); 
-
+		SmartDashboard.putData("Pigeon Gyro", pigeonWrapper); 
         SmartDashboard.putData("Field2d", field2d);
 
 		// Check Gyro.
-	  
-		if (gyro.getPigeon().isConnected())
-			Util.consoleLog("Pigeon connected version=%s", gyro.getPigeon().getVersion());
+		if (pigeonWrapper.getPigeon().isConnected())
+			Util.consoleLog("Pigeon connected version=%s", pigeonWrapper.getPigeon().getVersion());
 		else
 		{
 			Exception e = new Exception("Pigeon is NOT connected!");
@@ -83,7 +79,6 @@ public class DriveBase extends SubsystemBase {
 		}
 
         // Set drive motors to brake when power is zero.
-
         sdsDriveBase.configNeutralMode(NeutralModeValue.Brake);
 
 		// Idle while the robot is disabled. This ensures the configured
@@ -99,6 +94,8 @@ public class DriveBase extends SubsystemBase {
         // note that this doesn't really do much because PathPlanner redoes this anyway.
         // More for a starting pose in sim testing.
 
+        // At some point move this to teleop init if it can be done quickly because
+        // we will be waiting for the Limelight to get an accurate position during init periodic
         resetOdometry(DriveConstants.DEFAULT_STARTING_POSE);
 
         // Under sim, we starting pose the robot (above) before you can change the alliance 
@@ -140,13 +137,6 @@ public class DriveBase extends SubsystemBase {
                 driveField.withVelocityX(throttle * maxSpeed) 
                         .withVelocityY(strafe * maxSpeed) 
                         .withRotationalRate(rotation * maxRotRate));
-        else if (swivalTracking) {
-            // Get the angle target to the hub
-            sdsDriveBase.setControl(
-                driveRobot.withVelocityX(throttle * maxSpeed) 
-                        .withVelocityY(strafe * maxSpeed) 
-                        .withRotationalRate(rotation * maxRotRate));
-        }
 
         SmartDashboard.putNumber("Drive Velocity X", driveField.VelocityX);
         SmartDashboard.putNumber("Drive Velocity Y", driveField.VelocityY);
@@ -221,7 +211,7 @@ public class DriveBase extends SubsystemBase {
     {
         Util.consoleLog();
 
-        gyro.reset();
+        pigeonWrapper.reset();
     }
     
     /**
@@ -244,7 +234,7 @@ public class DriveBase extends SubsystemBase {
      */
     public void setStartingGyroYaw(double degrees)
     {
-        gyro.setStartingGyroYaw(degrees);
+        pigeonWrapper.setStartingGyroYaw(degrees);
     }
 
     /**
@@ -260,19 +250,23 @@ public class DriveBase extends SubsystemBase {
         return robotPose;
     }
 
+    public Pose3d getPose3d() {
+        // I think it should be fine to always assume zero z
+        return new Pose3d(robotPose);
+    }
+
     public double getYaw()
     {
-        return gyro.getYaw();
+        return pigeonWrapper.getYaw();
     }
 
     public double getYaw180()
     {
-        return gyro.getYaw180();
+        return pigeonWrapper.getYaw180();
     }
 
-    // The PigeonWrapper is named gyro
-    public RobotOrientation getRobotOrientation() { // IDK if this will really work, I'm not sure if get AngularVelocityX, Y, Z are the yaw, pitch, and roll rates
-        return new RobotOrientation(gyro.pigeon.getYaw().getValueAsDouble(), gyro.pigeon.getAngularVelocityXWorld().getValueAsDouble(), gyro.pigeon.getPitch().getValueAsDouble(), gyro.pigeon.getAngularVelocityYDevice().getValueAsDouble(), gyro.pigeon.getRoll().getValueAsDouble(), gyro.pigeon.getAngularVelocityZWorld().getValueAsDouble());
+    public RobotOrientation getRobotOrientation() { // As far as I can tell these are the correct values
+        return new RobotOrientation(pigeonWrapper.pigeon.getYaw().getValueAsDouble(), pigeonWrapper.pigeon.getAngularVelocityXWorld().getValueAsDouble(), pigeonWrapper.pigeon.getPitch().getValueAsDouble(), pigeonWrapper.pigeon.getAngularVelocityYDevice().getValueAsDouble(), pigeonWrapper.pigeon.getRoll().getValueAsDouble(), pigeonWrapper.pigeon.getAngularVelocityZWorld().getValueAsDouble());
     }
 
     private void updateDS()
@@ -427,7 +421,6 @@ public class DriveBase extends SubsystemBase {
 
         return distance;
     }
-
 
     /**
      * Update the robot & swerve module displays on the "Field2d" field display in sim.
