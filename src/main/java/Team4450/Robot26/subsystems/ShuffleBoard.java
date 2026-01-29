@@ -7,8 +7,6 @@ import Team4450.Robot26.commands.Utility.NotifierCommand;
 
 import static Team4450.Robot26.Constants.*;
 
-import Team4450.Lib.FunctionTracer;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
@@ -58,7 +56,6 @@ public class ShuffleBoard extends SubsystemBase {
         Pose2d pose = RobotContainer.drivebase.getPose(); 
         
         // Lines 1 & 2 handled elsewhere.
-
         LCD.printLine(LCD_4, "pose x=%.2fm  y=%.2fm  deg=%.1f  yaw=%.1f", pose.getX(), 
                       pose.getY(), pose.getRotation().getDegrees(), RobotContainer.drivebase.getYaw());
 
@@ -73,8 +70,7 @@ public class ShuffleBoard extends SubsystemBase {
      * Reset the shuffleboard indicators to disabled states. Runs in
      * a separate thread.
      */
-    public void resetLEDs()
-    {
+    public void resetLEDs() {
         // Notifier runs the reset function in a separate thread.
         notifier = new Notifier(this::resetLEDIndicators);
         notifier.startSingle(0);
@@ -84,8 +80,7 @@ public class ShuffleBoard extends SubsystemBase {
      * Reset the Shuffleboard indicators to diabled states. Runs on
      * main thread.
      */
-    private void resetLEDIndicators()
-    {
+    private void resetLEDIndicators() {
         Util.consoleLog();
         
         SmartDashboard.putBoolean("Disabled", true);
@@ -104,8 +99,7 @@ public class ShuffleBoard extends SubsystemBase {
      * Switch tab on shuffleboard display by rotating through the tabs.
      * @return The new tab index (0-based).
      */
-    public int switchTab()
-    {
+    public int switchTab() {
         currentTab++;
 
         if (currentTab > (numberOfTabs - 1)) currentTab = 0;
@@ -123,8 +117,7 @@ public class ShuffleBoard extends SubsystemBase {
      * @param tabName The name of the tab to select.
      * @return The selected tab object.
      */
-    public ShuffleboardTab switchTab(String tabName)
-    {
+    public ShuffleboardTab switchTab(String tabName) {
         Util.consoleLog("%s", tabName);
 
         return Shuffleboard.getTab(tabName);

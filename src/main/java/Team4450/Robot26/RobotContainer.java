@@ -15,11 +15,9 @@ import Team4450.Robot26.subsystems.ShuffleBoard;
 import Team4450.Robot26.subsystems.TestSubsystem;
 import Team4450.Robot26.subsystems.VisionSubsystem;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,8 +27,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -55,14 +51,14 @@ public class RobotContainer {
     //
     // Feat.
     //
-    // Find accuracy of Qeustnav
+    // Limelight vision replay system
     // Average between the Limelight and Questnav
     //
     // When in the middle swap from hub heading targeting to left or right of the hub targeting driving
     //
     // Shoot on the move ability
-    
-    
+
+
     
 	// Subsystem Default Commands.
 
@@ -89,13 +85,10 @@ public class RobotContainer {
 	public static XboxController driverController =  new XboxController(DRIVER_PAD);
 	public static XboxController utilityController = new XboxController(UTILITY_PAD);
 
-	private PowerDistribution pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kRev);
-
 	// Trajectories we load manually.
 	public static PathPlannerTrajectory	ppTestTrajectory;
 
 	private static SendableChooser<Command>	autoChooser;
-	
 	private static String 			autonomousCommandName = "none";
 
 	private static PIDController throttlePID;
@@ -110,10 +103,7 @@ public class RobotContainer {
 
         this.testSubsystem = new TestSubsystem();
 		
-	    SendableRegistry.addLW(pdp, "PDH"); // Only sent to NT in Test mode.
-
 		// Get information about the match environment from the Field Control System.
-      
 		getMatchInformation();
 
 		// Read properties file from RoboRio "disk". If we fail to open the file,
@@ -124,7 +114,6 @@ public class RobotContainer {
 		} catch (Exception e) { Util.logException(e);}
 
 		// Is this the competition or clone robot?
-   		
 		if (robotProperties == null || robotProperties.getProperty("RobotId").equals("comp"))
 			isComp = true;
 		else
@@ -132,12 +121,10 @@ public class RobotContainer {
  		
 		// Invert driving joy sticks Y axis so + values mean forward.
 		// Invert driving joy sticks X axis so + values mean right.
-	  
 		driverController.invertY(true);
 		driverController.invertX(true);		
 
 		// Create subsystems prior to button mapping.
-
 		shuffleBoard = new ShuffleBoard();
 
         // The pigeon is setup somewhere in the drivebase function.
@@ -190,7 +177,6 @@ public class RobotContainer {
 
 		// Note that the controller instance is passed to the drive command for use in displaying
 		// debugging information on Shuffleboard. It is not required for the driving function.
-
 		driveCommand = new DriveCommand(drivebase,
 		 							() -> driverController.getLeftY(),
 									driverController.getLeftXDS(), 
@@ -210,7 +196,6 @@ public class RobotContainer {
 		// joystick warning. This is long enough for when the warning is valid
 		// but will stop flooding the console log when we are legitimately
 		// running without both joysticks plugged in.
-
         new Thread(() -> {
             try {
                 Timer.delay(30);    
@@ -219,15 +204,12 @@ public class RobotContainer {
         }).start();
         
         // Configure autonomous routines and send to dashboard.
-		
 		setAutoChoices();
 
 		// Configure the button bindings.
-		
         configureButtonBindings();
 		
         // Warmup PathPlanner to avoid Java pauses.
-
 		CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
 		
 		Util.consoleLog(functionMarker);
@@ -240,7 +222,6 @@ public class RobotContainer {
 	 */
 	private void configureButtonBindings() {
 		Util.consoleLog();
-	  
 		// ------- Driver controller buttons -------------
 		
 		// For simple functions, instead of creating commands, we can call convenience functions on
@@ -248,7 +229,7 @@ public class RobotContainer {
 		// should be an aspect of the subsystem and what functions should be in Commands...
 
 		// POV buttons do same as alternate driving mode but without any lateral
-		// movement and increments of 45deg.
+		// Movement and increments of 45deg.
 		// new Trigger(()-> driverController.getPOV() != -1)
 		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false))
 
@@ -262,7 +243,7 @@ public class RobotContainer {
 				utilityController.setRumble(RumbleType.kBothRumble, 0);
 		}));
 
-		// holding top right bumper enables the alternate rotation mode in
+		// Holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
 
 		//new Trigger(() -> driverController.getRightBumperButton())
@@ -325,10 +306,8 @@ public class RobotContainer {
 
 		autoCommand = autoChooser.getSelected();
 
-		if (autoCommand == null) 
-		{
+		if (autoCommand == null) {
 			autonomousCommandName = "none";
-
 			return autoCommand;
 		}
 
@@ -336,26 +315,22 @@ public class RobotContainer {
 
 		Util.consoleLog("auto name=%s", autonomousCommandName);
 
-		if (autoCommand instanceof PathPlannerAuto)
-		{
+		if (autoCommand instanceof PathPlannerAuto) {
 			// ppAutoCommand = (PathPlannerAuto) autoCommand;
-	
 			// Util.consoleLog("pp starting pose=%s", PathPlannerAuto.getStaringPoseFromAutoFile(autoCommand.getName().toString()));
 		}
 
 		return autoCommand;
   	}
 
-	public static String getAutonomousCommandName()
-	{
+	public static String getAutonomousCommandName() {
 		return autonomousCommandName;
 	}
   
     // Configure SendableChooser (drop down list on dashboard) with auto program choices and
 	// send them to SmartDashboard/ShuffleBoard.
 	
-	private void setAutoChoices()
-	{
+	private void setAutoChoices() {
 	 	Util.consoleLog();
 		
 		// Register commands called from PathPlanner Autos.
@@ -384,7 +359,7 @@ public class RobotContainer {
     		  		   gameMessage);
 	}
 		
-	// public void fixPathPlannerGyro() { rich
+	// public void fixPathPlannerGyro() { Rich
 	// 	driveBase.fixPathPlannerGyro();
 	// }
 }

@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-public class Turret extends SubsystemBase {
+public class Shooter extends SubsystemBase {
     // Requested target (degrees) — set by callers
     private double requestedAngleDeg = 0.0;
     // Commanded angle we are currently outputting to hardware (degrees)
@@ -22,9 +22,7 @@ public class Turret extends SubsystemBase {
     // Flywheel runtime tunables (RPM and RPM/s units on dashboard)
     // (flywheel is currently controlled by TestSubsystem; no dashboard-driven flywheel tunables here)
     
-    private final Drivebase driveBase;
-
-    private final DriveBase driveBase;
+    private final Drivebase drivebase;
 
     // Constants for launch calculations
     private static final double GRAVITY = 9.81;
@@ -34,12 +32,12 @@ public class Turret extends SubsystemBase {
     private static final double CONVERSION_FACTOR_MPS_TO_RPM = 10000 / 47.93;
     private static final double MOTOR_TICKS_PER_REVOLUTION = 2048; // for Falcon 500
 
-    public Turret(DriveBase driveBase) {
+    public Shooter(Drivebase drivebase) {
         // initialize commanded angle to whatever a reasonable default is
         this.commandedAngleDeg = 0.0;
         this.requestedAngleDeg = 0.0;
         this.commandedAngularVelocity = 0.0;
-        this.driveBase = driveBase;
+        this.drivebase = drivebase;
 
         // Publish tuning values to SmartDashboard so they can be changed while testing.
         // Publish both RPM-based and internal values for clarity/editing.
@@ -70,8 +68,8 @@ public class Turret extends SubsystemBase {
 
     public void updateLaunchValues(){
         // Calculate distance to goal
-        double xDiff = getGoalPose().getX() - driveBase.getPose().getX();
-        double yDiff = getGoalPose().getY() - driveBase.getPose().getY();
+        double xDiff = getGoalPose().getX() - drivebase.getPose().getX();
+        double yDiff = getGoalPose().getY() - drivebase.getPose().getY();
         double distToGoal = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
         double desiredHeight = distToGoal > 6 ? DESIRED_MAX_HEIGHT : distToGoal / 6;
 
@@ -93,7 +91,7 @@ public class Turret extends SubsystemBase {
     public void aimTurret(Pose2d robotPosition) {
         setTargetAngle(getAngleToFaceGoalDegrees(robotPosition));
 
-        double targetFlywheelSpeed = getNeededFlywheelSpeed(driveBase.getDistFromRobot(driveBase.getPoseToAim(getGoalPose())));
+        double targetFlywheelSpeed = getNeededFlywheelSpeed(drivebase.getDistFromRobot(drivebase.getPoseToAim(getGoalPose())));
         setFlywheelSpeed(targetFlywheelSpeed);
     }
 

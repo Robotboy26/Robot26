@@ -75,8 +75,8 @@ public class DriveCommand extends Command
         //     driveBase.getGyroYaw() // rich
         // );
 
-        // This is the default command for the DriveBase. When running in autonmous, the auto commands
-        // require DriveBase, which preempts the default DriveBase command. However, if our auto code ends 
+        // This is the default command for the Drivebase. When running in autonmous, the auto commands
+        // require Drivebase, which preempts the default Drivebase command. However, if our auto code ends 
         // before end of auto period, then this drive command resumes and is feeding drivebase during remainder
         // of auto period. This was not an issue until the joystick drift problems arose, so the resumption of a 
         // driving command during auto had the robot driving randomly after our auto program completed. The if 

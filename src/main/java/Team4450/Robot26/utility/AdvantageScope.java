@@ -197,10 +197,10 @@ public class AdvantageScope {
 
     /**
      * Sends the swerve module poses to AdvantageScope
-     * @param sdsDriveBase The SDS drive base class.
+     * @param sdsDrivebase The SDS drivebase class.
      */
-    public void setSwerveModules(CommandSwerveDrivetrain sdsDriveBase) {
-        SwerveModuleState moduleStates[] = sdsDriveBase.getState().ModuleStates;
+    public void setSwerveModules(CommandSwerveDrivetrain sdsDrivebase) {
+        SwerveModuleState moduleStates[] = sdsDrivebase.getState().ModuleStates;
         
         swerveStates[0] = moduleStates[0].angle.getDegrees();
         swerveStates[1] = moduleStates[0].speedMetersPerSecond;
