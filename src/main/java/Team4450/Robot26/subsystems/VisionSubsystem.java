@@ -119,7 +119,7 @@ public class VisionSubsystem extends SubsystemBase {
                 if (useLeftLimelight) {
                     Util.consoleLog("Add left vision");
                     Util.consoleLog(left_mt2.pose.toString());
-                    drivebase.addVisionMeasurement(left_mt2.pose, left_mt2.timestampSeconds);
+                    drivebase.addLimelightMeasurement(left_mt2.pose, left_mt2.timestampSeconds);
                 }
             }
             if (Math.abs(left_mt2.pose.getX()) > Constants.FIELD_MAX_X) {
@@ -135,7 +135,7 @@ public class VisionSubsystem extends SubsystemBase {
             }
 
             if (useLeftLimelight) {
-                drivebase.addVisionMeasurement(left_mt2.pose, left_mt2.timestampSeconds);
+                drivebase.addLimelightMeasurement(left_mt2.pose, left_mt2.timestampSeconds);
             }
         }
 
@@ -157,7 +157,7 @@ public class VisionSubsystem extends SubsystemBase {
             }
 
             if (useRightLimelight) {
-                drivebase.addVisionMeasurement(right_mt2.pose, right_mt2.timestampSeconds);
+                drivebase.addLimelightMeasurement(right_mt2.pose, right_mt2.timestampSeconds);
             }
         }
 

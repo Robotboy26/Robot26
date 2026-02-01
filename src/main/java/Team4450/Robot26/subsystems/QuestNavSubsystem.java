@@ -20,6 +20,7 @@ public class QuestNavSubsystem extends SubsystemBase {
 
     ConsoleEveryX questTestLogger = new ConsoleEveryX(100);
     ConsoleEveryX questLogger = new ConsoleEveryX(100);
+    ConsoleEveryX limelightWarn = new ConsoleEveryX(1000);
 
     PoseFrame[] poseFrames;
 
@@ -79,21 +80,23 @@ public class QuestNavSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // If the x or y difference from the robots current pose to the limelight estimate pose update the current quest estimate for the position
-        if (resetTimer > 200) {
-            if (drivebase.limelightPoseEstimate.getX() > 0.2 || drivebase.limelightPoseEstimate.getY() > 0.2) {
-                Pose3d limelightEstimatePose = new Pose3d(drivebase.limelightPoseEstimate);
-                resetQuestOdometry(limelightEstimatePose);
-                Util.consoleLog("Updated quest odomety to pose: ", limelightEstimatePose.toString());
-                resetTimer = 0;
+        // Make these smartDashboard stuff send less data, maybe it is smart to not send data it does not need to
+        if (questNav.isConnected()) {
+            // If the x or y difference from the robots current pose to the limelight estimate pose update the current quest estimate for the position
+            SmartDashboard.putBoolean("Quest Connected", true);
+            if (resetTimer > 200) {
+                if (drivebase.limelightPoseEstimate.getX() > 0.2 || drivebase.limelightPoseEstimate.getY() > 0.2) {
+                    Pose3d limelightEstimatePose = new Pose3d(drivebase.limelightPoseEstimate);
+                    resetQuestOdometry(limelightEstimatePose);
+                    Util.consoleLog("Updated quest odomety to pose: ", limelightEstimatePose.toString());
+                    resetTimer = 0;
+                }
+            } else {
+                resetTimer++;
             }
         } else {
-            resetTimer++;
-        }
-
-        if (questNav.isConnected()) {
-            SmartDashboard.putBoolean("Quest Connected", true);
-        } else {
+            limelightWarn.update("The Questnav is not found, force updating pose with limelight pose!");
+            drivebase.forceAddLimelightMeasurement(drivebase.limelightPoseEstimate);
             SmartDashboard.putBoolean("Quest Connected", false);
         }
 
