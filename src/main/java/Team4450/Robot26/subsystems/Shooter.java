@@ -22,6 +22,7 @@ public class Shooter extends SubsystemBase {
     // Flywheel runtime tunables (RPM and RPM/s units on dashboard)
     // (flywheel is currently controlled by TestSubsystem; no dashboard-driven flywheel tunables here)
     
+
     private final Drivebase drivebase;
 
     // Constants for launch calculations

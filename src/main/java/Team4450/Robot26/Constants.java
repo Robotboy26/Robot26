@@ -121,7 +121,7 @@ public final class Constants {
     // public static double ROBOT_HEADING_KF = 0;
     public static double ROBOT_HEADING_TOLERANCE_DEG = 0.5;
     // public static double ROBOT_HEADING_MAX_OUTPUT = 1;
-    public static boolean ROBOT_HEADING_PID_TOGGLE = true;
+    public static boolean ROBOT_HEADING_PID_TOGGLE = false;
 
     // Interpolation table
     public static double[] FLYWHEEL_SPEED_TABLE = {0.57, 0.595, 0.69, 0.715, 0.73, 0.82, 0.86};
@@ -265,7 +265,7 @@ public final class Constants {
     // Flip this to 1 or -1 if direction is wrong
     public static final int FLYWHEEL_DIRECTION = -1;
 
-    
+    //------------------------------------------------------------------------------------------------------
 
     // What is the LCD
 	// LCD display line number constants showing class where the line is set.
