@@ -4,19 +4,18 @@ import Team4450.Robot26.Constants;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import com.ctre.phoenix6.controls.DifferentialPositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import com.ctre.phoenix6.CANBus;
 
 public class Intake extends SubsystemBase {
 
     // This motor is a Kraken x60
-    private final TalonFX intakePivitMotor = new TalonFX(Constants.INTAKE_MOTOR_PIVIT_CAN_ID);
+    private final TalonFX intakePivitMotor = new TalonFX(Constants.INTAKE_MOTOR_PIVIT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x44
-    private final TalonFX intakeLeftMotor = new TalonFX(Constants.INTAKE_MOTOR_LEFT_CAN_ID);
+    private final TalonFX intakeLeftMotor = new TalonFX(Constants.INTAKE_MOTOR_LEFT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x44
-    private final TalonFX intakeRightMotor = new TalonFX(Constants.INTAKE_MOTOR_RIGHT_CAN_ID);
+    private final TalonFX intakeRightMotor = new TalonFX(Constants.INTAKE_MOTOR_RIGHT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
 
     private boolean canPivit;
     private boolean canSpin;
@@ -31,29 +30,41 @@ public class Intake extends SubsystemBase {
     // The format of this value is in rotations of the pivit motor
     private double pivitCurrentPositionMotorPosition;
 
-    private DifferentialPositionVoltage pivitPositionVoltagePID = new DifferentialPositionVoltage(0, Constants.INTAKE_PIVIT_TOLERENCE_MOTOR_ROTATIONS);
-
     // I wish Java had errors as values
     public Intake() {
-        canPivit = intakePivitMotor.isConnected();
-        canSpin = intakeLeftMotor.isConnected() || intakeRightMotor.isConnected();
+        this.canPivit = intakePivitMotor.isConnected();
+        this.canSpin = intakeLeftMotor.isConnected() || intakeRightMotor.isConnected();
         // Assume the pivit starting position is 0
-        pivitCurrentPosition = 0;
-        pivitTargetPosition = 0;
+        this.pivitCurrentPosition = 0;
+        this.pivitTargetPosition = 0;
+
+        if (this.canPivit) {
+            this.intakePivitMotor.setPosition(0);
+        }
+
+        SmartDashboard.putBoolean("Intake can Pivit", canPivit);
+        SmartDashboard.putBoolean("Intake can Spin", canSpin);
     }
 
     @Override
     public void periodic() {
-        if (canPivit) {
-            this.pivitTargetPositionMotorPosition = pivitPositionToMotorPosition(pivitTargetPosition);
+        this.pivitTargetPosition = SmartDashboard.getNumber("Pivit Position", 0);
+        if (this.canPivit) {
+            this.pivitTargetPositionMotorPosition = this.pivitPositionToMotorPosition(this.pivitTargetPosition);
             // Convert position input to rotations for the motor
-            // I think this is not the correct way to use this??
-            // I think I only need to use with average position when it changes
-            intakePivitMotor.setControl(pivitPositionVoltagePID.withAveragePosition(this.pivitTargetPositionMotorPosition));
+            double power = SmartDashboard.getNumber("pivit MotorPower", Constants.INTAKE_PIVIT_MOTOR_POWER);
+            
+            if (this.pivitCurrentPositionMotorPosition <= this.pivitTargetPositionMotorPosition - Constants.INTAKE_PIVIT_TOLERENCE_MOTOR_ROTATIONS) {
+                this.intakePivitMotor.set(power);
+            } else if (this.pivitCurrentPositionMotorPosition >= this.pivitTargetPositionMotorPosition + Constants.INTAKE_PIVIT_TOLERENCE_MOTOR_ROTATIONS) {
+                this.intakePivitMotor.set(-power);
+            } else {
+                this.intakePivitMotor.set(0);
+            }
 
-            this.pivitCurrentPositionMotorPosition = getPivitPosition();
-            this.pivitCurrentPosition = motorPositionToPivitPosition(this.pivitCurrentPositionMotorPosition);
-            SmartDashboard.putNumber("Pivit position", this.pivitCurrentPosition);
+            this.pivitCurrentPositionMotorPosition = this.getPivitPosition();
+            this.pivitCurrentPosition = this.motorPositionToPivitPosition(this.pivitCurrentPositionMotorPosition);
+            SmartDashboard.putNumber("Pivit current position", this.pivitCurrentPosition);
         }
     }
 
@@ -63,7 +74,7 @@ public class Intake extends SubsystemBase {
     }
 
     public double motorPositionToPivitPosition(double motorPosition) {
-        return motorPosition / Constants.INTAKE_PIVIT_GEAR_RATIO;
+        return (motorPosition / Constants.INTAKE_PIVIT_GEAR_RATIO) * (1 / (Constants.INTAKE_PIVIT_POSITION_DOWN_DEGREES / 360));
     }
 
     public void startIntake() {
@@ -154,6 +165,7 @@ public class Intake extends SubsystemBase {
         pivitTargetPosition = position;
     }
 
+    // TODO:
     public double getPivitPosition() {
         // Need to convert
         if (canPivit) {
