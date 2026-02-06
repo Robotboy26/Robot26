@@ -6,13 +6,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import Team4450.Robot26.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import com.ctre.phoenix6.CANBus;
 
 public class Shooter extends SubsystemBase {
-
     // This motor is a Falcon 500
     private final TalonFX flywheelMotor_TopLeft = new TalonFX(Constants.FLYWHEEL_MOTOR_TOP_LEFT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Falcon 500
@@ -45,7 +45,9 @@ public class Shooter extends SubsystemBase {
     // Flywheel runtime tunables (RPM and RPM/s units on dashboard)
     // (flywheel is currently controlled by TestSubsystem; no dashboard-driven flywheel tunables here)
     
+
     private final Drivebase drivebase;
+    DigitalInput beamBreak;
 
     // Constants for launch calculations
     private static final double GRAVITY = 9.81;
@@ -53,47 +55,39 @@ public class Shooter extends SubsystemBase {
     private static final double GOAL_HEIGHT = 1.8288; // meters (6 feet)
     private static final double FLYWHEEL_HEIGHT = 0.5334; // meters (21 inches)
     private static final double CONVERSION_FACTOR_MPS_TO_RPM = 10000 / 47.93;
-    private static final double MOTOR_TICKS_PER_REVOLUTION = 2048; // for Falcon 500
 
     public Shooter(Drivebase drivebase) {
         // initialize commanded angle to whatever a reasonable default is
-        this.commandedAngleDeg = 0.0;
-        this.requestedAngleDeg = 0.0;
-        this.commandedAngularVelocity = 0.0;
         this.drivebase = drivebase;
-
-        // Publish tuning values to SmartDashboard so they can be changed while testing.
-        // Publish both RPM-based and internal values for clarity/editing.
-        SmartDashboard.putNumber("Turret/MaxVelocityRPM", TURRET_DEFAULT_MAX_VELOCITY_RPM);
-        SmartDashboard.putNumber("Turret/MaxAccelerationRPMperSec", TURRET_DEFAULT_MAX_ACCEL_RPMS);
-        SmartDashboard.putBoolean("Turret/AccelEnabled", turretAccelEnabled);
-
-    // Flywheel is controlled by TestSubsystem (code-controlled). No dashboard defaults here.
+        beamBreak = new DigitalInput(3);
     }
 
     @Override
     public void periodic() {
-    // Read potentially-updated tuning values from SmartDashboard (RPM-based entries).
-    double hudTurretMaxVelRpm = SmartDashboard.getNumber("Turret/MaxVelocityRPM", TURRET_DEFAULT_MAX_VELOCITY_RPM);
-    double hudTurretMaxAccelRpms = SmartDashboard.getNumber("Turret/MaxAccelerationRPMperSec", TURRET_DEFAULT_MAX_ACCEL_RPMS);
-    turretAccelEnabled = SmartDashboard.getBoolean("Turret/AccelEnabled", turretAccelEnabled);
+        // Flywheel is controlled by TestSubsystem via Constants; no dashboard reads here.
+        
+        //This line should be all that is needed when the flywheel should be spun up
+        //updateLaunchValues(true);
 
-
-    // Convert RPM-based dashboard values to internal deg/sec units: 1 RPM = 360 deg / 60 sec = 6 deg/sec
-    turretMaxVelDegPerSec = hudTurretMaxVelRpm * 6.0;
-    turretMaxAccelDegPerSec2 = hudTurretMaxAccelRpms * 6.0;
-
-    // Flywheel is controlled by TestSubsystem via Constants; no dashboard reads here.
-
-        // Update the acceleration-limited motion profile for the turret every robot cycle.
-        updateMotion(ROBOT_PERIOD_SEC);
+        //Update the beam break sensors
+        SmartDashboard.putBoolean("Beam Break", beamBreak.get());
     }
 
-    public void updateLaunchValues(){
-        // Calculate distance to goal
+    public void updateLaunchValues(boolean interpolate){
+        // Calculate distance to goal & diffs
         double xDiff = getGoalPose().getX() - drivebase.getPose().getX();
         double yDiff = getGoalPose().getY() - drivebase.getPose().getY();
         double distToGoal = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+        
+        // Chose how to get the flywheel speed
+        if (interpolate){
+            getNeededFlywheelSpeed(distToGoal);
+        } else {
+            calculateLaunchValues(distToGoal);
+        }
+    }
+
+    public void calculateLaunchValues(double distToGoal){
         double desiredHeight = distToGoal > 6 ? DESIRED_MAX_HEIGHT : distToGoal / 6;
 
         // Calculate time of flight and velocity vectors
@@ -103,34 +97,31 @@ public class Shooter extends SubsystemBase {
 
         // Calculate hood angle and angle to face goal
         double hoodAngle = Math.atan(verticalVel / horizonalVel);
-        double angleToFaceGoal = Math.atan2(yDiff, xDiff);
+        //double angleToFaceGoal = Math.atan2(yDiff, xDiff); I think this is done in a different file
         
         // Calculate flywheel RPM needed
         double initialVel = Math.sqrt(Math.pow((verticalVel), 2) * Math.pow((horizonalVel), 2));
         double targetRpm = initialVel * CONVERSION_FACTOR_MPS_TO_RPM;
-        //targetVelocity = (rpm / 60) * Constants.Swerve.MOTOR_TICKS_PER_REVOLUTION; I think this is only needed for FTC
-        }
-
-    public void aimTurret(Pose2d robotPosition) {
-        setTargetAngle(getAngleToFaceGoalDegrees(robotPosition));
-
-        double targetFlywheelSpeed = getNeededFlywheelSpeed(drivebase.getDistFromRobot(drivebase.getPoseToAim(getGoalPose())));
-        setFlywheelSpeed(targetFlywheelSpeed);
-    }
-
-    public void setTargetAngle(double angleInSomething) {
-        // Public API: callers request a new target angle in degrees. We store it and
-        // the periodic loop will ramp the commanded output toward this target using
-        // the acceleration/velocity limits in Constants.
-        this.requestedAngleDeg = angleInSomething;
+        
+        // Set the flywheel Velocity & Hood angle
+        setFlywheelSpeed(targetRpm);
+        setHoodAngle(hoodAngle);
     }
 
     public void setFlywheelSpeed(double targetFlywheelSpeed) {
         // For future integration: apply a flywheel RPM setpoint. Currently a stub.
-        applyFlywheelRpm(targetFlywheelSpeed);
+
+        // Whatever the harware call is here
+        //setFlywheelSpeed(targetFlywheelSpeed);
+    }
+
+    public void setHoodAngle(double targetAngle){
+        // Whatever the harware call is here
+        //setHoodAngle(targetAngle);
     }
 
     public double getNeededFlywheelSpeed(double distToGoal) {
+
         double targetVelocity = interpolateFlywheelSpeedByDistance(distToGoal);
         return targetVelocity * FLYWHEEL_MAX_THEORETICAL_RPM; // Normalize the target velocity by the max theoretical
     }
@@ -148,36 +139,32 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getAngleToFaceGoalDegrees(Pose2d robotPosition) {
-        // If blue side
-        double xDiff = 0;
-        double yDiff = 0;
-        if (alliance == Alliance.Blue) {
-            xDiff = HUB_BLUE_WELDED_POSE.getX() - robotPosition.getX();
-            yDiff = HUB_BLUE_WELDED_POSE.getY() + robotPosition.getY();
-        // If red side
-        } else if (alliance == Alliance.Red) {
-            xDiff = HUB_RED_WELDED_POSE.getX() - robotPosition.getX();
-            yDiff = HUB_RED_WELDED_POSE.getY() - robotPosition.getY();
-        } else {
-            // Error
-        }
-        // Simplify this stuff
-        return (Math.toDegrees(Math.atan(yDiff / xDiff)) + robotPosition.getRotation().getDegrees() - 180);
+        // Find the difference betweeen the robot and the goal
+        double xDiff = getGoalPose().getX() - drivebase.getPose().getX();
+        double yDiff = getGoalPose().getY() - drivebase.getPose().getY();
+
+        // use atan2 to get teh correct angle to face goal & convert to degrees
+        double angleToFaceGoal = Math.toDegrees(Math.atan(yDiff / xDiff));
+
+        return ( angleToFaceGoal - robotPosition.getRotation().getDegrees());
     }
 
+    // This method sets the lower and higher points to interpolate between 
+    // Based on the hardcoded flywheel speed & distance tables and the robots current distance away from the goal
     public double interpolateFlywheelSpeedByDistance(double distToGoal) {
+        
         double lowerPoint = FLYWHEEL_SPEED_DISTANCE_TABLE[0];
-
         int lowerPointIndex = 0;
 
         double higherPoint = FLYWHEEL_SPEED_DISTANCE_TABLE[FLYWHEEL_SPEED_DISTANCE_TABLE.length - 1];
         int higherPointIndex = FLYWHEEL_SPEED_DISTANCE_TABLE.length - 1;
 
         double currentDistance;
+
         for (int i = FLYWHEEL_SPEED_DISTANCE_TABLE.length - 2; i > 0; i--){
             currentDistance = FLYWHEEL_SPEED_TABLE[i];
             if(currentDistance > distToGoal){
-                if (currentDistance < higherPoint) {
+                if (currentDistance <= higherPoint) {
                     higherPoint = currentDistance;
                     higherPointIndex = i;
                 }
@@ -199,81 +186,4 @@ public class Shooter extends SubsystemBase {
     public static double linearInterpolate(double point1, double point2, double percentageSplit) {
         return point1 + ((point2 - point1) * percentageSplit);
     }
-
-    // --- Motion profiling helpers ----------------------------------------------------
-    private void updateMotion(double dt) {
-        if (dt <= 0) return;
-
-        if (!turretAccelEnabled) {
-            // No smoothing; jump straight to requested setpoint.
-            commandedAngleDeg = requestedAngleDeg;
-            commandedAngularVelocity = 0.0;
-            applyHardwareAngle(commandedAngleDeg);
-            return;
-        }
-
-        // Compute shortest-path angular error in degrees [-180,180)
-        double error = wrapAngleDeg(requestedAngleDeg - commandedAngleDeg);
-
-        // Desired velocity to close the error in one iteration (may be large); clamp to max velocity
-    double desiredVel = clamp(error / dt, -turretMaxVelDegPerSec, turretMaxVelDegPerSec);
-
-        // Limit acceleration: compute allowable change in velocity
-    double maxDeltaV = turretMaxAccelDegPerSec2 * dt;
-        double deltaV = desiredVel - commandedAngularVelocity;
-        if (deltaV > maxDeltaV) deltaV = maxDeltaV;
-        if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
-
-        commandedAngularVelocity += deltaV;
-
-        // Integrate angle
-        commandedAngleDeg += commandedAngularVelocity * dt;
-
-        // If we're very close to target, snap to it and zero velocity to avoid jitter.
-        if (Math.abs(wrapAngleDeg(requestedAngleDeg - commandedAngleDeg)) <= TURRET_ANGLE_TOLERANCE_DEG) {
-            commandedAngleDeg = requestedAngleDeg;
-            commandedAngularVelocity = 0.0;
-        }
-
-        applyHardwareAngle(commandedAngleDeg);
-    }
-
-    // Convert a raw angle to the range [-180, 180)
-    private static double wrapAngleDeg(double angle) {
-        angle = angle % 360.0;
-        if (angle < -180.0) angle += 360.0;
-        if (angle >= 180.0) angle -= 360.0;
-        return angle;
-    }
-
-    private static double clamp(double v, double lo, double hi) {
-        if (v < lo) return lo;
-        if (v > hi) return hi;
-        return v;
-    }
-
-    // This method should perform the actual hardware call to move the turret to the
-    // specified angle (in degrees). Replace the body with your motor controller call
-    // converting degrees to whatever encoder/motor units you use.
-    private void applyHardwareAngle(double angleDeg) {
-        // Example placeholder:
-        // turretMotor.setPositionDegrees(angleDeg);
-        // For now, just leave a debug comment or log if needed.
-        // System.out.println("Turret angle command: " + angleDeg);
-    }
-
-    // Flywheel hardware application stub. This will ramp target RPM with accel if you
-    // want to implement a flywheel ramp. Right now it simply calls the placeholder.
-    private void applyFlywheelRpm(double rpm) {
-        // Replace with your motor controller speed command, e.g.:
-        // flywheelMotor.setVelocityRpm(rpm);
-    }
-
-    // Public setters/getters for programmatic tuning if you prefer not to use SmartDashboard
-    public void setTurretMaxVelocityRpm(double rpm) { turretMaxVelDegPerSec = rpm * 6.0; SmartDashboard.putNumber("Turret/MaxVelocityRPM", rpm); }
-    public void setTurretMaxAccelerationRpms(double rpms) { turretMaxAccelDegPerSec2 = rpms * 6.0; SmartDashboard.putNumber("Turret/MaxAccelerationRPMperSec", rpms); }
-    public double getTurretMaxVelocityRpm() { return turretMaxVelDegPerSec / 6.0; }
-    public double getTurretMaxAccelerationRpms() { return turretMaxAccelDegPerSec2 / 6.0; }
-
-    // Flywheel dashboard/setters removed; flywheel is code-controlled in TestSubsystem.
 }
