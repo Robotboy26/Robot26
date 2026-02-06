@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class Shooter extends SubsystemBase {
     
+
     private final Drivebase drivebase;
     DigitalInput beamBreak;
 
