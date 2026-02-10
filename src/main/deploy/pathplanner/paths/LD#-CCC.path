@@ -53,7 +53,7 @@
       },
       "prevControl": {
         "x": 6.25174519768368,
-        "y": 3.9181664854636447
+        "y": 3.918166485463644
       },
       "nextControl": null,
       "isLocked": false,
@@ -86,7 +86,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "D-C",
+  "folder": "D-C practically finished",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -90.0

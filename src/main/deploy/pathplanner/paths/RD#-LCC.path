@@ -20,7 +20,7 @@
         "y": 7.44
       },
       "prevControl": {
-        "x": 2.102500928236196,
+        "x": 2.102500928236195,
         "y": 7.33347319797211
       },
       "nextControl": {
@@ -48,12 +48,12 @@
     },
     {
       "anchor": {
-        "x": 9.64,
-        "y": 4.88
+        "x": 8.55,
+        "y": 4.87
       },
       "prevControl": {
-        "x": 8.11,
-        "y": 4.74
+        "x": 7.02,
+        "y": 4.73
       },
       "nextControl": null,
       "isLocked": false,
@@ -82,7 +82,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "D-C",
+  "folder": "D-C practically finished",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0
