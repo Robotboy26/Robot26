@@ -22,6 +22,7 @@ import Team4450.Robot26.subsystems.QuestNavSubsystem;
 import Team4450.Robot26.subsystems.ShuffleBoard;
 import Team4450.Robot26.subsystems.TestSubsystem;
 import Team4450.Robot26.subsystems.VisionSubsystem;
+import Team4450.Robot26.subsystems.Hopper;
 import edu.wpi.first.math.controller.PIDController;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -58,6 +59,8 @@ public class RobotContainer {
 	public Shooter shooter;
     // public TestSubsystem testSubsystem;
 
+    private final Hopper hopper = new Hopper();
+
     // General todo list for Cole Pearson
     //
     // Feat.
@@ -73,7 +76,7 @@ public class RobotContainer {
     
 	// Subsystem Default Commands.
 
-    // Persistent Commands.
+	// Persistent Commands.
 
 	// Some notes about Commands.
 	// When a Command is created with the New operator, its constructor is called. When the

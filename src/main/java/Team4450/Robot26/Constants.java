@@ -256,4 +256,8 @@ public final class Constants {
         public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(0, 0, Rotation2d.kZero);
         public static final Pose3d	DEFAULT_STARTING_POSE_3D = new Pose3d(0, 0, 0, Rotation3d.kZero);
     }
+
+    // Hopper motor constants
+    public static final int HOPPER_MOTOR_CAN_ID = 11; // Example CAN ID for the Kraken X60 motor
+    public static final double HOPPER_MOTOR_SPEED_RPM = 1000.0; // Default speed in RPM
 };
