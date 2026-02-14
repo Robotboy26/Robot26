@@ -6,6 +6,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import Team4450.Robot26.commands.DriveCommand;
+import Team4450.Robot26.subsystems.Candle;
+import Team4450.Robot26.subsystems.Intake;
+import Team4450.Robot26.subsystems.Drivebase;
+import Team4450.Robot26.subsystems.Shooter;
+import Team4450.Robot26.subsystems.ShuffleBoard;
+import Team4450.Lib.MonitorPDP;
+import Team4450.Lib.MonitorPower;
 import Team4450.Lib.Util;
 import Team4450.Lib.XboxController;
 import Team4450.Robot26.commands.DriveCommand;
@@ -47,6 +55,8 @@ public class RobotContainer {
 
 	public final DriveCommand driveCommand;
 
+    public Intake intake;
+	public Shooter shooter;
     public TestSubsystem testSubsystem;
 
     private final Hopper hopper = new Hopper();
@@ -89,6 +99,7 @@ public class RobotContainer {
 	public static XboxController driverController =  new XboxController(DRIVER_PAD);
 	public static XboxController utilityController = new XboxController(UTILITY_PAD);
 
+	private MonitorPower   			monitorPowerThread;
 	// Trajectories we load manually.
 	public static PathPlannerTrajectory	ppTestTrajectory;
 
@@ -105,6 +116,8 @@ public class RobotContainer {
 	public RobotContainer() throws Exception {
 		Util.consoleLog();
 
+        this.intake = new Intake();
+		this.shooter = new Shooter(drivebase);
         this.testSubsystem = new TestSubsystem();
 		
 		// Get information about the match environment from the Field Control System.
@@ -195,6 +208,9 @@ public class RobotContainer {
 
         // IDK if I have to init SmartDashboard data
         SmartDashboard.putNumber("Test Motor Power", 0);
+		
+		monitorPowerThread = MonitorPower.getInstance();
+		monitorPowerThread.start();
 		
 		// Start a thread that will wait 30 seconds then disable the missing
 		// joystick warning. This is long enough for when the warning is valid
@@ -369,7 +385,7 @@ public class RobotContainer {
     		  		   gameMessage);
 	}
 		
-	// public void fixPathPlannerGyro() { Rich
+	// public void fixPathPlannerGyro() { rich
 	// 	driveBase.fixPathPlannerGyro();
 	// }
 }

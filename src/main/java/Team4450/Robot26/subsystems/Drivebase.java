@@ -276,9 +276,13 @@ public class Drivebase extends SubsystemBase {
         robotPose = pose;
     }
 
+    // This is for when the Questnav is not found.
+    public void forceAddLimelightMeasurement(Pose2d pose) {
+        robotPose = pose;
+    }
 
-    // AddVisionUpdate
-    public void addVisionMeasurement(Pose2d pose, double timestampSeconds) {
+    //
+    public void addLimelightMeasurement(Pose2d pose, double timestampSeconds) {
         // TODO: All the stuff below this
         // Use the visionBuffer
         // Truncate vision buffer
@@ -288,8 +292,17 @@ public class Drivebase extends SubsystemBase {
 
         // Basic vision update that just sets the pose, this is good enough for testing if it is working
         this.limelightPoseEstimate = pose;
+        SmartDashboard.putString("Limelight Pose", this.limelightPoseEstimate.toString());
     }
 
+    /**
+     * This function converts an ideal target position into an angle for the robot to face accounting for velocity
+     * <p>
+     * {@link #getPoseToAim} is secondary to this function, and only returns the position accounted for velocity and not the angle to face
+     * 
+     * @param targetPose A Pose2d where you want to aim
+     * @return An angle (0-360) for the robot to aim, accounting for velocity
+     */
     public double getAngleToAim(Pose2d targetPose) {
         Pose2d currentPose = getODPose();
     
@@ -354,8 +367,17 @@ public class Drivebase extends SubsystemBase {
         return angleToAim;
     }
 
+    /**
+     * This function converts an ideal target position into a virtual position offset with robot velocity
+     * <p>
+     * This function is secondary to {@link #getAngleToAim}, and should likely not be used
+     * 
+     * @param targetPose A Pose2d where you want to aim
+     * @return A "fake" position to aim accounting for velocity
+     **/
     public Pose2d getPoseToAim(Pose2d targetPose) {
         Pose2d currentPose = getODPose();
+        Pose2d offsetTargetPose;
     
         double deltaX = targetPose.getX() - currentPose.getX();
         double deltaY = targetPose.getY() - currentPose.getY();
@@ -389,7 +411,9 @@ public class Drivebase extends SubsystemBase {
                 double xVelocityOffset = driveField.VelocityX * airTime;
                 double yVelocityOffset = driveField.VelocityY * airTime;
 
-                return new Pose2d(targetPose.getX() + xVelocityOffset, targetPose.getY() + yVelocityOffset, targetPose.getRotation());
+                offsetTargetPose = new Pose2d(targetPose.getX() + xVelocityOffset, targetPose.getY() + yVelocityOffset, targetPose.getRotation());
+
+                return offsetTargetPose;
             }
         }
 
@@ -405,7 +429,9 @@ public class Drivebase extends SubsystemBase {
         double xVelocityOffset = driveField.VelocityX * airTime;
         double yVelocityOffset = driveField.VelocityY * airTime;
 
-        return new Pose2d(targetPose.getX() + xVelocityOffset, targetPose.getY() + yVelocityOffset, targetPose.getRotation());
+        offsetTargetPose = new Pose2d(targetPose.getX() + xVelocityOffset, targetPose.getY() + yVelocityOffset, targetPose.getRotation());
+
+        return offsetTargetPose;
     }
 
     // Get the distance in meters between the current robot position and the target position
