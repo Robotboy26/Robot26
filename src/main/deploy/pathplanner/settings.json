@@ -8,8 +8,8 @@
     "S-D Finished"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 5.0,
-  "defaultMaxAccel": 5.0,
+  "defaultMaxVel": 14.4,
+  "defaultMaxAccel": 9.0,
   "defaultMaxAngVel": 270.0,
   "defaultMaxAngAccel": 270.0,
   "defaultNominalVoltage": 12.0,
