@@ -157,7 +157,7 @@ public class RobotContainer {
         SmartDashboard.putNumber("Heading P", Constants.ROBOT_HEADING_KP);
 		SmartDashboard.putNumber("Heading I", Constants.ROBOT_HEADING_KI);
         SmartDashboard.putNumber("Heading D", Constants.ROBOT_HEADING_KD);
-		SmartDashboard.putBoolean("Heading PID Toggle", Constants.ROBOT_HEADING_PID_TOGGLE);
+		SmartDashboard.putBoolean("Heading PID Toggle", Constants.HUB_TRACKING);
 
 		// Create any persistent commands.
 
@@ -311,21 +311,27 @@ public class RobotContainer {
 
 		 // new Trigger(() -> driverController.getBButton())
 		 // 	.onTrue(new InstantCommand(testSubsystem::stop));
+         //
+		 new Trigger(() -> driverController.getLeftTrigger())
+		 	.onTrue(new InstantCommand(shooter::startFlywheel))
+		 	.onFalse(new InstantCommand(shooter::stopFlywheel));
+
+		 new Trigger(() -> driverController.getRightTrigger())
+		 	.onTrue(new InstantCommand(shooter::startInfeed))
+		 	.onFalse(new InstantCommand(shooter::stopInfeed));
 
 		 new Trigger(() -> driverController.getAButton())
-		 	.onTrue(new InstantCommand(shooter::startInfeed))
-		 	.onTrue(new InstantCommand(shooter::startFlywheel));
-		 	// .onTrue(new InstantCommand(intake::startIntake));
-		 	// .onTrue(new InstantCommand(hopper::start));
+		 	.onTrue(new InstantCommand(intake::startIntake));
 
 		 new Trigger(() -> driverController.getBButton())
-		 	.onTrue(new InstantCommand(shooter::stopInfeed))
-		 	.onTrue(new InstantCommand(shooter::stopFlywheel));
-		 	// .onTrue(new InstantCommand(intake::stopIntake));
-		 	// .onTrue(new InstantCommand(hopper::stop));
+		 	.onTrue(new InstantCommand(intake::stopIntake));
             
 		 new Trigger(() -> driverController.getYButton())
-		 	.onTrue(new InstantCommand(shooter::stopHood));
+		 	.onTrue(new InstantCommand(hopper::start))
+		 	.onFalse(new InstantCommand(hopper::stop));
+
+		 new Trigger(() -> driverController.getXButton())
+		 	.onTrue(new InstantCommand(drivebase::toggleHubTracking));
 
 		 new Trigger(() -> driverController.getLeftBumper())
 		 	.onTrue(new InstantCommand(shooter::hoodUp))

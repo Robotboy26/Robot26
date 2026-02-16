@@ -98,14 +98,18 @@ public final class Constants {
     public static double INTAKE_PIVIT_TOLERENCE_MOTOR_ROTATIONS = 5;
     public static double INTAKE_PIVIL_TOLERENCE_DEGREES = 360 * (INTAKE_PIVIT_TOLERENCE_MOTOR_ROTATIONS / INTAKE_PIVIT_GEAR_RATIO);
 
-    public static String LIMELIGHT_LEFT = "limelight-left";
+    public static String LIMELIGHT_FRONT = "limelight-front";
     public static String LIMELIGHT_RIGHT = "limelight-right";
 
-    public static Pose3d ROBOT_TO_QUEST = new Pose3d(0.304, 0, 0, new Rotation3d(Math.toRadians(0), Math.toRadians(32), Math.toRadians(0)));
-    public static Pose3d ROBOT_TO_LIMELIGHT_LEFT = new Pose3d(0, 0.282, 0, Rotation3d.kZero);
-    public static Pose3d ROBOT_TO_LIMELIGHT_RIGHT = new Pose3d(0, -0.282, 0, Rotation3d.kZero);
+    // The rotation values are in radians
 
+    public static Pose3d ROBOT_TO_QUEST = new Pose3d(0, 0, 0, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(0)));
+
+    public static Pose3d ROBOT_TO_LIMELIGHT_FRONT = new Pose3d(0.305, 0, 0, new Rotation3d(0, -0.3491, 0));
+    public static Pose3d ROBOT_TO_LIMELIGHT_RIGHT = new Pose3d(0.0762, 0.318, 0, new Rotation3d(0, -0.3491, -1.5708));
     public static int VISION_BUFFER_SIZE = 1;
+
+    // Akk 77
 
     // Assume all field measurements are in meters
     // Field Limits (The Origin of the field should be the bottom left corner therefore all pose should be in +, +)
@@ -114,8 +118,6 @@ public final class Constants {
 
     // HUB Positions (Center of the HUB)
     
-    // THESE ARE ALL IN INCHES AS THAT IS WHAT THE FIELD IS DEFINED IN
-
     public static double HUB_BLUE_X = 4.625;
     public static double HUB_BLUE_Y = 4.034;
     // Red
@@ -156,7 +158,7 @@ public final class Constants {
     public static double ROBOT_HEADING_KI_MAX = 0;
     public static double ROBOT_HEADING_KD = 0.001;
     public static double ROBOT_HEADING_TOLERANCE_DEG = 0.5;
-    public static boolean ROBOT_HEADING_PID_TOGGLE = false;
+    public static boolean HUB_TRACKING = false;
 
     // Interpolation table
     public static double[] FLYWHEEL_SPEED_TABLE = {0.57, 0.595, 0.69, 0.715, 0.73, 0.82, 0.86};
@@ -184,7 +186,7 @@ public final class Constants {
     
     // Default target RPM
     // public static final double FLYWHEEL_TARGET_RPM = 2650.0;
-    public static final double FLYWHEEL_TARGET_RPM = 0;
+    public static final double FLYWHEEL_TARGET_RPM = 2000;
 
     // CAN ID for flywheel TalonFX
     public static final int FLYWHEEL_MOTOR_CAN_ID = -1;
@@ -218,7 +220,7 @@ public final class Constants {
     // Hopper motor constants
     public static final int HOPPER_MOTOR_CAN_ID = 12; // Example CAN ID for the Kraken X60 motor
     public static final double HOPPER_MOTOR_SPEED_RPM = 1000.0; // Default speed in RPM
-    public static final double HOPPER_MOTOR_POWER = 0.2;
+    public static final double HOPPER_MOTOR_POWER = 0.4;
 
     // What is the LCD
 	// LCD display line number constants showing class where the line is set.

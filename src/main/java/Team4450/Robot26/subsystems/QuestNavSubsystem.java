@@ -86,9 +86,9 @@ public class QuestNavSubsystem extends SubsystemBase {
             SmartDashboard.putBoolean("Quest Connected", true);
             if (resetTimer > 200) {
                 if (drivebase.limelightPoseEstimate.getX() > 0.2 || drivebase.limelightPoseEstimate.getY() > 0.2) {
-                    Pose3d limelightEstimatePose = new Pose3d(drivebase.limelightPoseEstimate);
-                    resetQuestOdometry(limelightEstimatePose);
-                    Util.consoleLog("Updated quest odomety to pose: ", limelightEstimatePose.toString());
+                    // Pose3d limelightEstimatePose = new Pose3d(drivebase.limelightPoseEstimate);
+                    // resetQuestOdometry(limelightEstimatePose);
+                    // Util.consoleLog("Updated quest odomety to pose: ", limelightEstimatePose.toString());
                     resetTimer = 0;
                 }
             } else {

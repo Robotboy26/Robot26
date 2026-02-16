@@ -10,6 +10,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import Team4450.Lib.Util;
 import static Team4450.Robot26.Constants.*;
+
+import Team4450.Robot26.Constants;
 import Team4450.Robot26.Constants.DriveConstants;
 import Team4450.Robot26.subsystems.SDS.CommandSwerveDrivetrain;
 import Team4450.Robot26.subsystems.SDS.Telemetry;
@@ -478,5 +480,9 @@ public class Drivebase extends SubsystemBase {
 
         field2d.getObject("Robot").setPose(robotPose);
         field2d.getObject("Swerve Modules").setPoses(modulePoses);
+    }
+
+    public void toggleHubTracking() {
+        Constants.HUB_TRACKING = !Constants.HUB_TRACKING;
     }
 }
