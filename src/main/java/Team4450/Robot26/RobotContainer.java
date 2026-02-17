@@ -22,6 +22,7 @@ import Team4450.Robot26.subsystems.QuestNavSubsystem;
 import Team4450.Robot26.subsystems.ShuffleBoard;
 import Team4450.Robot26.subsystems.TestSubsystem;
 import Team4450.Robot26.subsystems.VisionSubsystem;
+import Team4450.Robot26.subsystems.Hopper;
 import edu.wpi.first.math.controller.PIDController;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -56,7 +57,9 @@ public class RobotContainer {
 
     public Intake intake;
 	public Shooter shooter;
-    public TestSubsystem testSubsystem;
+    // public TestSubsystem testSubsystem;
+
+    private final Hopper hopper = new Hopper();
 
     // General todo list for Cole Pearson
     //
@@ -73,7 +76,7 @@ public class RobotContainer {
     
 	// Subsystem Default Commands.
 
-    // Persistent Commands.
+	// Persistent Commands.
 
 	// Some notes about Commands.
 	// When a Command is created with the New operator, its constructor is called. When the
@@ -115,7 +118,7 @@ public class RobotContainer {
 
         this.intake = new Intake();
 		this.shooter = new Shooter(drivebase);
-        this.testSubsystem = new TestSubsystem();
+        // this.testSubsystem = new TestSubsystem();
 		
 		// Get information about the match environment from the Field Control System.
 		getMatchInformation();
@@ -154,7 +157,7 @@ public class RobotContainer {
         SmartDashboard.putNumber("Heading P", Constants.ROBOT_HEADING_KP);
 		SmartDashboard.putNumber("Heading I", Constants.ROBOT_HEADING_KI);
         SmartDashboard.putNumber("Heading D", Constants.ROBOT_HEADING_KD);
-		SmartDashboard.putBoolean("Heading PID Toggle", Constants.ROBOT_HEADING_PID_TOGGLE);
+		SmartDashboard.putBoolean("Heading PID Toggle", Constants.HUB_TRACKING);
 
 		// Create any persistent commands.
 
@@ -276,7 +279,7 @@ public class RobotContainer {
 		 	.onChange(new InstantCommand(drivebase::toggleSlowMode));
 
 		// Reset field orientation (direction).
-		new Trigger(() -> driverController.getStartButton()) // Rich
+		new Trigger(() -> driverController.getPOV() == 180) // D-pad down Cole
 			.onTrue(new InstantCommand(drivebase::resetFieldOrientation));
 
 		// Toggle field-oriented driving mode.
@@ -303,12 +306,40 @@ public class RobotContainer {
 		// -------- Utility controller buttons ----------
 
 		// Driver controller A/B used for flywheel start/stop (TestSubsystem currently drives the motor)
+		 // new Trigger(() -> driverController.getAButton())
+		 // 	.onTrue(new InstantCommand(testSubsystem::start));
+
+		 // new Trigger(() -> driverController.getBButton())
+		 // 	.onTrue(new InstantCommand(testSubsystem::stop));
+         //
+		 new Trigger(() -> driverController.getLeftTrigger())
+		 	.onTrue(new InstantCommand(shooter::startFlywheel))
+		 	.onFalse(new InstantCommand(shooter::stopFlywheel));
+
+		 new Trigger(() -> driverController.getRightTrigger())
+		 	.onTrue(new InstantCommand(shooter::startInfeed))
+		 	.onFalse(new InstantCommand(shooter::stopInfeed));
+
 		 new Trigger(() -> driverController.getAButton())
-		 	.onTrue(new InstantCommand(testSubsystem::start));
+		 	.onTrue(new InstantCommand(intake::startIntake));
 
 		 new Trigger(() -> driverController.getBButton())
-		 	.onTrue(new InstantCommand(testSubsystem::stop));
+		 	.onTrue(new InstantCommand(intake::stopIntake));
+            
+		 new Trigger(() -> driverController.getYButton())
+		 	.onTrue(new InstantCommand(hopper::start))
+		 	.onFalse(new InstantCommand(hopper::stop));
 
+		 new Trigger(() -> driverController.getXButton())
+		 	.onTrue(new InstantCommand(drivebase::toggleHubTracking));
+
+		 new Trigger(() -> driverController.getLeftBumper())
+		 	.onTrue(new InstantCommand(shooter::hoodUp))
+            .onFalse(new InstantCommand(shooter::stopHood));
+
+		 new Trigger(() -> driverController.getRightBumper())
+		 	.onTrue(new InstantCommand(shooter::hoodDown))
+            .onFalse(new InstantCommand(shooter::stopHood));
 	}
 
 	/**
@@ -318,9 +349,7 @@ public class RobotContainer {
 	 * @return The Command to run in autonomous.
 	 */
 	public Command getAutonomousCommand() {
-		// PathPlannerAuto  	ppAutoCommand;
 		Command				autoCommand;
-
 		autoCommand = autoChooser.getSelected();
 
 		if (autoCommand == null) {
@@ -331,11 +360,6 @@ public class RobotContainer {
 		autonomousCommandName = autoCommand.getName();
 
 		Util.consoleLog("auto name=%s", autonomousCommandName);
-
-		if (autoCommand instanceof PathPlannerAuto) {
-			// ppAutoCommand = (PathPlannerAuto) autoCommand;
-			// Util.consoleLog("pp starting pose=%s", PathPlannerAuto.getStaringPoseFromAutoFile(autoCommand.getName().toString()));
-		}
 
 		return autoCommand;
   	}
@@ -363,8 +387,7 @@ public class RobotContainer {
 	/**
 	 *  Get and log information about the current match from the FMS or DS.
 	 */
-	public void getMatchInformation()
-	{
+	public void getMatchInformation() {
 		alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
   	  	location = DriverStation.getLocation().orElse(0);
   	  	eventName = DriverStation.getEventName();

@@ -21,9 +21,8 @@ import edu.wpi.first.wpilibj.DriverStation;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants
-{
-	public static String		PROGRAM_NAME = "ORF26-01.30.26";
+public final class Constants {
+	public static String		PROGRAM_NAME = "ORF26-02.12.26";
 
 	public static Robot			robot;
 
@@ -57,21 +56,28 @@ public final class Constants
     public static int KRAKEN_X44_MAX_THEORETICAL_RPM = 7530;
 
     // Shooter Constants
-    public static int FLYWHEEL_MOTOR_TOP_LEFT_CAN_ID = -1;
-    public static int FLYWHEEL_MOTOR_TOP_RIGHT_CAN_ID = -1;
-    public static int FLYWHEEL_MOTOR_BOTTOM_RIGHT_CAN_ID = -1;
-    public static int FLYWHEEL_MOTOR_BOTTOM_LEFT_CAN_ID = -1;
+    public static int FLYWHEEL_MOTOR_TOP_LEFT_CAN_ID = 13;
+    public static int FLYWHEEL_MOTOR_TOP_RIGHT_CAN_ID = 14;
+    public static int FLYWHEEL_MOTOR_BOTTOM_RIGHT_CAN_ID = 16;
+    public static int FLYWHEEL_MOTOR_BOTTOM_LEFT_CAN_ID = 15;
 
-    public static int HOOD_MOTOR_LEFT_CAN_ID = -1;
-    public static int HOOD_MOTOR_RIGHT_CAN_ID = -1;
+    public static boolean[] FLYWHEEL_MOTOR_CLOCKWISE = {false, true, false, true};
 
-    public static int ROLLER_MOTOR_LEFT_CAN_ID = -1;
-    public static int ROLLER_MOTOR_RIGHT_CAN_ID = -1;
+    public static int HOOD_MOTOR_LEFT_CAN_ID = 17;
+    public static int HOOD_MOTOR_RIGHT_CAN_ID = 18;
+
+    public static int ROLLER_MOTOR_LEFT_CAN_ID = 19;
+    public static int ROLLER_MOTOR_RIGHT_CAN_ID = 22;
+
+    public static double HOOD_TOLERENCE_MOTOR_ROTATIONS = 0.02;
+    public static double HOOD_TOLERENCE_DEGREES = 5;
+    public static double HOOD_GEAR_RATIO = 3/8;
+    public static double HOOD_DOWN_ANGLE_DEGREES = 15;
     
     // Intake Constants
-    public static int INTAKE_MOTOR_PIVIT_CAN_ID = -1;
-    public static int INTAKE_MOTOR_LEFT_CAN_ID = -1;
-    public static int INTAKE_MOTOR_RIGHT_CAN_ID = -1;
+    public static int INTAKE_MOTOR_PIVIT_CAN_ID = 9;
+    public static int INTAKE_MOTOR_LEFT_CAN_ID = 10;
+    public static int INTAKE_MOTOR_RIGHT_CAN_ID = 11;
 
     // The intake gear ratio it 1 to 1
     public static int INTAKE_GEAR_RATIO = 1 / 1;
@@ -92,14 +98,18 @@ public final class Constants
     public static double INTAKE_PIVIT_TOLERENCE_MOTOR_ROTATIONS = 5;
     public static double INTAKE_PIVIL_TOLERENCE_DEGREES = 360 * (INTAKE_PIVIT_TOLERENCE_MOTOR_ROTATIONS / INTAKE_PIVIT_GEAR_RATIO);
 
-    public static String LIMELIGHT_LEFT = "limelight-left";
+    public static String LIMELIGHT_FRONT = "limelight-front";
     public static String LIMELIGHT_RIGHT = "limelight-right";
 
-    public static Pose3d ROBOT_TO_QUEST = new Pose3d(0.304, 0, 0, new Rotation3d(Math.toRadians(0), Math.toRadians(32), Math.toRadians(0)));
-    public static Pose3d ROBOT_TO_LIMELIGHT_LEFT = new Pose3d(0, 0.282, 0, Rotation3d.kZero);
-    public static Pose3d ROBOT_TO_LIMELIGHT_RIGHT = new Pose3d(0, -0.282, 0, Rotation3d.kZero);
+    // The rotation values are in radians
 
+    public static Pose3d ROBOT_TO_QUEST = new Pose3d(0, 0, 0, new Rotation3d(Math.toRadians(0), Math.toRadians(0), Math.toRadians(0)));
+
+    public static Pose3d ROBOT_TO_LIMELIGHT_FRONT = new Pose3d(0.305, 0, 0, new Rotation3d(0, -0.3491, 0));
+    public static Pose3d ROBOT_TO_LIMELIGHT_RIGHT = new Pose3d(0.0762, 0.318, 0, new Rotation3d(0, -0.3491, -1.5708));
     public static int VISION_BUFFER_SIZE = 1;
+
+    public static double LIMELIGHT_QUEST_ERROR_AMOUNT_METERS = 0.2;
 
     // Assume all field measurements are in meters
     // Field Limits (The Origin of the field should be the bottom left corner therefore all pose should be in +, +)
@@ -108,8 +118,6 @@ public final class Constants
 
     // HUB Positions (Center of the HUB)
     
-    // THESE ARE ALL IN INCHES AS THAT IS WHAT THE FIELD IS DEFINED IN
-
     public static double HUB_BLUE_X = 4.625;
     public static double HUB_BLUE_Y = 4.034;
     // Red
@@ -149,8 +157,8 @@ public final class Constants
     public static double ROBOT_HEADING_KI = 0;
     public static double ROBOT_HEADING_KI_MAX = 0;
     public static double ROBOT_HEADING_KD = 0.001;
-    public static double ROBOT_HEADING_TOLERANCE_DEG = 0.5;
-    public static boolean ROBOT_HEADING_PID_TOGGLE = true;
+    public static double ROBOT_HEADING_TOLERANCE_DEG = 0.0001;
+    public static boolean HUB_TRACKING = false;
 
     // Interpolation table
     public static double[] FLYWHEEL_SPEED_TABLE = {0.57, 0.595, 0.69, 0.715, 0.73, 0.82, 0.86};
@@ -177,15 +185,14 @@ public final class Constants
     // Flywheel tuning defaults (used as Shuffleboard starting values)
     
     // Default target RPM
-    public static final double FLYWHEEL_TARGET_RPM = 2650.0;
+    // public static final double FLYWHEEL_TARGET_RPM = 2650.0;
+    public static final double FLYWHEEL_TARGET_RPM = 2000;
 
     // CAN ID for flywheel TalonFX
-    public static final int FLYWHEEL_MOTOR_CAN_ID = 10;
+    public static final int FLYWHEEL_MOTOR_CAN_ID = -1;
 
     // Closed-loop slot selection
     public static final int FLYWHEEL_PID_SLOT = 0;
-    // Motor inversion handled in Talon configuration (not math)
-    public static final boolean FLYWHEEL_INVERTED = true;
 
     // ---------------- Feedforward (Talon internal) ----------------
     // Units: Volts, Volts/(rps), Volts/(rps/s)
@@ -199,7 +206,7 @@ public final class Constants
 
     // ---------------- Motion Magic Velocity ----------------
     // These only affect ramp rate
-    public static final boolean FLYWHEEL_USE_MOTION_MAGIC = true;
+    // public static final boolean FLYWHEEL_USE_MOTION_MAGIC = true;
 
     public static final double FLYWHEEL_MOTION_ACCEL_RPMS = 5000.0; // RPM/s
     public static final double FLYWHEEL_MOTION_JERK = 0.0;
@@ -209,6 +216,11 @@ public final class Constants
 
     // Flip this to 1 or -1 if direction is wrong
     public static final int FLYWHEEL_DIRECTION = -1;
+
+    // Hopper motor constants
+    public static final int HOPPER_MOTOR_CAN_ID = 12; // Example CAN ID for the Kraken X60 motor
+    public static final double HOPPER_MOTOR_SPEED_RPM = 1000.0; // Default speed in RPM
+    public static final double HOPPER_MOTOR_POWER = 0.4;
 
     // What is the LCD
 	// LCD display line number constants showing class where the line is set.
@@ -232,7 +244,7 @@ public final class Constants
         public static double kMaxAngularRate = RotationsPerSecond.of(1.0).in(RadiansPerSecond); // 1 rotation per second max angular velocity
 
         // Velocity dead bands applied in SDS code. Times max speed.
-        public static final double  DRIVE_DEADBAND = 0.01, ROTATION_DEADBAND = 0.01;
+        public static final double  DRIVE_DEADBAND = 0.01, ROTATION_DEADBAND = 0.00001;
 
         // Factors used to reduce robot max speed to levels desired for lab/demo operation.
         // The split below matches the rotation speed to drive speed. Needs to be tuned for

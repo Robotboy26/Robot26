@@ -47,11 +47,6 @@ public class TestSubsystem extends SubsystemBase {
         // Neutral + inversion
         cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        cfg.MotorOutput.Inverted =
-                Constants.FLYWHEEL_INVERTED
-                        ? InvertedValue.Clockwise_Positive
-                        : InvertedValue.CounterClockwise_Positive;
-
         // Slot 0 PID
         cfg.Slot0.kP = Constants.FLYWHEEL_kP;
         cfg.Slot0.kI = Constants.FLYWHEEL_kI;
@@ -63,12 +58,12 @@ public class TestSubsystem extends SubsystemBase {
         cfg.Slot0.kA = Constants.FLYWHEEL_kA;
 
         // Motion Magic acceleration limits
-        if (Constants.FLYWHEEL_USE_MOTION_MAGIC) {
+        // if (Constants.FLYWHEEL_USE_MOTION_MAGIC) {
             cfg.MotionMagic.MotionMagicAcceleration =
                     Constants.FLYWHEEL_MOTION_ACCEL_RPMS / 60.0;
             cfg.MotionMagic.MotionMagicJerk =
                     Constants.FLYWHEEL_MOTION_JERK;
-        }
+        // }
 
         flywheelMotor.getConfigurator().apply(cfg);
 
@@ -162,7 +157,7 @@ public class TestSubsystem extends SubsystemBase {
                 ? targetRpm / 60.0
                 : 0.0;
 
-        if (Constants.FLYWHEEL_USE_MOTION_MAGIC) {
+        // if (Constants.FLYWHEEL_USE_MOTION_MAGIC) {
 
             MotionMagicVelocityVoltage req =
                     new MotionMagicVelocityVoltage(targetRps)
@@ -170,14 +165,14 @@ public class TestSubsystem extends SubsystemBase {
 
             flywheelMotor.setControl(req);
 
-        } else {
+        // } else {
 
-            VelocityVoltage req =
-                    new VelocityVoltage(targetRps)
-                            .withSlot(Constants.FLYWHEEL_PID_SLOT);
+        //     VelocityVoltage req =
+        //             new VelocityVoltage(targetRps)
+        //                     .withSlot(Constants.FLYWHEEL_PID_SLOT);
 
-            flywheelMotor.setControl(req);
-        }
+        //     flywheelMotor.setControl(req);
+        // }
 
         // -------- Telemetry --------
 
