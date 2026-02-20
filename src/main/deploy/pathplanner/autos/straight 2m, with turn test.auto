@@ -7,25 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "straight with turn"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "runIntake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stopIntake"
+            "pathName": "Straight pt.2"
           }
         }
       ]

@@ -7,25 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": null
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "runIntake"
+            "pathName": "true straight path"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 5.0
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "stopIntake"
+            "pathName": "endtoend"
           }
         }
       ]
