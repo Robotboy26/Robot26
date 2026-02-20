@@ -35,12 +35,4 @@ public class Hopper extends SubsystemBase {
     public void stop() {
         hopperMotor.set(0);
     }
-
-    public void setHopperRPM(double targetRPM) {
-        this.hopperTargetRPM = targetRPM;
-        double currentRPM = hopperMotor.getRotorVelocity().getValueAsDouble() * 60.0;
-        double error = targetRPM - currentRPM;
-        double output = Constants.HOPPER_kP * error;
-        hopperMotor.set(output);
-    }
 }

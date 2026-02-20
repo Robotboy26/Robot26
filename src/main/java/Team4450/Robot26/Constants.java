@@ -220,12 +220,7 @@ public final class Constants {
     // Hopper motor constants
     public static final int HOPPER_MOTOR_CAN_ID = 12; // Example CAN ID for the Kraken X60 motor
     public static final double HOPPER_MOTOR_SPEED_RPM = 1000.0; // Default speed in RPM
-    public static final double HOPPER_MOTOR_POWER = 0.4;
-
-    // PID constants for Hopper
-    public static final double HOPPER_kP = 0.1;
-    public static final double HOPPER_kI = 0.0;
-    public static final double HOPPER_kD = 0.0;
+    public static final double HOPPER_MOTOR_POWER = 1;
 
     // PID constants for Intake
     public static final double INTAKE_kP = 0.1;
