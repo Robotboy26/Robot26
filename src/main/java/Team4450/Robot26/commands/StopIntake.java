@@ -6,11 +6,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class StopIntake extends Command {
   private Intake intake;
 
+  private State state;
+
+  private static enum State {
+    STOPPING, INTAKE, END
+  };
+
   public StopIntake(Intake intake) {
     this.intake = intake;
   }
 
   public void initialize() {
+    state = State.STOPPING;
 
   }
 
@@ -19,7 +26,7 @@ public class StopIntake extends Command {
   }
 
   public boolean isFinished() {
-    return true;
+    return state == State.END;
 
   }
 
