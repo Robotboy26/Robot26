@@ -123,7 +123,7 @@ public class DriveCommand extends Command
                     targetHeading = drivebase.getAngleToAim(FERRY_RED_OUTPOST_CORNER);
                 }
             }
-            // If there IS input, set the target heading to where the joystick si facing in relation to the driver
+            // If there is input, set the target heading to where the joystick is facing in relation to the driver
         } else {
             targetHeading = -Math.toDegrees(Math.atan2(rotationYSupplier.getAsDouble(), rotationXSupplier.getAsDouble())) - 90;
         }

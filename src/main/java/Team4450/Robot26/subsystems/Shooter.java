@@ -72,7 +72,7 @@ public class Shooter extends SubsystemBase {
     private static final double DESIRED_MAX_HEIGHT = 2.5; // meters (8.2 feet)
     private static final double GOAL_HEIGHT = 1.8288; // meters (6 feet)
     private static final double FLYWHEEL_HEIGHT = 0.5334; // meters (21 inches)
-    private static final double CONVERSION_FACTOR_MPS_TO_RPM = 10000 / 47.93;
+    private static final double CONVERSION_FACTOR_MPS_TO_RPM = 2000 / 3.15; // Needs to be tested
 
     private double targetRPM = 0.0;
     private double currentRPM = 0.0;

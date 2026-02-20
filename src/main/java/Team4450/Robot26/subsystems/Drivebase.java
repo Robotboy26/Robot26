@@ -4,6 +4,8 @@ import static Team4450.Robot26.Constants.DriveConstants.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -21,9 +23,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import Team4450.Robot26.utility.RobotOrientation;
@@ -148,6 +152,28 @@ public class Drivebase extends SubsystemBase {
         SmartDashboard.putNumber("Drive Velocity X", driveField.VelocityX);
         SmartDashboard.putNumber("Drive Velocity Y", driveField.VelocityY);
         SmartDashboard.putNumber("Drive Rot Rate", driveField.RotationalRate);
+    }
+
+    public void driveToOrigin(){
+        driveToPose(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)), 0.0);
+    }
+
+    public void driveToPose(Pose2d targetPose, double targetEndVelocity){
+        createPathfindingCommand(targetPose, targetEndVelocity).execute();
+    }
+
+    public Command createPathfindingCommand(Pose2d targetPose, double targetEndVelocity){
+        // Create the constraints to use while pathfinding
+        PathConstraints constraints = new PathConstraints(
+        Constants.DriveConstants.kMaxSpeed, Constants.DriveConstants.kMaxAcceleration,
+        Units.degreesToRadians(Constants.DriveConstants.kMaxAngularRate), Units.degreesToRadians(Constants.DriveConstants.kMaxAngularAcceleration));
+
+        // If AutoBuilder is configured, we can use it to build pathfinding commands
+        return AutoBuilder.pathfindToPose(
+            targetPose,
+            constraints,
+            targetEndVelocity // Goal end velocity in meters/sec
+        );
     }
 
     /**

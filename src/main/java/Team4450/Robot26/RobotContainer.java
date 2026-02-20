@@ -4,7 +4,6 @@ import static Team4450.Robot26.Constants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import Team4450.Robot26.commands.DriveCommand;
 import Team4450.Robot26.subsystems.Candle;
@@ -24,7 +23,7 @@ import Team4450.Robot26.subsystems.TestSubsystem;
 import Team4450.Robot26.subsystems.VisionSubsystem;
 import Team4450.Robot26.subsystems.Hopper;
 import edu.wpi.first.math.controller.PIDController;
-
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -340,6 +339,9 @@ public class RobotContainer {
 		 new Trigger(() -> driverController.getRightBumper())
 		 	.onTrue(new InstantCommand(shooter::hoodDown))
             .onFalse(new InstantCommand(shooter::stopHood));
+
+		new Trigger(() -> driverController.getYButton())
+			.onTrue(new InstantCommand(drivebase::driveToOrigin));
 	}
 
 	/**

@@ -243,6 +243,9 @@ public final class Constants {
         public static double kMaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // top speed
         public static double kMaxAngularRate = RotationsPerSecond.of(1.0).in(RadiansPerSecond); // 1 rotation per second max angular velocity
 
+        public static double kMaxAcceleration = -1;
+        public static double kMaxAngularAcceleration = -1;
+
         // Velocity dead bands applied in SDS code. Times max speed.
         public static final double  DRIVE_DEADBAND = 0.01, ROTATION_DEADBAND = 0.00001;
 
