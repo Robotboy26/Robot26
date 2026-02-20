@@ -70,9 +70,19 @@ public class Intake extends SubsystemBase {
         this.intakePivitMotor.set(0);
       }
 
+<<<<<<< HEAD
       this.pivitCurrentPositionMotorPosition = this.getPivitPosition();
       this.pivitCurrentPosition = this.motorPositionToPivitPosition(this.pivitCurrentPositionMotorPosition);
       SmartDashboard.putNumber("Pivit current position", this.pivitCurrentPosition);
+=======
+    public void setIntakeRPM(double targetRPM) {
+        this.intakeTargetRPM = targetRPM;
+        double currentRPM = intakeLeftMotor.getRotorVelocity(true).getValueAsDouble() * 60.0;
+        double error = targetRPM - currentRPM;
+        double adjustment = Constants.INTAKE_kP * error; // Adjustment to approach target
+        double newRPM = currentRPM + adjustment; // Adjust current RPM towards target
+        intakeMotors.setPower(newRPM / Constants.INTAKE_MAX_THEORETICAL_RPM); // Normalize to motor power
+>>>>>>> a2be10a58382a9a57ec55821db2fa2f7827bae2b
     }
   }
 
