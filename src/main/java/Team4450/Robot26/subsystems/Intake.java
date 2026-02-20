@@ -5,7 +5,6 @@ import Team4450.Robot26.utility.LinkedMotors;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 
 import com.ctre.phoenix6.CANBus;
 
@@ -32,6 +31,8 @@ public class Intake extends SubsystemBase {
     // The format of this value is in rotations of the pivit motor
     private double pivitCurrentPositionMotorPosition;
 
+    private double intakeTargetRPM;
+
     public Intake() {
         this.canPivit = intakePivitMotor.isConnected();
         this.canSpin = intakeLeftMotor.isConnected() && intakeRightMotor.isConnected();
@@ -46,6 +47,7 @@ public class Intake extends SubsystemBase {
 
         SmartDashboard.putBoolean("Intake can Pivit", canPivit);
         SmartDashboard.putBoolean("Intake can Spin", canSpin);
+        SmartDashboard.putNumber("Pivit Position", 0);
     }
 
     @Override
@@ -53,8 +55,9 @@ public class Intake extends SubsystemBase {
         this.pivitTargetPosition = SmartDashboard.getNumber("Pivit Position", 0);
         if (this.canPivit) {
             this.pivitTargetPositionMotorPosition = this.pivitPositionToMotorPosition(this.pivitTargetPosition);
+            SmartDashboard.putNumber("ppmp", this.pivitTargetPositionMotorPosition);
             // Convert position input to rotations for the motor
-            double power = SmartDashboard.getNumber("pivit MotorPower", Constants.INTAKE_PIVIT_MOTOR_POWER);
+            double power = Constants.INTAKE_PIVIT_MOTOR_POWER;
             
             if (this.pivitCurrentPositionMotorPosition <= this.pivitTargetPositionMotorPosition - Constants.INTAKE_PIVIT_TOLERENCE_MOTOR_ROTATIONS) {
                 this.intakePivitMotor.set(power);
@@ -81,19 +84,19 @@ public class Intake extends SubsystemBase {
 
     public void startIntake() {
         if (canSpin) {
-            intakeMotors.set(0.5);
+            intakeMotors.setPower(0.5); // Updated to use setPower
         }
     }
 
     public void startIntakeWithSpeed(double speed) {
         if (canSpin) {
-            intakeMotors.set(speed);
+            intakeMotors.setPower(speed); // Updated to use setPower
         }
     }
 
     public void stopIntake() {
         if (canSpin) {
-            intakeMotors.set(0);
+            intakeMotors.setPower(0); // Updated to use setPower
         }
     }
 
@@ -188,5 +191,21 @@ public class Intake extends SubsystemBase {
         } else {
             return -1;
         }
+    }
+
+    /**
+     * Sets the power for the intake motors.
+     * @param power The power level to set.
+     */
+    public void setPower(double power) {
+        this.intakePivitMotor.set(power);
+    }
+
+    public void setIntakeRPM(double targetRPM) {
+        this.intakeTargetRPM = targetRPM;
+        double currentRPM = intakeLeftMotor.getRotorVelocity().getValueAsDouble() * 60.0;
+        double error = targetRPM - currentRPM;
+        double output = Constants.INTAKE_kP * error;
+        intakeMotors.setPower(output);
     }
 }

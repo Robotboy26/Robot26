@@ -14,6 +14,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 
 public class Hopper extends SubsystemBase {
     private final TalonFX hopperMotor = new TalonFX(Constants.HOPPER_MOTOR_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
+    private double hopperTargetRPM;
 
     public Hopper() {
         // Configure motor neutral mode
