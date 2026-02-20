@@ -200,9 +200,9 @@ public final class Constants {
     public static final double FLYWHEEL_kV = 0.11;
     public static final double FLYWHEEL_kA = 0.05;
     // ---------------- PID (Velocity) ----------------
-    public static final double FLYWHEEL_kP = 0.55;
+    public static final double FLYWHEEL_kP = 0.45;
     public static final double FLYWHEEL_kI = 0.25;
-    public static final double FLYWHEEL_kD = 0.0;   
+    public static final double FLYWHEEL_kD = 0.0;
 
     // ---------------- Motion Magic Velocity ----------------
     // These only affect ramp rate
@@ -221,6 +221,21 @@ public final class Constants {
     public static final int HOPPER_MOTOR_CAN_ID = 12; // Example CAN ID for the Kraken X60 motor
     public static final double HOPPER_MOTOR_SPEED_RPM = 1000.0; // Default speed in RPM
     public static final double HOPPER_MOTOR_POWER = 0.4;
+
+    // PID constants for Hopper
+    public static final double HOPPER_kP = 0.1;
+    public static final double HOPPER_kI = 0.0;
+    public static final double HOPPER_kD = 0.0;
+
+    // PID constants for Intake
+    public static final double INTAKE_kP = 0.1;
+    public static final double INTAKE_kI = 0.0;
+    public static final double INTAKE_kD = 0.0;
+
+    // PID constants for Shooter Infeed
+    public static final double INFEED_kP = 0.1;
+    public static final double INFEED_kI = 0.0;
+    public static final double INFEED_kD = 0.0;
 
     // What is the LCD
 	// LCD display line number constants showing class where the line is set.

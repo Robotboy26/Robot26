@@ -5,8 +5,6 @@ import static Team4450.Robot26.Constants.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import Team4450.Lib.Util;
 import Team4450.Robot26.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -17,7 +15,6 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import Team4450.Robot26.utility.LinkedMotors;
 
@@ -87,10 +84,13 @@ public class Shooter extends SubsystemBase {
     private double sd_kP, sd_kI, sd_kD;
     private double sd_kS, sd_kV, sd_kA;
 
-    private final TalonFX flywheelMotor = new TalonFX(Constants.FLYWHEEL_MOTOR_CAN_ID);
+    private final TalonFX flywheelMotor;
+
+    private double infeedTargetRPM;
 
     public Shooter(Drivebase drivebase) {
         this.drivebase = drivebase;
+        this.flywheelMotor = new TalonFX(Constants.FLYWHEEL_MOTOR_CAN_ID);
 
         this.canFlywheel = flywheelMotorTopLeft.isConnected() && flywheelMotorTopRight.isConnected() && flywheelMotorBottomLeft.isConnected() && flywheelMotorBottomRight.isConnected();
         this.canHood = hoodRollerLeft.isConnected() && hoodRollerRight.isConnected();
@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
 
         beamBreak = new DigitalInput(3);
 
-        for (int i = 0; i < flywheelMotors.size(); i++) {
+        for (int i = 0; i < flywheelMotors.getTotalMotors(); i++) {
             TalonFXConfiguration cfg = new TalonFXConfiguration();
 
             // Neutral + inversion
@@ -135,8 +135,8 @@ public class Shooter extends SubsystemBase {
             cfg.MotionMagic.MotionMagicJerk =
                 Constants.FLYWHEEL_MOTION_JERK;
 
-            if (flywheelMotors.getMotor(i) != null) {
-                flywheelMotors.getMotor(i).getConfigurator().apply(cfg);
+            if (flywheelMotors.getMotorByIndex(i) != null) {
+                flywheelMotors.getMotorByIndex(i).getConfigurator().apply(cfg);
             }
         }
 
@@ -204,7 +204,7 @@ public class Shooter extends SubsystemBase {
                 kS != sd_kS || kV != sd_kV || kA != sd_kA) {
 
 
-            for (int i = 0; i < flywheelMotors.size(); i++) {
+            for (int i = 0; i < flywheelMotors.getTotalMotors(); i++) {
                 TalonFXConfiguration cfg = new TalonFXConfiguration();
 
                 // Neutral + inversion
@@ -232,7 +232,7 @@ public class Shooter extends SubsystemBase {
                 cfg.MotionMagic.MotionMagicJerk =
                     Constants.FLYWHEEL_MOTION_JERK;
 
-                flywheelMotors.getMotor(i).getConfigurator().apply(cfg);
+                flywheelMotors.getMotorByIndex(i).getConfigurator().apply(cfg);
             }
             
             sd_kP = kP;
@@ -254,13 +254,13 @@ public class Shooter extends SubsystemBase {
                     new MotionMagicVelocityVoltage(targetRPS)
                             .withSlot(Constants.FLYWHEEL_PID_SLOT);
 
-            flywheelMotors.setControl(req, true);
+            flywheelMotors.applyControl(req, true);
         } else {
             targetRPS = 0;
             CoastOut req =
                     new CoastOut();
 
-            flywheelMotors.setControl(req, true);
+            flywheelMotors.applyControl(req, true);
         }
 
         double percent = currentRPM / maxRpm;
@@ -424,19 +424,19 @@ public class Shooter extends SubsystemBase {
 
     public void startInfeed() {
         if (canInfeed) {
-            rollerMotors.set(0.6);
+            rollerMotors.setPower(0.6);
         }
     }
 
     public void startInfeedWithSpeed(double speed) {
         if (canInfeed) {
-            rollerMotors.set(speed);
+            rollerMotors.setPower(speed);
         }
     }
 
     public void stopInfeed() {
         if (canInfeed) {
-            rollerMotors.set(0);
+            rollerMotors.setPower(0);
         }
     }
 
@@ -500,5 +500,87 @@ public class Shooter extends SubsystemBase {
 
     public double getHoodRightMotorCurrent() {
         return hoodRollerRight.getSupplyCurrent(true).getValueAsDouble();
+    }
+
+    /**
+     * Calculates the RPM for the flywheel based on the robot's pose and the hub's pose.
+     * @param robotPose The current pose of the robot (x, y, rotation).
+     * @param hubPose The pose of the hub (x, y).
+     * @param hoodAngle The constant hood angle in radians.
+     * @return The calculated RPM value.
+     */
+    public double calculateRPM(Pose2d robotPose, Pose2d hubPose, double hoodAngle) {
+        double deltaX = hubPose.getX() - robotPose.getX();
+        double deltaY = hubPose.getY() - robotPose.getY();
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        // Calculate the required velocity to reach the hub
+        double velocity = Math.sqrt((GRAVITY * distance * distance) / 
+            (2 * (distance * Math.tan(hoodAngle) - (GOAL_HEIGHT - FLYWHEEL_HEIGHT))));
+
+        // Convert velocity to RPM
+        double rpmMath = velocity * CONVERSION_FACTOR_MPS_TO_RPM;
+        return rpmMath;
+    }
+
+    /**
+     * Interpolates RPM values based on predefined data points.
+     * @param distance The distance between the robot and the hub.
+     * @return The interpolated RPM value.
+     */
+    public double interpolateRPM(double distance) {
+        // Example interpolation table (distance in meters, RPM values)
+        double[][] rpmTable = {
+            {1.0, 2000},
+            {2.0, 2500},
+            {3.0, 3000},
+            {4.0, 3500},
+            {5.0, 4000}
+        };
+
+        // Linear interpolation logic
+        for (int i = 0; i < rpmTable.length - 1; i++) {
+            if (distance >= rpmTable[i][0] && distance <= rpmTable[i + 1][0]) {
+                double x1 = rpmTable[i][0];
+                double y1 = rpmTable[i][1];
+                double x2 = rpmTable[i + 1][0];
+                double y2 = rpmTable[i + 1][1];
+
+                // Linear interpolation formula
+                return y1 + (distance - x1) * (y2 - y1) / (x2 - x1);
+            }
+        }
+
+        // Return the closest value if out of bounds
+        if (distance < rpmTable[0][0]) return rpmTable[0][1];
+        if (distance > rpmTable[rpmTable.length - 1][0]) return rpmTable[rpmTable.length - 1][1];
+
+        return 0; // Default case (should not occur)
+    }
+
+    /**
+     * Calculates the final RPM by averaging RPMmath and interpolated RPM.
+     * @param robotPose The current pose of the robot (x, y, rotation).
+     * @param hubPose The pose of the hub (x, y).
+     * @param hoodAngle The constant hood angle in radians.
+     * @return The final RPM value.
+     */
+    public double calculateFinalRPM(Pose2d robotPose, Pose2d hubPose, double hoodAngle) {
+        double deltaX = hubPose.getX() - robotPose.getX();
+        double deltaY = hubPose.getY() - robotPose.getY();
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        double rpmMath = calculateRPM(robotPose, hubPose, hoodAngle);
+        double interpolatedRPM = interpolateRPM(distance);
+
+        return (rpmMath + interpolatedRPM) / 2.0;
+    }
+
+    public void setInfeedRPM(double targetRPM) {
+        this.infeedTargetRPM = targetRPM;
+        double currentRPM = rollerLeft.getRotorVelocity(true).getValueAsDouble() * 60.0;
+        double error = targetRPM - currentRPM;
+        double output = Constants.INFEED_kP * error;
+        rollerMotors.setPower(output);
     }
 }

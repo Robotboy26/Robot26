@@ -5,7 +5,6 @@ import Team4450.Robot26.utility.LinkedMotors;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 
 import com.ctre.phoenix6.CANBus;
 
@@ -31,6 +30,8 @@ public class Intake extends SubsystemBase {
     private double pivitCurrentPosition;
     // The format of this value is in rotations of the pivit motor
     private double pivitCurrentPositionMotorPosition;
+
+    private double intakeTargetRPM;
 
     public Intake() {
         this.canPivit = intakePivitMotor.isConnected();
@@ -81,19 +82,19 @@ public class Intake extends SubsystemBase {
 
     public void startIntake() {
         if (canSpin) {
-            intakeMotors.set(0.5);
+            intakeMotors.setPower(0.5); // Updated to use setPower
         }
     }
 
     public void startIntakeWithSpeed(double speed) {
         if (canSpin) {
-            intakeMotors.set(speed);
+            intakeMotors.setPower(speed); // Updated to use setPower
         }
     }
 
     public void stopIntake() {
         if (canSpin) {
-            intakeMotors.set(0);
+            intakeMotors.setPower(0); // Updated to use setPower
         }
     }
 
@@ -188,5 +189,21 @@ public class Intake extends SubsystemBase {
         } else {
             return -1;
         }
+    }
+
+    /**
+     * Sets the power for the intake motors.
+     * @param power The power level to set.
+     */
+    public void setPower(double power) {
+        this.intakePivitMotor.set(power);
+    }
+
+    public void setIntakeRPM(double targetRPM) {
+        this.intakeTargetRPM = targetRPM;
+        double currentRPM = intakeLeftMotor.getRotorVelocity().getValueAsDouble() * 60.0;
+        double error = targetRPM - currentRPM;
+        double output = Constants.INTAKE_kP * error;
+        intakeMotors.setPower(output);
     }
 }
