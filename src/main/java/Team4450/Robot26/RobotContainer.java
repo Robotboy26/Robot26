@@ -9,6 +9,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import Team4450.Robot26.commands.DriveCommand;
 import Team4450.Robot26.commands.StartIntake;
+import Team4450.Robot26.commands.StopIntake;
 import Team4450.Robot26.subsystems.Candle;
 import Team4450.Robot26.subsystems.Intake;
 import Team4450.Robot26.subsystems.Drivebase;
@@ -191,6 +192,7 @@ public class RobotContainer {
     // Pathplanner NamedCommands
 
     NamedCommands.registerCommand("runIntake", new StartIntake(intake));
+    NamedCommands.registerCommand("stopIntake", new StopIntake(intake));
 
     // Set the default drive command. This command will be scheduled automatically
     // to run

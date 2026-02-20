@@ -2,6 +2,7 @@ package Team4450.Robot26.commands;
 
 import Team4450.Robot26.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class StopIntake extends Command {
   private Intake intake;
@@ -9,7 +10,7 @@ public class StopIntake extends Command {
   private State state;
 
   private static enum State {
-    STOPPING, INTAKE, END
+    STOPPING, STOPPED, END
   };
 
   public StopIntake(Intake intake) {
@@ -22,7 +23,9 @@ public class StopIntake extends Command {
   }
 
   public void execute() {
+    state = State.STOPPED;
     intake.stopIntake();
+    end();
   }
 
   public boolean isFinished() {
@@ -31,6 +34,7 @@ public class StopIntake extends Command {
   }
 
   public void end() {
+    SmartDashboard.putString("Intake Stopped?", "Yup");
 
   }
 }
