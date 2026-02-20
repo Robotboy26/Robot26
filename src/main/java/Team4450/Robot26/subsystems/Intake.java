@@ -32,6 +32,7 @@ public class Intake extends SubsystemBase {
     private double pivitCurrentPositionMotorPosition;
 
     private double intakeTargetRPM;
+    private boolean runIntake;
 
     public Intake() {
         this.canPivit = intakePivitMotor.isConnected();
@@ -48,6 +49,8 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putBoolean("Intake can Pivit", canPivit);
         SmartDashboard.putBoolean("Intake can Spin", canSpin);
         SmartDashboard.putNumber("Pivit Position", 0);
+
+        SmartDashboard.putNumber("Intake Target RPM", 1200);
     }
 
     @Override
@@ -70,6 +73,12 @@ public class Intake extends SubsystemBase {
             this.pivitCurrentPositionMotorPosition = this.getPivitPosition();
             this.pivitCurrentPosition = this.motorPositionToPivitPosition(this.pivitCurrentPositionMotorPosition);
             SmartDashboard.putNumber("Pivit current position", this.pivitCurrentPosition);
+
+            SmartDashboard.putNumber("Intake RPM", getIntakeRPM());
+
+            if (this.runIntake) {
+                setIntakeRPM(SmartDashboard.getNumber("Intake Target RPM", 1200));
+            }
         }
     }
 
@@ -84,7 +93,7 @@ public class Intake extends SubsystemBase {
 
     public void startIntake() {
         if (canSpin) {
-            intakeMotors.setPower(0.5); // Updated to use setPower
+            this.runIntake = true;
         }
     }
 
@@ -96,6 +105,7 @@ public class Intake extends SubsystemBase {
 
     public void stopIntake() {
         if (canSpin) {
+            this.runIntake = false;
             intakeMotors.setPower(0); // Updated to use setPower
         }
     }
@@ -203,10 +213,10 @@ public class Intake extends SubsystemBase {
 
     public void setIntakeRPM(double targetRPM) {
         this.intakeTargetRPM = targetRPM;
-        double currentRPM = intakeLeftMotor.getRotorVelocity(true).getValueAsDouble() * 60.0;
+        double currentRPM = getIntakeRPM();
         double error = targetRPM - currentRPM;
         double adjustment = Constants.INTAKE_kP * error; // Adjustment to approach target
-        double newRPM = currentRPM + adjustment; // Adjust current RPM towards target
+        double newRPM = targetRPM + adjustment; // Adjust current RPM towards target
         intakeMotors.setPower(newRPM / Constants.INTAKE_MAX_THEORETICAL_RPM); // Normalize to motor power
     }
 }

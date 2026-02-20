@@ -44,6 +44,8 @@ public class Shooter extends SubsystemBase {
     private boolean canHood;
     private boolean canInfeed;
 
+    private boolean runInfeed;
+
     // This value is expected to be between 0 and 1
     private double hoodTargetAngle;
     // The format of this value is in rotations of the pivit motor
@@ -163,6 +165,7 @@ public class Shooter extends SubsystemBase {
         sdInit = true;
 
         SmartDashboard.putNumber("Hood Power", 0.05);
+        SmartDashboard.putNumber("Infeed Target RPM", 1200);
     }
 
     @Override
@@ -272,6 +275,12 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber(
                 "Flywheel/PercentOutApprox",
                 percent);
+
+        SmartDashboard.putNumber("Infeed RPM", getInfeedRPM());
+        
+        if (this.runInfeed) {
+            setInfeedRPM(SmartDashboard.getNumber("Infeed Target RPM", 1200));
+        }
     }
 
     public void updateLaunchValues(boolean interpolate){
@@ -424,7 +433,7 @@ public class Shooter extends SubsystemBase {
 
     public void startInfeed() {
         if (canInfeed) {
-            rollerMotors.setPower(0.6);
+            this.runInfeed = true;
         }
     }
 
@@ -436,15 +445,16 @@ public class Shooter extends SubsystemBase {
 
     public void stopInfeed() {
         if (canInfeed) {
+            this.runInfeed = false;
             rollerMotors.setPower(0);
         }
     }
 
-    public double getTransferRPM() {
+    public double getInfeedRPM() {
         return rollerLeft.getRotorVelocity(true).getValueAsDouble() * 60;
     }
 
-    public double getTransferCurrent() {
+    public double getInfeedCurrent() {
         return rollerLeft.getSupplyCurrent(true).getValueAsDouble() + rollerRight.getSupplyCurrent(true).getValueAsDouble();
     }
 
@@ -578,10 +588,10 @@ public class Shooter extends SubsystemBase {
 
     public void setInfeedRPM(double targetRPM) {
         this.infeedTargetRPM = targetRPM;
-        double currentRPM = rollerLeft.getRotorVelocity(true).getValueAsDouble() * 60.0;
+        double currentRPM = getInfeedRPM();
         double error = targetRPM - currentRPM;
         double adjustment = Constants.INFEED_kP * error; // Adjustment to approach target
-        double newRPM = currentRPM + adjustment; // Adjust current RPM towards target
+        double newRPM = targetRPM + adjustment; // Adjust current RPM towards target
         rollerMotors.setPower(newRPM / Constants.FLYWHEEL_MAX_THEORETICAL_RPM); // Normalize to motor power
     }
 }
