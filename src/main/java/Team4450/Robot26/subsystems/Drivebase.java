@@ -139,6 +139,11 @@ public class Drivebase extends SubsystemBase {
         if (robotPose != null) {
             SmartDashboard.putString("Robot pose", robotPose.toString());
         }
+        SmartDashboard.putNumber("DriveBase Current", getDrivetrainCurrent());
+    }
+
+    public double getDrivetrainCurrent(){
+        return sdsDrivebase.getModule(0).getDriveMotor().getSupplyCurrent().getValueAsDouble() + sdsDrivebase.getModule(0).getSteerMotor().getSupplyCurrent().getValueAsDouble() + sdsDrivebase.getModule(1).getDriveMotor().getSupplyCurrent().getValueAsDouble() + sdsDrivebase.getModule(1).getSteerMotor().getSupplyCurrent().getValueAsDouble() + sdsDrivebase.getModule(2).getDriveMotor().getSupplyCurrent().getValueAsDouble() + sdsDrivebase.getModule(2).getSteerMotor().getSupplyCurrent().getValueAsDouble() + sdsDrivebase.getModule(3).getDriveMotor().getSupplyCurrent().getValueAsDouble() + sdsDrivebase.getModule(3).getSteerMotor().getSupplyCurrent().getValueAsDouble();
     }
 
     public void drive(double throttle, double strafe, double rotation) {

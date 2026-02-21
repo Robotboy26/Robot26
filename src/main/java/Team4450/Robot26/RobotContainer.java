@@ -401,8 +401,8 @@ public class RobotContainer {
 		 	.onTrue(new InstantCommand(shooter::hoodDown))
             .onFalse(new InstantCommand(shooter::stopHood));
 
-		new Trigger(() -> driverController.getYButton())
-			.onTrue(new InstantCommand(drivebase::driveToOrigin));
+	// 	new Trigger(() -> driverController.getYButton())
+	// 		.onTrue(new InstantCommand(drivebase::driveToOrigin));
 	}
 
   /**
