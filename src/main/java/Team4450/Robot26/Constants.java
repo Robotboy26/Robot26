@@ -223,12 +223,12 @@ public final class Constants {
     public static final double HOPPER_MOTOR_POWER = 1;
 
     // PID constants for Intake
-    public static final double INTAKE_kP = 0.1;
+    public static final double INTAKE_kP = 0.8;
     public static final double INTAKE_kI = 0.0;
     public static final double INTAKE_kD = 0.0;
 
     // PID constants for Shooter Infeed
-    public static final double INFEED_kP = 0.1;
+    public static final double INFEED_kP = 0.8;
     public static final double INFEED_kI = 0.0;
     public static final double INFEED_kD = 0.0;
 
