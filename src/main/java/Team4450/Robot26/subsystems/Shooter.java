@@ -49,13 +49,14 @@ public class Shooter extends SubsystemBase {
 
     private boolean runInfeed;
 
-    // This value is expected to be between 0 and 1
+    // This value is expected to be between 0 and 2PI
     private double hoodTargetAngle;
-    // The format of this value is in rotations of the pivit motor
+    // The format of this value is in rotations of the hood motor
     private double hoodTargetAngleMotorPosition;
-
-    // This value is expected to be between 0 and 1
+    // This value is expected to be between 0 and 2PI
     private double hoodCurrentAngle;
+    // This value is the starting rotaions of the hood motor
+    private double hoodRotationOffset;
     // The format of this value is in rotations of the pivit motor
     private double hoodCurrentAngleMotorPosition;
     // Current RPM of the flywheel
@@ -104,6 +105,7 @@ public class Shooter extends SubsystemBase {
         this.flywheelCurrentRPM = 0;
         this.flywheelTargetRPM = 0;
         this.flywheelError = 0;
+        this.hoodRotationOffset = hoodRollerLeft.getPosition().getValueAsDouble();
 
         beamBreak = new DigitalInput(Constants.SHOOTER_UPPER_BEAM_BREAK_PORT);
 
@@ -185,6 +187,8 @@ public class Shooter extends SubsystemBase {
         //Update the beam break sensors
         SmartDashboard.putBoolean("Beam Break", beamBreak.get());
 
+        hoodCurrentAngleMotorPosition = hoodRollerLeft.getPosition().getValueAsDouble();
+        hoodCurrentAngle = (hoodCurrentAngleMotorPosition - hoodRotationOffset) * HOOD_GEAR_RATIO * 360 * Math.PI/180;
 
         double measuredRps =
                 flywheelMotorTopLeft.getRotorVelocity()
@@ -516,6 +520,11 @@ public class Shooter extends SubsystemBase {
     public void setHoodMotorPosition(double position) {
         hoodTargetAngleMotorPosition = position;
     }
+
+    public double getHoodAngleRadians(){
+        return hoodCurrentAngle;
+    }
+
     public double getHoodCurrent() {
         return hoodRollerLeft.getSupplyCurrent(true).getValueAsDouble() + hoodRollerRight.getSupplyCurrent(true).getValueAsDouble();
     }
