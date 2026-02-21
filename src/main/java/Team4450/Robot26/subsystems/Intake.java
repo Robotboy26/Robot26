@@ -1,10 +1,15 @@
 package Team4450.Robot26.subsystems;
 
 import Team4450.Robot26.Constants;
-import Team4450.Robot26.utility.LinkedMotors;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import com.ctre.phoenix6.CANBus;
 
@@ -13,10 +18,9 @@ public class Intake extends SubsystemBase {
     // This motor is a Kraken x60
     private final TalonFX intakePivitMotor = new TalonFX(Constants.INTAKE_MOTOR_PIVIT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x44
-    private final TalonFX intakeLeftMotor = new TalonFX(Constants.INTAKE_MOTOR_LEFT_CAN_ID);
+    private final TalonFX intakeMotorLeft = new TalonFX(Constants.INTAKE_MOTOR_LEFT_CAN_ID);
     // This motor is a Kraken x44
-    private final TalonFX intakeRightMotor = new TalonFX(Constants.INTAKE_MOTOR_RIGHT_CAN_ID);
-    private final LinkedMotors intakeMotors = new LinkedMotors(intakeLeftMotor, intakeRightMotor);
+    private final TalonFX intakeMotorRight = new TalonFX(Constants.INTAKE_MOTOR_RIGHT_CAN_ID);
 
     private boolean canPivit;
     private boolean canSpin;
@@ -31,11 +35,11 @@ public class Intake extends SubsystemBase {
     // The format of this value is in rotations of the pivit motor
     private double pivitCurrentPositionMotorPosition;
 
-    private double intakeTargetRPM;
+    private boolean runIntake;
 
     public Intake() {
         this.canPivit = intakePivitMotor.isConnected();
-        this.canSpin = intakeLeftMotor.isConnected() && intakeRightMotor.isConnected();
+        this.canSpin = intakeMotorLeft.isConnected() && intakeMotorRight.isConnected();
 
         // Assume the pivit starting position is 0
         this.pivitCurrentPosition = 0;
@@ -45,9 +49,21 @@ public class Intake extends SubsystemBase {
             this.intakePivitMotor.setPosition(0);
         }
 
+        TalonFXConfiguration intakeCFG = new TalonFXConfiguration();
+
+        // Neutral + inversion
+        intakeCFG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        intakeCFG.CurrentLimits = new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.SHOOTER_INFEED_CURRENT_LIMIT);
+        intakeCFG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        this.intakeMotorLeft.getConfigurator().apply(intakeCFG);
+        this.intakeMotorRight.getConfigurator().apply(intakeCFG);
+
         SmartDashboard.putBoolean("Intake can Pivit", canPivit);
         SmartDashboard.putBoolean("Intake can Spin", canSpin);
         SmartDashboard.putNumber("Pivit Position", 0);
+
+        SmartDashboard.putNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM);
     }
 
     @Override
@@ -70,6 +86,12 @@ public class Intake extends SubsystemBase {
             this.pivitCurrentPositionMotorPosition = this.getPivitPosition();
             this.pivitCurrentPosition = this.motorPositionToPivitPosition(this.pivitCurrentPositionMotorPosition);
             SmartDashboard.putNumber("Pivit current position", this.pivitCurrentPosition);
+
+            SmartDashboard.putNumber("Intake RPM", getIntakeRPM());
+
+            if (this.runIntake) {
+                setIntakeRPM(SmartDashboard.getNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM));
+            }
         }
     }
 
@@ -84,25 +106,35 @@ public class Intake extends SubsystemBase {
 
     public void startIntake() {
         if (canSpin) {
-            intakeMotors.setPower(0.5); // Updated to use setPower
+            this.runIntake = true;
         }
     }
 
-    public void startIntakeWithSpeed(double speed) {
+    public void testIntake() {
         if (canSpin) {
-            intakeMotors.setPower(speed); // Updated to use setPower
+            this.intakeMotorLeft.set(0.05);
+            this.intakeMotorRight.setControl(new Follower(this.intakeMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
+        }
+    }
+
+    // TODO: FIX for the start Intake command for autos
+    public void startIntakeSlow() {
+        if (canSpin) {
+            // intakeMotors.setPower(0.1);
         }
     }
 
     public void stopIntake() {
         if (canSpin) {
-            intakeMotors.setPower(0); // Updated to use setPower
+            this.runIntake = false;
+            this.intakeMotorLeft.set(0);
+            this.intakeMotorRight.setControl(new Follower(this.intakeMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
         }
     }
 
     public double getIntakeRPM() {
         if (canSpin) {
-            return intakeLeftMotor.getRotorVelocity(true).getValueAsDouble() * 60;
+            return intakeMotorLeft.getRotorVelocity(true).getValueAsDouble() * 60;
         } else {
             return -1;
         }
@@ -110,7 +142,7 @@ public class Intake extends SubsystemBase {
 
     public double getIntakeCurrent() {
         if (canSpin) {
-            return intakeLeftMotor.getSupplyCurrent(true).getValueAsDouble() + intakeRightMotor.getSupplyCurrent(true).getValueAsDouble();
+            return intakeMotorLeft.getSupplyCurrent(true).getValueAsDouble() + intakeMotorRight.getSupplyCurrent(true).getValueAsDouble();
         } else {
             return -1;
         }
@@ -118,7 +150,7 @@ public class Intake extends SubsystemBase {
 
     public double getIntakeLeftMotorCurrent() {
         if (canSpin) {
-            return intakeLeftMotor.getSupplyCurrent(true).getValueAsDouble();
+            return intakeMotorLeft.getSupplyCurrent(true).getValueAsDouble();
         } else {
             return -1;
         }
@@ -126,7 +158,7 @@ public class Intake extends SubsystemBase {
 
     public double getIntakeRightMotorCurrent() {
         if (canSpin) {
-            return intakeRightMotor.getSupplyCurrent(true).getValueAsDouble();
+            return intakeMotorRight.getSupplyCurrent(true).getValueAsDouble();
         } else {
             return -1;
         }
@@ -134,7 +166,7 @@ public class Intake extends SubsystemBase {
 
     public double getIntakeVoltage() {
         if (canSpin) {
-            return intakeLeftMotor.getSupplyVoltage(true).getValueAsDouble() + intakeRightMotor.getSupplyVoltage(true).getValueAsDouble();
+            return intakeMotorLeft.getSupplyVoltage(true).getValueAsDouble() + intakeMotorRight.getSupplyVoltage(true).getValueAsDouble();
         } else {
             return -1;
         }
@@ -142,7 +174,7 @@ public class Intake extends SubsystemBase {
 
     public double getIntakeLeftMotorVoltage() {
         if (canSpin) {
-            return intakeLeftMotor.getSupplyVoltage(true).getValueAsDouble();
+            return intakeMotorLeft.getSupplyVoltage(true).getValueAsDouble();
         } else {
             return -1;
         }
@@ -150,7 +182,7 @@ public class Intake extends SubsystemBase {
 
     public double getIntakeRightMotorVoltage() {
         if (canSpin) {
-            return intakeRightMotor.getSupplyVoltage(true).getValueAsDouble();
+            return intakeMotorRight.getSupplyVoltage(true).getValueAsDouble();
         } else {
             return -1;
         }
@@ -202,11 +234,11 @@ public class Intake extends SubsystemBase {
     }
 
     public void setIntakeRPM(double targetRPM) {
-        this.intakeTargetRPM = targetRPM;
-        double currentRPM = intakeLeftMotor.getRotorVelocity(true).getValueAsDouble() * 60.0;
+        double currentRPM = getIntakeRPM();
         double error = targetRPM - currentRPM;
         double adjustment = Constants.INTAKE_kP * error; // Adjustment to approach target
-        double newRPM = currentRPM + adjustment; // Adjust current RPM towards target
-        intakeMotors.setPower(newRPM / Constants.INTAKE_MAX_THEORETICAL_RPM); // Normalize to motor power
+        double newRPM = targetRPM + adjustment; // Adjust current RPM towards target
+        this.intakeMotorLeft.set(newRPM / Constants.INTAKE_MAX_THEORETICAL_RPM);
+        this.intakeMotorRight.setControl(new Follower(this.intakeMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 }

@@ -61,13 +61,17 @@ public final class Constants {
     public static int FLYWHEEL_MOTOR_BOTTOM_RIGHT_CAN_ID = 16;
     public static int FLYWHEEL_MOTOR_BOTTOM_LEFT_CAN_ID = 15;
 
-    public static boolean[] FLYWHEEL_MOTOR_CLOCKWISE = {false, true, false, true};
-
     public static int HOOD_MOTOR_LEFT_CAN_ID = 17;
     public static int HOOD_MOTOR_RIGHT_CAN_ID = 18;
 
-    public static int ROLLER_MOTOR_LEFT_CAN_ID = 19;
-    public static int ROLLER_MOTOR_RIGHT_CAN_ID = 22;
+    public static int INFEED_MOTOR_LEFT_CAN_ID = 19;
+    public static int INFEED_MOTOR_RIGHT_CAN_ID = 22;
+
+    public static int SHOOTER_UPPER_BEAM_BREAK_PORT = 3;
+
+    public static int SHOOTER_FLYWHEEL_CURRENT_LIMIT = 40;
+    public static int SHOOTER_INFEED_CURRENT_LIMIT = 20;
+    public static int INTAKE_CURRENT_LIMIT = 20;
 
     public static double HOOD_TOLERENCE_MOTOR_ROTATIONS = 0.02;
     public static double HOOD_TOLERENCE_DEGREES = 5;
@@ -222,15 +226,13 @@ public final class Constants {
     public static final double HOPPER_MOTOR_SPEED_RPM = 1000.0; // Default speed in RPM
     public static final double HOPPER_MOTOR_POWER = 1;
 
+    public static final int INTAKE_DEFAULT_TARGET_RPM = 3600;
     // PID constants for Intake
-    public static final double INTAKE_kP = 0.1;
-    public static final double INTAKE_kI = 0.0;
-    public static final double INTAKE_kD = 0.0;
+    public static final double INTAKE_kP = 0.4;
 
+    public static final int INFEED_DEFAULT_TARGET_RPM = 4000;
     // PID constants for Shooter Infeed
-    public static final double INFEED_kP = 0.1;
-    public static final double INFEED_kI = 0.0;
-    public static final double INFEED_kD = 0.0;
+    public static final double INFEED_kP = 0.4;
 
     // What is the LCD
 	// LCD display line number constants showing class where the line is set.

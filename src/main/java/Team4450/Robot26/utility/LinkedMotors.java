@@ -17,31 +17,6 @@ public class LinkedMotors {
     }
 
     /**
-     * Sets the power for all linked motors.
-     * @param power The power level to set.
-     */
-    public void setPower(double power) {
-        this.masterMotor.set(power);
-        for (TalonFX slaveMotor : this.slaveMotors) {
-            slaveMotor.set(power);
-        }
-    }
-
-    /**
-     * Applies a control request to all linked motors.
-     * @param req The control request to apply.
-     * @param shooter Whether the motors are part of the shooter system.
-     */
-    public void applyControl(ControlRequest req, boolean shooter) {
-        this.masterMotor.setControl(req);
-        if (shooter) {
-            this.slaveMotors.get(0).setControl(new Follower(this.masterMotor.getDeviceID(), MotorAlignmentValue.Opposed));
-            this.slaveMotors.get(1).setControl(new Follower(this.masterMotor.getDeviceID(), MotorAlignmentValue.Aligned));
-            this.slaveMotors.get(2).setControl(new Follower(this.masterMotor.getDeviceID(), MotorAlignmentValue.Opposed));
-        }
-    }
-
-    /**
      * Gets the total number of linked motors.
      * @return The total number of motors.
      */

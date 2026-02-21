@@ -12,9 +12,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import Team4450.Robot26.utility.LinkedMotors;
 
@@ -33,16 +36,18 @@ public class Shooter extends SubsystemBase {
     // This motor is a Kraken x60
     private final TalonFX hoodRollerRight = new TalonFX(Constants.HOOD_MOTOR_RIGHT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x44
-    private final TalonFX rollerLeft = new TalonFX(Constants.ROLLER_MOTOR_LEFT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
+    private final TalonFX infeedMotorLeft = new TalonFX(Constants.INFEED_MOTOR_LEFT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x44
-    private final TalonFX rollerRight = new TalonFX(Constants.ROLLER_MOTOR_RIGHT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
+    private final TalonFX infeedMotorRight = new TalonFX(Constants.INFEED_MOTOR_RIGHT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
 
     // Link the two roller motors for use when setting the power
-    private final LinkedMotors rollerMotors = new LinkedMotors(rollerLeft, rollerRight);
+    private final LinkedMotors infeedMotors = new LinkedMotors(infeedMotorLeft, infeedMotorRight);
 
     private boolean canFlywheel;
     private boolean canHood;
     private boolean canInfeed;
+
+    private boolean runInfeed;
 
     // This value is expected to be between 0 and 1
     private double hoodTargetAngle;
@@ -84,17 +89,12 @@ public class Shooter extends SubsystemBase {
     private double sd_kP, sd_kI, sd_kD;
     private double sd_kS, sd_kV, sd_kA;
 
-    private final TalonFX flywheelMotor;
-
-    private double infeedTargetRPM;
-
     public Shooter(Drivebase drivebase) {
         this.drivebase = drivebase;
-        this.flywheelMotor = new TalonFX(Constants.FLYWHEEL_MOTOR_CAN_ID);
 
         this.canFlywheel = flywheelMotorTopLeft.isConnected() && flywheelMotorTopRight.isConnected() && flywheelMotorBottomLeft.isConnected() && flywheelMotorBottomRight.isConnected();
         this.canHood = hoodRollerLeft.isConnected() && hoodRollerRight.isConnected();
-        this.canInfeed = rollerLeft.isConnected() && rollerRight.isConnected();
+        this.canInfeed = infeedMotorLeft.isConnected() && infeedMotorRight.isConnected();
 
         this.hoodTargetAngle = 0;
         this.hoodTargetAngleMotorPosition = 0;
@@ -105,7 +105,7 @@ public class Shooter extends SubsystemBase {
         this.flywheelTargetRPM = 0;
         this.flywheelError = 0;
 
-        beamBreak = new DigitalInput(3);
+        beamBreak = new DigitalInput(Constants.SHOOTER_UPPER_BEAM_BREAK_PORT);
 
         for (int i = 0; i < flywheelMotors.getTotalMotors(); i++) {
             TalonFXConfiguration cfg = new TalonFXConfiguration();
@@ -113,11 +113,9 @@ public class Shooter extends SubsystemBase {
             // Neutral + inversion
             cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-            if (Constants.FLYWHEEL_MOTOR_CLOCKWISE[i]) {
-                cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-            } else {
-                cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-            }
+            cfg.CurrentLimits = new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.SHOOTER_FLYWHEEL_CURRENT_LIMIT);
+
+            cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
             // Slot 0 PID
             cfg.Slot0.kP = Constants.FLYWHEEL_kP;
@@ -139,6 +137,16 @@ public class Shooter extends SubsystemBase {
                 flywheelMotors.getMotorByIndex(i).getConfigurator().apply(cfg);
             }
         }
+
+        TalonFXConfiguration infeedCFG = new TalonFXConfiguration();
+
+        // Neutral + inversion
+        infeedCFG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        infeedCFG.CurrentLimits = new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.SHOOTER_INFEED_CURRENT_LIMIT);
+        infeedCFG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        this.infeedMotorLeft.getConfigurator().apply(infeedCFG);
+        this.infeedMotorRight.getConfigurator().apply(infeedCFG);
 
         SmartDashboard.putNumber("Hood Target Position", 0);
 
@@ -163,6 +171,8 @@ public class Shooter extends SubsystemBase {
         sdInit = true;
 
         SmartDashboard.putNumber("Hood Power", 0.05);
+        SmartDashboard.putNumber("Infeed Target RPM", Constants.INFEED_DEFAULT_TARGET_RPM);
+        SmartDashboard.putNumber("Infeed Measured RPM", getInfeedRPM());
     }
 
     @Override
@@ -207,14 +217,12 @@ public class Shooter extends SubsystemBase {
             for (int i = 0; i < flywheelMotors.getTotalMotors(); i++) {
                 TalonFXConfiguration cfg = new TalonFXConfiguration();
 
+                cfg.CurrentLimits = new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.SHOOTER_FLYWHEEL_CURRENT_LIMIT);
+
                 // Neutral + inversion
                 cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-                if (Constants.FLYWHEEL_MOTOR_CLOCKWISE[i]) {
-                    cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-                } else {
-                    cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-                }
+                cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
                 // Slot 0 PID
                 cfg.Slot0.kP = Constants.FLYWHEEL_kP;
@@ -254,13 +262,19 @@ public class Shooter extends SubsystemBase {
                     new MotionMagicVelocityVoltage(targetRPS)
                             .withSlot(Constants.FLYWHEEL_PID_SLOT);
 
-            flywheelMotors.applyControl(req, true);
+            this.flywheelMotorTopLeft.setControl(req);
+            this.flywheelMotorTopRight.setControl(new Follower(flywheelMotorTopLeft.getDeviceID(), MotorAlignmentValue.Opposed));
+            this.flywheelMotorBottomLeft.setControl(new Follower(flywheelMotorTopLeft.getDeviceID(), MotorAlignmentValue.Aligned));
+            this.flywheelMotorBottomRight.setControl(new Follower(flywheelMotorTopLeft.getDeviceID(), MotorAlignmentValue.Opposed));
         } else {
             targetRPS = 0;
             CoastOut req =
                     new CoastOut();
 
-            flywheelMotors.applyControl(req, true);
+            this.flywheelMotorTopLeft.setControl(req);
+            this.flywheelMotorTopRight.setControl(new Follower(flywheelMotorTopLeft.getDeviceID(), MotorAlignmentValue.Opposed));
+            this.flywheelMotorBottomLeft.setControl(new Follower(flywheelMotorTopLeft.getDeviceID(), MotorAlignmentValue.Aligned));
+            this.flywheelMotorBottomRight.setControl(new Follower(flywheelMotorTopLeft.getDeviceID(), MotorAlignmentValue.Opposed));
         }
 
         double percent = currentRPM / maxRpm;
@@ -272,6 +286,14 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber(
                 "Flywheel/PercentOutApprox",
                 percent);
+
+        SmartDashboard.putNumber("Infeed RPM", getInfeedRPM());
+        
+        if (this.runInfeed) {
+            setInfeedRPM(SmartDashboard.getNumber("Infeed Target RPM", Constants.INFEED_DEFAULT_TARGET_RPM));
+        }
+
+        SmartDashboard.putNumber("Flywheel Current Draw", getFlywheelCurrent());
     }
 
     public void updateLaunchValues(boolean interpolate){
@@ -424,36 +446,39 @@ public class Shooter extends SubsystemBase {
 
     public void startInfeed() {
         if (canInfeed) {
-            rollerMotors.setPower(0.6);
+            this.runInfeed = true;
         }
     }
 
-    public void startInfeedWithSpeed(double speed) {
+    public void testInfeed() {
         if (canInfeed) {
-            rollerMotors.setPower(speed);
+            this.infeedMotorLeft.set(0.05);
+            this.infeedMotorRight.setControl(new Follower(this.infeedMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
         }
     }
 
     public void stopInfeed() {
         if (canInfeed) {
-            rollerMotors.setPower(0);
+            this.runInfeed = false;
+            this.infeedMotorLeft.set(0);
+            this.infeedMotorRight.setControl(new Follower(this.infeedMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
         }
     }
 
-    public double getTransferRPM() {
-        return rollerLeft.getRotorVelocity(true).getValueAsDouble() * 60;
+    public double getInfeedRPM() {
+        return infeedMotorLeft.getRotorVelocity(true).getValueAsDouble() * 60;
     }
 
-    public double getTransferCurrent() {
-        return rollerLeft.getSupplyCurrent(true).getValueAsDouble() + rollerRight.getSupplyCurrent(true).getValueAsDouble();
+    public double getInfeedCurrent() {
+        return infeedMotorLeft.getSupplyCurrent(true).getValueAsDouble() + infeedMotorRight.getSupplyCurrent(true).getValueAsDouble();
     }
 
     public double getTransferLeftMotorCurrent() {
-        return rollerLeft.getSupplyCurrent(true).getValueAsDouble();
+        return infeedMotorLeft.getSupplyCurrent(true).getValueAsDouble();
     }
 
     public double getTransferRightMotorCurrent() {
-        return rollerRight.getSupplyCurrent(true).getValueAsDouble();
+        return infeedMotorRight.getSupplyCurrent(true).getValueAsDouble();
     }
 
     public void setHoodPower(double power){
@@ -577,11 +602,11 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setInfeedRPM(double targetRPM) {
-        this.infeedTargetRPM = targetRPM;
-        double currentRPM = rollerLeft.getRotorVelocity(true).getValueAsDouble() * 60.0;
+        double currentRPM = getInfeedRPM();
         double error = targetRPM - currentRPM;
         double adjustment = Constants.INFEED_kP * error; // Adjustment to approach target
-        double newRPM = currentRPM + adjustment; // Adjust current RPM towards target
-        rollerMotors.setPower(newRPM / Constants.FLYWHEEL_MAX_THEORETICAL_RPM); // Normalize to motor power
+        double newRPM = targetRPM + adjustment; // Adjust current RPM towards target
+        this.infeedMotorLeft.set(newRPM / Constants.FLYWHEEL_MAX_THEORETICAL_RPM);
+        this.infeedMotorRight.setControl(new Follower(this.infeedMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 }
