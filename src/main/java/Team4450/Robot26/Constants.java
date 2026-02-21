@@ -72,6 +72,7 @@ public final class Constants {
     public static int SHOOTER_FLYWHEEL_CURRENT_LIMIT = 40;
     public static int SHOOTER_INFEED_CURRENT_LIMIT = 20;
     public static int INTAKE_CURRENT_LIMIT = 20;
+    public static int HOPPER_CURRENT_LIMIT = 20;
 
     public static double HOOD_TOLERENCE_MOTOR_ROTATIONS = 0.02;
     public static double HOOD_TOLERENCE_DEGREES = 5;
@@ -226,7 +227,7 @@ public final class Constants {
     public static final double HOPPER_MOTOR_SPEED_RPM = 1000.0; // Default speed in RPM
     public static final double HOPPER_MOTOR_POWER = 1;
 
-    public static final int INTAKE_DEFAULT_TARGET_RPM = 3600;
+    public static final int INTAKE_DEFAULT_TARGET_RPM = 3000;
     // PID constants for Intake
     public static final double INTAKE_kP = 0.4;
 
