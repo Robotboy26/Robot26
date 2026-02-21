@@ -69,6 +69,8 @@ public final class Constants {
     public static int ROLLER_MOTOR_LEFT_CAN_ID = 19;
     public static int ROLLER_MOTOR_RIGHT_CAN_ID = 22;
 
+    public static int SHOOTER_UPPER_BEAM_BREAK_PORT = 3;
+
     public static double HOOD_TOLERENCE_MOTOR_ROTATIONS = 0.02;
     public static double HOOD_TOLERENCE_DEGREES = 5;
     public static double HOOD_GEAR_RATIO = 3/8;

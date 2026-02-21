@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
         this.flywheelTargetRPM = 0;
         this.flywheelError = 0;
 
-        beamBreak = new DigitalInput(3);
+        beamBreak = new DigitalInput(Constants.SHOOTER_UPPER_BEAM_BREAK_PORT);
 
         for (int i = 0; i < flywheelMotors.getTotalMotors(); i++) {
             TalonFXConfiguration cfg = new TalonFXConfiguration();
