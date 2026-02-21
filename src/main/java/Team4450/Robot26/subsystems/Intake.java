@@ -92,6 +92,8 @@ public class Intake extends SubsystemBase {
             if (this.runIntake) {
                 setIntakeRPM(SmartDashboard.getNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM));
             }
+
+            SmartDashboard.putNumber("Intake Current Draw", getIntakeCurrent());
         }
     }
 
@@ -141,11 +143,7 @@ public class Intake extends SubsystemBase {
     }
 
     public double getIntakeCurrent() {
-        if (canSpin) {
-            return intakeMotorLeft.getSupplyCurrent(true).getValueAsDouble() + intakeMotorRight.getSupplyCurrent(true).getValueAsDouble();
-        } else {
-            return -1;
-        }
+        return intakeMotorLeft.getSupplyCurrent(true).getValueAsDouble() + intakeMotorRight.getSupplyCurrent(true).getValueAsDouble();
     }
 
     public double getIntakeLeftMotorCurrent() {

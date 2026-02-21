@@ -294,6 +294,7 @@ public class Shooter extends SubsystemBase {
         }
 
         SmartDashboard.putNumber("Flywheel Current Draw", getFlywheelCurrent());
+        SmartDashboard.putNumber("Infeed Current Draw", getInfeedCurrent());
     }
 
     public void updateLaunchValues(boolean interpolate){
