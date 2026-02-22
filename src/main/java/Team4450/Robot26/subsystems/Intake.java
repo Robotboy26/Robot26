@@ -1,6 +1,7 @@
 package Team4450.Robot26.subsystems;
 
 import Team4450.Robot26.Constants;
+import Team4450.Robot26.RobotContainer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -36,6 +37,8 @@ public class Intake extends SubsystemBase {
     private double pivitCurrentPositionMotorPosition;
 
     private boolean runIntake;
+
+    private RobotContainer robotContainer;
 
     public Intake() {
         this.canPivit = intakePivitMotor.isConnected();
@@ -90,7 +93,7 @@ public class Intake extends SubsystemBase {
             SmartDashboard.putNumber("Intake RPM", getIntakeRPM());
 
             if (this.runIntake) {
-                setIntakeRPM(SmartDashboard.getNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM));
+                setIntakeRPM(SmartDashboard.getNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM) * robotContainer.getVolatgePercent() * Constants.INTAKE_VOLTAGE_MULTIPLIER);
             }
 
             SmartDashboard.putNumber("Intake Current Draw", getIntakeCurrent());

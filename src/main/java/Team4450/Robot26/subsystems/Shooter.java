@@ -3,6 +3,7 @@ package Team4450.Robot26.subsystems;
 import static Team4450.Robot26.Constants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import Team4450.Robot26.RobotContainer;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import Team4450.Robot26.Constants;
@@ -43,6 +44,8 @@ public class Shooter extends SubsystemBase {
     // Link the two roller motors for use when setting the power
     private final LinkedMotors infeedMotors = new LinkedMotors(infeedMotorLeft, infeedMotorRight);
 
+    private RobotContainer robotContainer;
+
     private boolean canFlywheel;
     private boolean canHood;
     private boolean canInfeed;
@@ -58,7 +61,7 @@ public class Shooter extends SubsystemBase {
     // This value is the starting rotaions of the hood motor
     private double hoodRotationOffset;
     // The format of this value is in rotations of the pivit motor
-    private double hoodCurrentAngleMotorPosition;
+    private double hoodCurrentMotorPosition;
     // Current RPM of the flywheel
     private double flywheelCurrentRPM;
     // Target RPM of the flywheel
@@ -100,7 +103,7 @@ public class Shooter extends SubsystemBase {
         this.hoodTargetAngle = 0;
         this.hoodTargetAngleMotorPosition = 0;
         this.hoodCurrentAngle = 0;
-        this.hoodCurrentAngleMotorPosition = 0;
+        this.hoodCurrentMotorPosition = 0;
 
         this.flywheelCurrentRPM = 0;
         this.flywheelTargetRPM = 0;
@@ -187,8 +190,8 @@ public class Shooter extends SubsystemBase {
         //Update the beam break sensors
         SmartDashboard.putBoolean("Beam Break", beamBreak.get());
 
-        hoodCurrentAngleMotorPosition = hoodRollerLeft.getPosition().getValueAsDouble();
-        hoodCurrentAngle = (hoodCurrentAngleMotorPosition - hoodRotationOffset) * HOOD_GEAR_RATIO * 360 * Math.PI/180;
+        hoodCurrentMotorPosition = hoodRollerLeft.getPosition().getValueAsDouble();
+        hoodCurrentAngle = (hoodCurrentMotorPosition - hoodRotationOffset) * HOOD_GEAR_RATIO * 360 * Math.PI/180;
 
         double measuredRps =
                 flywheelMotorTopLeft.getRotorVelocity()
@@ -294,7 +297,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Infeed RPM", getInfeedRPM());
         
         if (this.runInfeed) {
-            setInfeedRPM(SmartDashboard.getNumber("Infeed Target RPM", Constants.INFEED_DEFAULT_TARGET_RPM));
+            setInfeedRPM(SmartDashboard.getNumber("Infeed Target RPM", Constants.INFEED_DEFAULT_TARGET_RPM) * robotContainer.getVolatgePercent() * Constants.INFEED_VOLTAGE_MULTIPLIER);
         }
 
         SmartDashboard.putNumber("Flywheel Current Draw", getFlywheelCurrent());

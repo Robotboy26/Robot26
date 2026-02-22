@@ -116,6 +116,13 @@ public final class Constants {
 
     public static double LIMELIGHT_QUEST_ERROR_AMOUNT_METERS = 0.2;
 
+    // Voltage Modifiers
+    public static double MAX_BATTERY_VOLTAGE = 13.5;
+    public static double INFEED_VOLTAGE_MULTIPLIER = 1.0;
+    public static double HOPPER_VOLTAGE_MULTIPLIER = 1.0;
+    public static double INTAKE_VOLTAGE_MULTIPLIER = 1.0;
+    // public static double FLYWHEEL_VOLTAGE_MULTIPLIER = 1.0;
+
     // Assume all field measurements are in meters
     // Field Limits (The Origin of the field should be the bottom left corner therefore all pose should be in +, +)
     public static double FIELD_MAX_X = 16.54;
