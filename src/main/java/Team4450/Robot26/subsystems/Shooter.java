@@ -224,13 +224,27 @@ public class Shooter extends SubsystemBase {
         double kV = SmartDashboard.getNumber("Flywheel/kV", sd_kV);
         double kA = SmartDashboard.getNumber("Flywheel/kA", sd_kA);
 
-        setHoodPosition(SmartDashboard.getNumber("Hood Position", hoodMotorPosition));
 
-        // -------- Hood --------
+                // -------- Hood --------
 
         hoodCurrentAngle = getHoodAngleRadians();
         hoodMotorPosition = getHoodMotorPosition();
         hoodError = hoodTargetAngle - hoodCurrentAngle;
+        
+        this.hoodTargetMotorPosition = SmartDashboard.getNumber("Hood Target Position", 0);
+        // Convert position input to rotations for the motor
+        double power = Constants.HOOD_MOTOR_POWER;
+        
+        if (this.hoodMotorPosition <= this.hoodTargetMotorPosition - Constants.HOOD_TOLERENCE_MOTOR_ROTATIONS) {
+            this.hoodLeft.set(power);
+            this.hoodRight.set(power);
+        } else if (this.hoodMotorPosition >= this.hoodTargetMotorPosition + Constants.HOOD_TOLERENCE_MOTOR_ROTATIONS) {
+            this.hoodLeft.set(-power);
+            this.hoodRight.set(-power);
+        } else {
+            this.hoodLeft.set(0);
+            this.hoodRight.set(0);
+        }
 
         SmartDashboard.putNumber("Hood Angle", hoodCurrentAngle);
         SmartDashboard.putNumber("Hood Motor Position", hoodMotorPosition);
@@ -442,11 +456,6 @@ public class Shooter extends SubsystemBase {
 
     public double motorPositionToHoodAngle(double motorPosition) {
         return ((motorPosition * Constants.HOOD_GEAR_RATIO * 360) + Constants.HOOD_DOWN_ANGLE_DEGREES);
-    }
-
-    public void setHoodPosition(double pos){
-        hoodLeft.setPosition(pos);
-        hoodRight.setPosition(pos);
     }
 
     public void startFlywheel() {
