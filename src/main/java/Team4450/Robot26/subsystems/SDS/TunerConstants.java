@@ -54,7 +54,7 @@ public class TunerConstants {
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
-    // This will overwrite any current stuff that is done with the initial configs
+    // This will overwrite any current stuff that is done with the initial config for the driveInitialConfig
     private static final Current kSlipCurrent = Amps.of(60);
 
     // Provides a 1 second ramp 0v to 12v. Added by 4450.

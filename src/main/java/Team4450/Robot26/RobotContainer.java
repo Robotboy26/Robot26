@@ -135,10 +135,6 @@ public class RobotContainer {
    * and commands.
    */
   public RobotContainer() throws Exception {
-    Util.consoleLog();
-
-    this.intake = new Intake();
-    this.shooter = new Shooter();
     // this.testSubsystem = new TestSubsystem();
 
     // Get information about the match environment from the Field Control System.
@@ -175,6 +171,9 @@ public class RobotContainer {
     drivebase = new Drivebase();
     visionSubsystem = new VisionSubsystem(drivebase);
     questNavSubsystem = new QuestNavSubsystem(drivebase);
+
+    intake = new Intake();
+    shooter = new Shooter(drivebase);
 
     throttlePID = new PIDController(Constants.ROBOT_THROTTLE_KP, Constants.ROBOT_THROTTLE_KI,
         Constants.ROBOT_THROTTLE_KD);

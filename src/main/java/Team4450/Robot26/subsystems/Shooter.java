@@ -96,7 +96,9 @@ public class Shooter extends SubsystemBase {
     private double sd_kP, sd_kI, sd_kD;
     private double sd_kS, sd_kV, sd_kA;
 
-    public Shooter() {
+    public Shooter(Drivebase drivebase) {
+        this.drivebase = drivebase;
+
         this.canFlywheel = flywheelMotorTopLeft.isConnected() && flywheelMotorTopRight.isConnected() && flywheelMotorBottomLeft.isConnected() && flywheelMotorBottomRight.isConnected();
         this.canHood = hoodLeft.isConnected() && hoodRight.isConnected();
         this.canInfeed = infeedMotorLeft.isConnected() && infeedMotorRight.isConnected();
@@ -328,18 +330,23 @@ public class Shooter extends SubsystemBase {
 
     public void updateLaunchValues(boolean interpolate){
         // Calculate distance to goal & diffs
-        double xDiff = getGoalPose().getX() - RobotContainer.drivebase.getPose().getX();
-        double yDiff = getGoalPose().getY() - RobotContainer.drivebase.getPose().getY();
+        double xDiff = Math.abs(getGoalPose().getX() - drivebase.getPose().getX());
+
+        double yDiff = Math.abs(getGoalPose().getY() - drivebase.getPose().getY());
         double distToGoal = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
+        SmartDashboard.putNumber("RobotLaunchX", drivebase.getPose().getX());
+        SmartDashboard.putNumber("RobotLaunchY", drivebase.getPose().getY());
+        SmartDashboard.putString("Goal Pose", getGoalPose().toString());
+        SmartDashboard.putString("Diffs", String.format("%.2f, %.2f", xDiff, yDiff));
         SmartDashboard.putNumber("Robot Distance", distToGoal);
         
         // Chose how to get the flywheel speed
-        if (interpolate){
-            getNeededFlywheelSpeed(distToGoal);
-        } else {
-            calculateLaunchValues(distToGoal);
-        }
+        // if (interpolate){
+        //     getNeededFlywheelSpeed(distToGoal);
+        // } else {
+        //     calculateLaunchValues(distToGoal);
+        // }
     }
 
     public void calculateLaunchValues(double distToGoal){
