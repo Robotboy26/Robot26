@@ -566,15 +566,11 @@ public class Shooter extends SubsystemBase {
     public void setHoodMotorPosition(double targetPosition) {
         hoodTargetMotorPosition = targetPosition;
         hoodTargetAngle = motorPositionToHoodAngle(targetPosition);
-        hoodLeft.setPosition(targetPosition);
-        hoodRight.setPosition(targetPosition);
     }
 
     public void setHoodAngle(double targetAngle){
         hoodTargetAngle = targetAngle;
         hoodTargetMotorPosition = hoodAngleToMotorPosition(targetAngle);
-        hoodLeft.setPosition(hoodAngleToMotorPosition(targetAngle));
-        hoodRight.setPosition(hoodAngleToMotorPosition(targetAngle));
     }
 
     public double getHoodAngleRadians(){
