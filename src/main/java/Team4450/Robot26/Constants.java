@@ -121,7 +121,7 @@ public final class Constants {
     public static double INFEED_VOLTAGE_MULTIPLIER = 1.0;
     public static double HOPPER_VOLTAGE_MULTIPLIER = 1.0;
     public static double INTAKE_VOLTAGE_MULTIPLIER = 1.0;
-    // public static double FLYWHEEL_VOLTAGE_MULTIPLIER = 1.0;
+    public static double FLYWHEEL_VOLTAGE_MULTIPLIER = 1.0;
 
     // Assume all field measurements are in meters
     // Field Limits (The Origin of the field should be the bottom left corner therefore all pose should be in +, +)

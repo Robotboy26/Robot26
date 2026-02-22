@@ -461,13 +461,17 @@ public class RobotContainer {
     gameMessage = DriverStation.getGameSpecificMessage();
 
     Util.consoleLog("Alliance=%s, Location=%d, FMS=%b event=%s match=%d msg=%s",
-        alliance.name(), location, DriverStation.isFMSAttached(), eventName, matchNumber,
-        gameMessage);
+      alliance.name(), location, DriverStation.isFMSAttached(), eventName, matchNumber,
+      gameMessage);
   }
 
   public double getVolatgePercent(){
-        return RobotController.getBatteryVoltage() / Constants.MAX_BATTERY_VOLTAGE;
-    }
+    return RobotController.getBatteryVoltage() / Constants.MAX_BATTERY_VOLTAGE;
+  }
+
+  public double getVolatgeMultiplier(){
+    return Constants.MAX_BATTERY_VOLTAGE / RobotController.getBatteryVoltage();
+  }
 
   // public void fixPathPlannerGyro() { rich
   // driveBase.fixPathPlannerGyro();
