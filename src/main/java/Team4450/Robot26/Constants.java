@@ -69,7 +69,7 @@ public final class Constants {
 
     public static int SHOOTER_UPPER_BEAM_BREAK_PORT = 3;
 
-    public static int SHOOTER_FLYWHEEL_CURRENT_LIMIT = 120;
+    public static int SHOOTER_FLYWHEEL_CURRENT_LIMIT = 40;
     public static int SHOOTER_INFEED_CURRENT_LIMIT = 30;
     public static int INTAKE_CURRENT_LIMIT = 20;
     public static int HOPPER_CURRENT_LIMIT = 40;
@@ -212,19 +212,19 @@ public final class Constants {
     public static final double FLYWHEEL_kV = 0.11;
     public static final double FLYWHEEL_kA = 0.05;
     // ---------------- PID (Velocity) ----------------
-    public static final double FLYWHEEL_kP = 0.55;
-    public static final double FLYWHEEL_kI = 0.25;
-    public static final double FLYWHEEL_kD = 0.0;
+    public static final double FLYWHEEL_kP = 1.8;
+    public static final double FLYWHEEL_kI = 0;
+    public static final double FLYWHEEL_kD = 0.2;
 
     // ---------------- Motion Magic Velocity ----------------
     // These only affect ramp rate
     // public static final boolean FLYWHEEL_USE_MOTION_MAGIC = true;
 
-    public static final double FLYWHEEL_MOTION_ACCEL_RPMS = 5000.0; // RPM/s
+    public static final double FLYWHEEL_MOTION_ACCEL_RPMS = 3500.0; // RPM/s
     public static final double FLYWHEEL_MOTION_JERK = 0.0;
 
     // ---------------- Telemetry / limits ----------------
-    public static final double FLYWHEEL_MAX_THEORETICAL_RPM = 4000.0;
+    public static final double FLYWHEEL_MAX_THEORETICAL_RPM = 6000.0;
 
     // Flip this to 1 or -1 if direction is wrong
     public static final int FLYWHEEL_DIRECTION = -1;

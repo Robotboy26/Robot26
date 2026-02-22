@@ -138,7 +138,7 @@ public class RobotContainer {
     Util.consoleLog();
 
     this.intake = new Intake();
-    this.shooter = new Shooter(drivebase);
+    this.shooter = new Shooter();
     // this.testSubsystem = new TestSubsystem();
 
     // Get information about the match environment from the Field Control System.
@@ -293,7 +293,6 @@ public class RobotContainer {
    * These buttons are for robot driver station with 2 Xbox or F310 controllers.
    */
   private void configureButtonBindings() {
-    Util.consoleLog();
     // ------- Driver controller buttons -------------
 
     // For simple functions, instead of creating commands, we can call convenience
@@ -375,7 +374,9 @@ public class RobotContainer {
     //
     new Trigger(() -> driverController.getLeftTrigger())
         .onTrue(new InstantCommand(shooter::startFlywheel))
-        .onFalse(new InstantCommand(shooter::stopFlywheel));
+        .onTrue(new InstantCommand(drivebase::toggleHubTracking))
+        .onFalse(new InstantCommand(shooter::stopFlywheel))
+        .onFalse(new InstantCommand(drivebase::toggleHubTracking));
 
     new Trigger(() -> driverController.getRightTrigger())
         .onTrue(new InstantCommand(shooter::startInfeed))

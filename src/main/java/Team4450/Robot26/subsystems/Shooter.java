@@ -7,6 +7,7 @@ import Team4450.Robot26.RobotContainer;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import Team4450.Robot26.Constants;
+import Team4450.Robot26.RobotContainer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -33,9 +34,9 @@ public class Shooter extends SubsystemBase {
     private final TalonFX flywheelMotorBottomRight = new TalonFX(Constants.FLYWHEEL_MOTOR_BOTTOM_RIGHT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     private final LinkedMotors flywheelMotors = new LinkedMotors(flywheelMotorTopLeft, flywheelMotorTopRight, flywheelMotorBottomLeft, flywheelMotorBottomRight);
     // This motor is a Kraken x60
-    private final TalonFX hoodRollerLeft = new TalonFX(Constants.HOOD_MOTOR_LEFT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
+    private final TalonFX hoodLeft = new TalonFX(Constants.HOOD_MOTOR_LEFT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x60
-    private final TalonFX hoodRollerRight = new TalonFX(Constants.HOOD_MOTOR_RIGHT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
+    private final TalonFX hoodRight = new TalonFX(Constants.HOOD_MOTOR_RIGHT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x44
     private final TalonFX infeedMotorLeft = new TalonFX(Constants.INFEED_MOTOR_LEFT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x44
@@ -63,7 +64,7 @@ public class Shooter extends SubsystemBase {
     // This value is the starting rotaions of the hood motor
     private double hoodRotationOffset;
     // The format of this value is in rotations of the pivit motor
-    private double hoodCurrentMotorPosition;
+    private double hoodMotorPosition;
     // Current RPM of the flywheel
     private double flywheelCurrentRPM;
     // Target RPM of the flywheel
@@ -95,24 +96,24 @@ public class Shooter extends SubsystemBase {
     private double sd_kP, sd_kI, sd_kD;
     private double sd_kS, sd_kV, sd_kA;
 
-    public Shooter(Drivebase drivebase) {
-        this.drivebase = drivebase;
-
+    public Shooter() {
         this.canFlywheel = flywheelMotorTopLeft.isConnected() && flywheelMotorTopRight.isConnected() && flywheelMotorBottomLeft.isConnected() && flywheelMotorBottomRight.isConnected();
-        this.canHood = hoodRollerLeft.isConnected() && hoodRollerRight.isConnected();
+        this.canHood = hoodLeft.isConnected() && hoodRight.isConnected();
         this.canInfeed = infeedMotorLeft.isConnected() && infeedMotorRight.isConnected();
 
         this.hoodTargetAngle = 0;
         this.hoodTargetMotorPosition = 0;
+        this.hoodTargetMotorPosition = 0;
         this.hoodCurrentAngle = 0;
-        this.hoodCurrentMotorPosition = 0;
+        this.hoodMotorPosition = 0;
         this.hoodError = 0;
-        this.hoodRotationOffset = hoodRollerLeft.getPosition().getValueAsDouble();
+        this.hoodRotationOffset = hoodLeft.getPosition().getValueAsDouble();
 
         this.flywheelCurrentRPM = 0;
         this.flywheelTargetRPM = 0;
         this.flywheelError = 0;
-        this.hoodRotationOffset = hoodRollerLeft.getPosition().getValueAsDouble();
+
+        this.hoodRotationOffset = this.hoodLeft.getPosition(true).getValueAsDouble();
 
         beamBreak = new DigitalInput(Constants.SHOOTER_UPPER_BEAM_BREAK_PORT);
 
@@ -168,6 +169,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Flywheel/kS", Constants.FLYWHEEL_kS);
         SmartDashboard.putNumber("Flywheel/kV", Constants.FLYWHEEL_kV);
         SmartDashboard.putNumber("Flywheel/kA", Constants.FLYWHEEL_kA);
+        SmartDashboard.putNumber("Hood Position", hoodMotorPosition);
 
         sd_kP = Constants.FLYWHEEL_kP;
         sd_kI = Constants.FLYWHEEL_kI;
@@ -188,13 +190,13 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         // Flywheel is controlled by TestSubsystem via Constants; no dashboard reads here.
         
-        //This line should be all that is needed when the flywheel should be spun up
-        //updateLaunchValues(true);
+        // This line should be all that is needed when the flywheel should be spun up
+        updateLaunchValues(true);
 
-        //Update the beam break sensors
+        // Update the beam break sensors
         SmartDashboard.putBoolean("Beam Break", beamBreak.get());
 
-        hoodCurrentMotorPosition = hoodRollerLeft.getPosition().getValueAsDouble();
+        hoodMotorPosition = hoodLeft.getPosition().getValueAsDouble();
         hoodCurrentAngle = getHoodMotorPosition() * HOOD_GEAR_RATIO * 360 * (Math.PI/180);
 
         double measuredRps =
@@ -220,14 +222,16 @@ public class Shooter extends SubsystemBase {
         double kV = SmartDashboard.getNumber("Flywheel/kV", sd_kV);
         double kA = SmartDashboard.getNumber("Flywheel/kA", sd_kA);
 
+        setHoodPosition(SmartDashboard.getNumber("Hood Position", hoodMotorPosition));
+
         // -------- Hood --------
 
         hoodCurrentAngle = getHoodAngleRadians();
-        hoodCurrentMotorPosition = getHoodMotorPosition();
+        hoodMotorPosition = getHoodMotorPosition();
         hoodError = hoodTargetAngle - hoodCurrentAngle;
 
         SmartDashboard.putNumber("Hood Angle", hoodCurrentAngle);
-        SmartDashboard.putNumber("Hood Motor Position", hoodCurrentMotorPosition);
+        SmartDashboard.putNumber("Hood Motor Position", hoodMotorPosition);
         SmartDashboard.putNumber("Hood Target Angle", hoodTargetAngle);
         SmartDashboard.putNumber("Hood Target Motor Position", hoodTargetMotorPosition);
         SmartDashboard.putNumber("Hood Error", hoodError);
@@ -320,13 +324,15 @@ public class Shooter extends SubsystemBase {
 
         SmartDashboard.putNumber("Flywheel Current Draw", getFlywheelCurrent());
         SmartDashboard.putNumber("Infeed Current Draw", getInfeedCurrent());
-    }
+   }
 
     public void updateLaunchValues(boolean interpolate){
         // Calculate distance to goal & diffs
-        double xDiff = getGoalPose().getX() - drivebase.getPose().getX();
-        double yDiff = getGoalPose().getY() - drivebase.getPose().getY();
+        double xDiff = getGoalPose().getX() - RobotContainer.drivebase.getPose().getX();
+        double yDiff = getGoalPose().getY() - RobotContainer.drivebase.getPose().getY();
         double distToGoal = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+
+        SmartDashboard.putNumber("Robot Distance", distToGoal);
         
         // Chose how to get the flywheel speed
         if (interpolate){
@@ -374,8 +380,8 @@ public class Shooter extends SubsystemBase {
 
     public double getAngleToFaceGoalDegrees(Pose2d robotPosition) {
         // Find the difference betweeen the robot and the goal
-        double xDiff = getGoalPose().getX() - drivebase.getPose().getX();
-        double yDiff = getGoalPose().getY() - drivebase.getPose().getY();
+        double xDiff = getGoalPose().getX() - RobotContainer.drivebase.getPose().getX();
+        double yDiff = getGoalPose().getY() - RobotContainer.drivebase.getPose().getY();
 
         // use atan2 to get teh correct angle to face goal & convert to degrees
         double angleToFaceGoal = Math.toDegrees(Math.atan(yDiff / xDiff));
@@ -419,6 +425,21 @@ public class Shooter extends SubsystemBase {
 
     public static double linearInterpolate(double point1, double point2, double percentageSplit) {
         return point1 + ((point2 - point1) * percentageSplit);
+    }
+
+    
+    // Linear interpolate the hood angle between zero and one with the motor rotations of up and down on the hood
+    public double hoodAngleToMotorPosition(double hoodAngle) {
+        return ((hoodAngle - Constants.HOOD_DOWN_ANGLE_DEGREES) / Constants.HOOD_GEAR_RATIO);
+    }
+
+    public double motorPositionToHoodAngle(double motorPosition) {
+        return ((motorPosition * Constants.HOOD_GEAR_RATIO * 360) + Constants.HOOD_DOWN_ANGLE_DEGREES);
+    }
+
+    public void setHoodPosition(double pos){
+        hoodLeft.setPosition(pos);
+        hoodRight.setPosition(pos);
     }
 
     public void startFlywheel() {
@@ -498,52 +519,54 @@ public class Shooter extends SubsystemBase {
     
     public void setHoodPower(double power){
         if (canHood) {
-            this.hoodRollerLeft.set(power);
-            this.hoodRollerRight.set(power);
+            this.hoodLeft.set(power);
+            this.hoodRight.set(power);
         }
     }
 
     public void hoodUp() {
         if (canHood) {
             double power = SmartDashboard.getNumber("Hood Power", 0.05);
-            this.hoodRollerLeft.set(power);
-            this.hoodRollerRight.set(power);
+            this.hoodLeft.set(power);
+            this.hoodRight.set(power);
         }
     }
 
     public void hoodDown() {
         if (canHood) {
             double power = SmartDashboard.getNumber("Hood Power", 0.05);
-            this.hoodRollerLeft.set(-power);
-            this.hoodRollerRight.set(-power);
+            this.hoodLeft.set(-power);
+            this.hoodRight.set(-power);
         }
     }
 
     public void stopHood() {
         if (canHood) {
-            this.hoodRollerLeft.set(0);
-            this.hoodRollerRight.set(0);
+            this.hoodLeft.set(0);
+            this.hoodRight.set(0);
         }
     }
     
     public void setHoodMotorPosition(double targetPosition) {
         hoodTargetMotorPosition = targetPosition;
         hoodTargetAngle = motorPositionToHoodAngle(targetPosition);
-        hoodRollerLeft.setPosition(targetPosition);
+        hoodLeft.setPosition(targetPosition);
+        hoodRight.setPosition(targetPosition);
     }
 
     public void setHoodAngle(double targetAngle){
         hoodTargetAngle = targetAngle;
         hoodTargetMotorPosition = hoodAngleToMotorPosition(targetAngle);
-        hoodRollerLeft.setPosition(hoodAngleToMotorPosition(targetAngle));
+        hoodLeft.setPosition(hoodAngleToMotorPosition(targetAngle));
+        hoodRight.setPosition(hoodAngleToMotorPosition(targetAngle));
     }
 
     public double getHoodAngleRadians(){
-        return -(hoodRollerLeft.getPosition().getValueAsDouble() - hoodRotationOffset)  * Math.PI * 2 * (3.0 / 8.0) + (Math.PI / 2);
+        return (((hoodLeft.getPosition().getValueAsDouble() - hoodRotationOffset)  * Math.PI * 2 * 3) / 8) + (Math.PI / 2);
     }
 
-    public double getHoodMotorPosition(){
-        return hoodRollerLeft.getPosition().getValueAsDouble();
+    public double getHoodMotorPosition() {
+        return hoodLeft.getPosition().getValueAsDouble();
     }
 
     public double getHoodTargetAngle(){
@@ -554,24 +577,16 @@ public class Shooter extends SubsystemBase {
         return hoodTargetMotorPosition;
     }
 
-    public double hoodAngleToMotorPosition(double hoodAngle) {
-        return ((hoodAngle - Constants.HOOD_DOWN_ANGLE_DEGREES) / Constants.HOOD_GEAR_RATIO);
-    }
-
-    public double motorPositionToHoodAngle(double motorPosition) {
-        return ((motorPosition * Constants.HOOD_GEAR_RATIO * 360) + Constants.HOOD_DOWN_ANGLE_DEGREES);
-    }
-
     public double getHoodCurrent() {
-        return hoodRollerLeft.getSupplyCurrent(true).getValueAsDouble() + hoodRollerRight.getSupplyCurrent(true).getValueAsDouble();
+        return hoodLeft.getSupplyCurrent(true).getValueAsDouble() + hoodRight.getSupplyCurrent(true).getValueAsDouble();
     }
 
     public double getHoodLeftMotorCurrent() {
-        return hoodRollerLeft.getSupplyCurrent(true).getValueAsDouble();
+        return hoodLeft.getSupplyCurrent(true).getValueAsDouble();
     }
 
     public double getHoodRightMotorCurrent() {
-        return hoodRollerRight.getSupplyCurrent(true).getValueAsDouble();
+        return hoodRight.getSupplyCurrent(true).getValueAsDouble();
     }
 
     /**
@@ -641,6 +656,8 @@ public class Shooter extends SubsystemBase {
         double deltaX = hubPose.getX() - robotPose.getX();
         double deltaY = hubPose.getY() - robotPose.getY();
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        SmartDashboard.putNumber("Robot Distance", distance);
 
         double rpmMath = calculateRPM(robotPose, hubPose, hoodAngle);
         double interpolatedRPM = interpolateRPM(distance);
