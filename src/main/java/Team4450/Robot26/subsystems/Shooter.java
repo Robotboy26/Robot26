@@ -68,6 +68,8 @@ public class Shooter extends SubsystemBase {
     private double flywheelTargetRPM;
     // Current Error of the flywheel
     private double flywheelError;
+    //Hood Rotation Offset
+    private double hoodRotationOffset = 0.1171875;
 
     private Drivebase drivebase;
 
@@ -190,8 +192,8 @@ public class Shooter extends SubsystemBase {
         //Update the beam break sensors
         SmartDashboard.putBoolean("Beam Break", beamBreak.get());
 
-        hoodCurrentMotorPosition = hoodRollerLeft.getPosition().getValueAsDouble();
-        hoodCurrentAngle = (hoodCurrentMotorPosition - hoodRotationOffset) * HOOD_GEAR_RATIO * 360 * Math.PI/180;
+        hoodCurrentAngleMotorPosition = hoodRollerLeft.getPosition().getValueAsDouble();
+        hoodCurrentAngle = getHoodMotorPosition() * HOOD_GEAR_RATIO * 360 * (Math.PI/180);
 
         double measuredRps =
                 flywheelMotorTopLeft.getRotorVelocity()
@@ -214,6 +216,9 @@ public class Shooter extends SubsystemBase {
         double kS = SmartDashboard.getNumber("Flywheel/kS", sd_kS);
         double kV = SmartDashboard.getNumber("Flywheel/kV", sd_kV);
         double kA = SmartDashboard.getNumber("Flywheel/kA", sd_kA);
+
+        SmartDashboard.putNumber("Hood Angle", getHoodAngleRadians());
+        SmartDashboard.putNumber("Hood Motor Position", getHoodMotorPosition());
 
         // Apply only if changed
         if (!sdInit ||
@@ -525,7 +530,11 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getHoodAngleRadians(){
-        return hoodCurrentAngle;
+        return (((hoodRollerLeft.getPosition().getValueAsDouble() - hoodRotationOffset)  * Math.PI * 2 * 3) / 8) + (Math.PI / 2);
+    }
+
+    public double getHoodMotorPosition(){
+        return hoodRollerLeft.getPosition().getValueAsDouble();
     }
 
     public double getHoodCurrent() {
@@ -619,7 +628,8 @@ public class Shooter extends SubsystemBase {
         double error = targetRPM - currentRPM;
         double adjustment = Constants.INFEED_kP * error; // Adjustment to approach target
         double newRPM = targetRPM + adjustment; // Adjust current RPM towards target
-        this.infeedMotorLeft.set(newRPM / Constants.FLYWHEEL_MAX_THEORETICAL_RPM);
+        //this.infeedMotorLeft.set(newRPM / Constants.FLYWHEEL_MAX_THEORETICAL_RPM);
+        this.infeedMotorLeft.set(0.8);
         this.infeedMotorRight.setControl(new Follower(this.infeedMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 }
