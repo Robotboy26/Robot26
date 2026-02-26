@@ -235,7 +235,6 @@ public class Shooter extends SubsystemBase {
 
         updateHoodPosition(SmartDashboard.getNumber("Hood Target Position", this.hoodMotorPosition));
 
-        SmartDashboard.putNumber("Hood Angle", getHoodMotorAngleRadians());
         SmartDashboard.putNumber("Hood Motor Position", getHoodMotorPosition());
 
         double measuredRps =
@@ -371,7 +370,7 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Infeed RPM", getInfeedRPM());
         
         if (this.runInfeed && flywheelError < 300 && hoodError < 0.1) {
-            setInfeedRPM(SmartDashboard.getNumber("Infeed Target RPM", Constants.INFEED_DEFAULT_TARGET_RPM) * robotContainer.getVolatgePercent() * Constants.INFEED_VOLTAGE_MULTIPLIER);
+            setInfeedRPM(SmartDashboard.getNumber("Infeed Target RPM", Constants.INFEED_DEFAULT_TARGET_RPM));
         }
 
         SmartDashboard.putNumber("Flywheel Current Draw", getFlywheelCurrent());
@@ -507,6 +506,11 @@ public class Shooter extends SubsystemBase {
 
         this.hoodLeft.setControl(req);
         this.hoodRight.setControl(new Follower(this.hoodLeft.getDeviceID(), MotorAlignmentValue.Opposed));
+    }
+
+    public void startShootingSequence(){
+        startFlywheel();
+        drivebase.stopHumanDriving();
     }
 
     public void startFlywheel() {
@@ -728,6 +732,16 @@ public class Shooter extends SubsystemBase {
         double error = targetRPM - currentRPM;
         double adjustment = Constants.INFEED_kP * error; // Adjustment to approach target
         double newRPM = targetRPM + adjustment; // Adjust current RPM towards target
+        //this.infeedMotorLeft.set(newRPM / Constants.FLYWHEEL_MAX_THEORETICAL_RPM);
+        this.infeedMotorLeft.set(0.8);
+        this.infeedMotorRight.setControl(new Follower(this.infeedMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
+    }
+    
+    public void setInfeedRPMWithScaling(double targetRPM) {
+        double currentRPM = getInfeedRPM();
+        double error = targetRPM - currentRPM;
+        double adjustment = Constants.INFEED_kP * error; // Adjustment to approach target
+        double newRPM = (targetRPM + adjustment) * robotContainer.getVolatgePercent() * Constants.INFEED_VOLTAGE_MULTIPLIER; // Adjust current RPM towards target
         //this.infeedMotorLeft.set(newRPM / Constants.FLYWHEEL_MAX_THEORETICAL_RPM);
         this.infeedMotorLeft.set(0.8);
         this.infeedMotorRight.setControl(new Follower(this.infeedMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));

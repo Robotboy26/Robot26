@@ -122,7 +122,7 @@ public class Intake extends SubsystemBase {
             SmartDashboard.putNumber("Intake RPM", getIntakeRPM());
 
             if (this.runIntake) {
-                setIntakeRPM(SmartDashboard.getNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM) * robotContainer.getVolatgePercent() * Constants.INTAKE_VOLTAGE_MULTIPLIER);
+                setIntakeRPM(SmartDashboard.getNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM));
             }
 
             SmartDashboard.putNumber("Intake Current Draw", getIntakeCurrent());
@@ -272,6 +272,15 @@ public class Intake extends SubsystemBase {
         double error = targetRPM - currentRPM;
         double adjustment = Constants.INTAKE_kP * error; // Adjustment to approach target
         double newRPM = targetRPM + adjustment; // Adjust current RPM towards target
+        this.intakeMotorLeft.set(newRPM / Constants.INTAKE_MAX_THEORETICAL_RPM);
+        this.intakeMotorRight.setControl(new Follower(this.intakeMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
+    }
+
+    public void setIntakeRPMWithScaling(double targetRPM) {
+        double currentRPM = getIntakeRPM();
+        double error = targetRPM - currentRPM;
+        double adjustment = Constants.INTAKE_kP * error; // Adjustment to approach target
+        double newRPM = (targetRPM + adjustment) * robotContainer.getVolatgePercent() * Constants.INTAKE_VOLTAGE_MULTIPLIER; // Adjust current RPM towards target
         this.intakeMotorLeft.set(newRPM / Constants.INTAKE_MAX_THEORETICAL_RPM);
         this.intakeMotorRight.setControl(new Follower(this.intakeMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
     }

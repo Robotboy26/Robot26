@@ -56,7 +56,7 @@ public class Drivebase extends SubsystemBase {
     private final Field2d               field2d = new Field2d();
     
         private boolean overrideQuestForRobotPose = false;
-    private boolean                     fieldRelativeDriving = true, slowMode = false;
+    private boolean                     fieldRelativeDriving = true, slowMode = false, driverControlled = true;
     private boolean                     neutralModeBrake = true;
     private double                      maxSpeed = kMaxSpeed * kDriveReductionPct; 
     private double                      maxRotRate = kMaxAngularRate * kRotationReductionPct;
@@ -535,5 +535,17 @@ public class Drivebase extends SubsystemBase {
 
     public void toggleHubTracking() {
         Constants.HUB_TRACKING = !Constants.HUB_TRACKING;
+    }
+
+    public void stopHumanDriving(){
+        driverControlled = false;
+    }
+
+    public void startHumanDriving(){
+        driverControlled = true;
+    }
+
+    public boolean getDriverControled(){
+        return driverControlled;
     }
 }
