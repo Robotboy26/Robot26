@@ -174,7 +174,7 @@ public final class Constants {
     public static double[] FLYWHEEL_SPEED_DISTANCE_TABLE = {0.46, 0.91, 1.52, 2.13, 2.74, 3.35};
     public static double[] FUEL_AIR_TIME_TABLE_SEC = {0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6};
 
-    public static double[] HOOD_ARC_TABLE = {0, 0.625, 1.48, 2.17, 2.17, 2.17};
+    public static double[] HOOD_ARC_TABLE = {0, 0.265, 0.628, 0.92, 0.92, 0.92};
 
     // -------------------------------------------------------------------------------------
     // Flywheel tuning defaults (used as Shuffleboard starting values)
