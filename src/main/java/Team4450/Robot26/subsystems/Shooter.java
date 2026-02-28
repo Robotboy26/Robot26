@@ -200,6 +200,8 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Hood Power", 0.05);
         SmartDashboard.putNumber("Infeed Target RPM", Constants.INFEED_DEFAULT_TARGET_RPM);
         SmartDashboard.putBoolean("disableAutomaticFlywheelUpdate", this.disableAutomaticFlywheelUpdate);
+
+        SmartDashboard.putNumber("Flywheel Voltage Target", 0);
     }
 
     @Override
@@ -214,11 +216,7 @@ public class Shooter extends SubsystemBase {
 
         hoodMotorPosition = hoodLeft.getPosition().getValueAsDouble();
 
-        if (!SmartDashboard.getBoolean("disableAutomaticFlywheelUpdate", this.disableAutomaticFlywheelUpdate)) {
-            updateHoodPosition(SmartDashboard.getNumber("Hood Position", 0));
-        } else {
-            updateHoodPosition(SmartDashboard.getNumber("Hood Position", this.hoodMotorPosition));
-        }
+        updateHoodPosition(SmartDashboard.getNumber("Hood Target Position", this.hoodMotorPosition));
 
         SmartDashboard.putNumber("Hood Angle", getHoodMotorAngleRadians());
         SmartDashboard.putNumber("Hood Motor Position", getHoodMotorPosition());
@@ -251,7 +249,7 @@ public class Shooter extends SubsystemBase {
                 kS != sd_kS || kV != sd_kV || kA != sd_kA) {
 
 
-            // for (int i = 0; i < flywheelMotors.getTotalMotors(); i++) {
+            for (int i = 0; i < flywheelMotors.getTotalMotors(); i++) {
                 TalonFXConfiguration cfg = new TalonFXConfiguration();
 
                 cfg.CurrentLimits = new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.SHOOTER_FLYWHEEL_CURRENT_LIMIT);
@@ -259,7 +257,7 @@ public class Shooter extends SubsystemBase {
                 // Neutral + inversion
                 cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-                cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+                cfg.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
                 // Slot 0 PID
                 cfg.Slot0.kP = kP;
@@ -277,9 +275,9 @@ public class Shooter extends SubsystemBase {
                 cfg.MotionMagic.MotionMagicJerk =
                     Constants.FLYWHEEL_MOTION_JERK;
 
-                // flywheelMotors.getMotorByIndex(i).getConfigurator().apply(cfg);
-                this.flywheelMotorTopLeft.getConfigurator().apply(cfg);
-            // }
+                flywheelMotors.getMotorByIndex(i).getConfigurator().apply(cfg);
+                // this.flywheelMotorTopLeft.getConfigurator().apply(cfg);
+            }
             
             sd_kP = kP;
             sd_kI = kI;
@@ -351,8 +349,8 @@ public class Shooter extends SubsystemBase {
         if (interpolate) {
             if (!SmartDashboard.getBoolean("disableAutomaticFlywheelUpdate", this.disableAutomaticFlywheelUpdate)) {
                 SmartDashboard.putNumber("Flywheel/TargetRPM", interpolateFlywheelSpeedByDistance(distToGoal));
+                SmartDashboard.putNumber("Hood Target Position", interpolateHoodByDistance(distToGoal));
             }
-            setHoodMotorPosition(interpolateHoodByDistance(distToGoal));
         }   
     }
 
@@ -540,11 +538,6 @@ public class Shooter extends SubsystemBase {
 
     public double getTransferRightMotorCurrent() {
         return infeedMotorRight.getSupplyCurrent(true).getValueAsDouble();
-    }
-
-    // The position input is between 0 and 1 with 0 being up and 1 being down
-    public void setHoodMotorPosition(double position) {
-        hoodTargetMotorPosition = position;
     }
 
     public double getHoodMotorAngleRadians() {

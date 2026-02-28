@@ -191,11 +191,11 @@ public final class Constants {
 
     // ---------------- Feedforward (Talon internal) ----------------
     // Units: Volts, Volts/(rps), Volts/(rps/s)
-    public static final double FLYWHEEL_kS = 0.1;
-    public static final double FLYWHEEL_kV = 0.11;
-    public static final double FLYWHEEL_kA = 0.05;
+    public static final double FLYWHEEL_kS = 0.16; // Voltage to overcome static friction
+    public static final double FLYWHEEL_kV = 0.112; // Voltage to get one RPS - The static friction
+    public static final double FLYWHEEL_kA = 0.035; // Voltage to accelerate 1 rps/s/s
     // ---------------- PID (Velocity) ----------------
-    public static final double FLYWHEEL_kP = 0.2; // This is called Bang Bang
+    public static final double FLYWHEEL_kP = 0.15;
     public static final double FLYWHEEL_kI = 0;
     public static final double FLYWHEEL_kD = 0;
 
@@ -203,7 +203,7 @@ public final class Constants {
     // These only affect ramp rate
 
     public static final double FLYWHEEL_MOTION_ACCEL_RPMS = 3500.0; // RPM/s
-    public static final double FLYWHEEL_MOTION_JERK = 0.0;
+    public static final double FLYWHEEL_MOTION_JERK = 100;
 
     // ---------------- Telemetry / limits ----------------
     public static final double FLYWHEEL_MAX_THEORETICAL_RPM = 6000.0;
