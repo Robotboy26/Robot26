@@ -171,7 +171,7 @@ public final class Constants {
 
     // Interpolation table
     public static double[] FLYWHEEL_SPEED_TABLE = {3500, 3500, 3500, 3750, 3850, 4400}; // Converted from percentages to RPM
-    public static double[] FLYWHEEL_SPEED_DISTANCE_TABLE = {0.46, 0.91, 1.52, 2.13, 2.74, 3.35};
+    public static double[] FLYWHEEL_SPEED_DISTANCE_TABLE = {0.5, 1, 1.5, 2, 2.5, 3.5};
     public static double[] FUEL_AIR_TIME_TABLE_SEC = {0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6};
 
     public static double[] HOOD_ARC_TABLE = {0, 0.265, 0.628, 0.92, 0.92, 0.92};

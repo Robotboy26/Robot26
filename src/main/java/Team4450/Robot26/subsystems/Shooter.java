@@ -231,6 +231,7 @@ public class Shooter extends SubsystemBase {
 
         // -------- Shuffleboard tuning --------
 
+        // Update this to use a local var and shoot with local var when using flywheel interpolate
         targetRPM = SmartDashboard.getNumber(
                 "Flywheel/TargetRPM",
                 Constants.FLYWHEEL_TARGET_RPM);
@@ -348,6 +349,7 @@ public class Shooter extends SubsystemBase {
         
         if (interpolate) {
             if (!SmartDashboard.getBoolean("disableAutomaticFlywheelUpdate", this.disableAutomaticFlywheelUpdate)) {
+                // Update this to use a local var and shoot with local var when using flywheel interpolate
                 SmartDashboard.putNumber("Flywheel/TargetRPM", interpolateFlywheelSpeedByDistance(distToGoal));
                 SmartDashboard.putNumber("Hood Target Position", interpolateHoodByDistance(distToGoal));
             }
@@ -473,13 +475,11 @@ public class Shooter extends SubsystemBase {
         this.flywheelEnabled = false;
     }
 
-    public double getFlywheelRPM () {
-        return flywheelCurrentRPM;
-    }
-        public double getFlywheelTatgetRPM () {
+    public double getFlywheelTatgetRPM () {
         return flywheelTargetRPM;
     }
-        public double getFlywheelError () {
+
+    public double getFlywheelError () {
         return flywheelError;
     }
 
