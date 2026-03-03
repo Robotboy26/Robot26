@@ -27,7 +27,6 @@ public class Shoot extends Command {
             hopper.start();
         } else {
             shooter.stopInfeed();
-            hopper.stop();
         }
     }
 
