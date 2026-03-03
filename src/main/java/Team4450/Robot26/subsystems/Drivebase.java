@@ -169,6 +169,7 @@ public class Drivebase extends SubsystemBase {
   }
 
   public void stop() {
+    Util.consoleLog();
     drive(0, 0, 0);
   }
 
