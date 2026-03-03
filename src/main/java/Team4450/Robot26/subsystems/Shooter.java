@@ -70,9 +70,6 @@ public class Shooter extends SubsystemBase {
     private double hoodRotationOffset;
     // The format of this value is in rotations of the pivit motor
     private double hoodMotorPosition;
-    private double hoodTargetMotorPosition;
-    //Hood Rotation Offset
-    private double hoodRotationOffset;
 
     DigitalInput beamBreak;
 
