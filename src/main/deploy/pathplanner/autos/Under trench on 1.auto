@@ -7,25 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CS-RD"
+            "pathName": "Trench to middle 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RD-LD#"
+            "pathName": "Middle 1 to under trench"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "LD#-LCL"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CenterDisrupt"
+            "pathName": "Under trench to shot 1"
           }
         }
       ]

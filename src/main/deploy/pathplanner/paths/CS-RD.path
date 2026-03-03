@@ -38,15 +38,15 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Shoot(temporary)",
+      "name": "",
       "waypointRelativePos": 0.19928186714542162,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 14.4,
-    "maxAcceleration": 9.0,
+    "maxVelocity": 0.75,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 270.0,
     "maxAngularAcceleration": 270.0,
     "nominalVoltage": 12.0,
