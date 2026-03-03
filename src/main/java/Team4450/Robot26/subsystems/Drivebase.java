@@ -137,7 +137,6 @@ public class Drivebase extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Drivebase velocity", getDrivebaseVelocity());
         sdsDrivebase.periodic();
 
         // update 3d simulation: look in AdvantageScope.java for more
@@ -544,9 +543,11 @@ public class Drivebase extends SubsystemBase {
         return sdsDrivebase.getChassisSpeeds();
     }
 
-    public double getDrivebaseVelocity() {
-        ChassisSpeeds speeds = this.getChassisSpeeds();
-        
-        return (speeds.vxMetersPerSecond + speeds.vyMetersPerSecond);
+    public void enabledSlowMode() {
+        this.slowMode = true;
+    }
+
+    public void disableSlowMode() {
+        this.slowMode = false;
     }
 }

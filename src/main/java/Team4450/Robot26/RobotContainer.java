@@ -377,7 +377,7 @@ public class RobotContainer {
     new Trigger(() -> driverController.getLeftTrigger())
         // .onTrue(new InstantCommand(shooter::startFlywheel))
         // .onFalse(new InstantCommand(shooter::stopFlywheel));
-        .whileTrue(new Shoot(shooter, hopper));
+        .whileTrue(new Shoot(drivebase, shooter, hopper));
 
     new Trigger(() -> driverController.getRightTrigger())
         .onTrue(new InstantCommand(shooter::startInfeed))
