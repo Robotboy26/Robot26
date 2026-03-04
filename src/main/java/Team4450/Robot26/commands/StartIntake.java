@@ -24,7 +24,7 @@ public class StartIntake extends Command {
 
   public void execute() {
     state = State.STOPPED;
-    intake.startIntake();
+    intake.setIntakeRPM(4500);
     end(false);
   }
 

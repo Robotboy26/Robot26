@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.137,
-        "y": 5.944756820877817
+        "x": 8.58,
+        "y": 2.09
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.229989685328834,
-        "y": 5.916289249408511
+        "x": 9.58,
+        "y": 2.09
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "RCR"
     },
     {
       "anchor": {
-        "x": 2.137,
-        "y": 5.944756820877817
+        "x": 2.33,
+        "y": 1.7200000000000002
       },
       "prevControl": {
-        "x": 1.6301950446002782,
-        "y": 6.004561042392791
+        "x": 1.33,
+        "y": 1.7200000000000002
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 14.4,
-    "maxAcceleration": 9.0,
+    "maxVelocity": 0.75,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 270.0,
     "maxAngularAcceleration": 270.0,
     "nominalVoltage": 12.0,
@@ -45,10 +45,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "C-Shoot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
