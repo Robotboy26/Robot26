@@ -6,7 +6,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
+import Team4450.Robot26.commands.DisableHubTracking;
 import Team4450.Robot26.commands.DriveCommand;
+import Team4450.Robot26.commands.EnableHubTracking;
 import Team4450.Robot26.commands.Shoot;
 import Team4450.Robot26.commands.StartIntake;
 import Team4450.Robot26.commands.StopIntake;
@@ -193,6 +195,8 @@ public class RobotContainer {
 
     // Pathplanner NamedCommands
 
+    NamedCommands.registerCommand("enableHubTracking", new EnableHubTracking(drivebase, headingPID));
+    NamedCommands.registerCommand("disableHubTracking", new DisableHubTracking(drivebase));
     NamedCommands.registerCommand("startIntake", new StartIntake(intake));
     NamedCommands.registerCommand("stopIntake", new StopIntake(intake));
     NamedCommands.registerCommand("shoot", new Shoot(drivebase, shooter, hopper));
