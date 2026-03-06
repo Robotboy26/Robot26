@@ -679,7 +679,7 @@ public class Drivebase extends SubsystemBase {
                 rawVelocityX = lastRawVelocityX;
             }
 
-            if (Math.abs(rawVelocityX) < 0.1) {
+            if (Math.abs(rawVelocityX) < 0.2) {
                 rawVelocityX = 0;
             }
 
@@ -704,7 +704,7 @@ public class Drivebase extends SubsystemBase {
                 rawVelocityY = lastRawVelocityY;
             }
 
-            if (Math.abs(rawVelocityY) < 0.1) {
+            if (Math.abs(rawVelocityY) < 0.2) {
                 rawVelocityY = 0;
             }
 
