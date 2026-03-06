@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 0.45999999999999996,
-        "y": 4.955
+        "y": 5.051465517241379
       },
       "prevControl": null,
       "nextControl": {
         "x": 3.21,
-        "y": 4.83
+        "y": 4.926465517241379
       },
       "isLocked": false,
       "linkedName": "RD#"
@@ -70,8 +70,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 14.4,
-    "maxAcceleration": 9.0,
+    "maxVelocity": 6.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 270.0,
     "maxAngularAcceleration": 270.0,
     "nominalVoltage": 12.0,

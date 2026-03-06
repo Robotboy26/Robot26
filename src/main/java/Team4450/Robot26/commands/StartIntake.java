@@ -4,6 +4,7 @@ import Team4450.Robot26.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+
 public class StartIntake extends Command {
   private Intake intake;
 
@@ -26,7 +27,7 @@ public class StartIntake extends Command {
   @Override
   public void execute() {
     state = State.STOPPED;
-    intake.setIntakeRPM(4500);
+    intake.setIntakeRPM(2500);
     end(false);
   }
 

@@ -2,6 +2,7 @@ package Team4450.Robot26;
 
 import static Team4450.Robot26.Constants.*;
 
+import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
@@ -13,8 +14,9 @@ import Team4450.Robot26.commands.Shoot;
 import Team4450.Robot26.commands.StartIntake;
 import Team4450.Robot26.commands.StopIntake;
 import Team4450.Robot26.commands.StopShoot;
-import Team4450.Robot26.commands.StopShooting;
 import Team4450.Robot26.commands.StopAuto;
+import Team4450.Robot26.commands.IntakeUp;
+import Team4450.Robot26.commands.IntakeDown;
 import Team4450.Robot26.subsystems.Candle;
 import Team4450.Robot26.subsystems.Intake;
 import Team4450.Robot26.subsystems.Drivebase;
@@ -196,6 +198,8 @@ public class RobotContainer {
 
     // Pathplanner NamedCommands
 
+    NamedCommands.registerCommand("intakeDown", new IntakeDown(intake));
+    NamedCommands.registerCommand("intakeUp", new IntakeUp(intake));
     NamedCommands.registerCommand("enableHubTracking", new EnableHubTracking(drivebase, headingPID));
     NamedCommands.registerCommand("disableHubTracking", new DisableHubTracking(drivebase));
     NamedCommands.registerCommand("startIntake", new StartIntake(intake));
@@ -203,8 +207,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("shoot", new Shoot(drivebase, shooter, hopper));
     NamedCommands.registerCommand("stopShooter", new StopShoot(shooter, hopper));
     NamedCommands.registerCommand("end", new StopAuto(drivebase));
-    NamedCommands.registerCommand("Shoot", new Shoot(drivebase, shooter, hopper));
-    NamedCommands.registerCommand("StopShooting", new StopShooting(shooter, hopper));
 
     // Set the default drive command. This command will be scheduled automatically
     // to run
@@ -399,9 +401,8 @@ public class RobotContainer {
         .onTrue(new InstantCommand(hopper::stop));
 
     new Trigger(() -> driverController.getYButton())
-    .onTrue(new InstantCommand(shooter::reverseInfeed))
-    .onFalse(new InstantCommand(shooter::stopInfeed));
-    
+        .onTrue(new InstantCommand(shooter::reverseInfeed))
+        .onFalse(new InstantCommand(shooter::stopInfeed));
 
     new Trigger(() -> driverController.getXButton())
         .onTrue(new InstantCommand(drivebase::toggleHubTracking));

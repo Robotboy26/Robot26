@@ -10,8 +10,8 @@
     "S-D Finished"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 0.75,
-  "defaultMaxAccel": 1.0,
+  "defaultMaxVel": 6.0,
+  "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 270.0,
   "defaultMaxAngAccel": 270.0,
   "defaultNominalVoltage": 12.0,
@@ -36,6 +36,6 @@
   "bumperOffsetY": 0.0,
   "robotFeatures": [
     "{\"name\":\"Circle\",\"type\":\"circle\",\"data\":{\"center\":{\"x\":0.3,\"y\":0.0},\"radius\":0.1,\"strokeWidth\":0.05,\"filled\":false}}",
-    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":-0.37,\"y\":0.0},\"size\":{\"width\":0.623,\"length\":0.1},\"borderRadius\":0.002,\"strokeWidth\":0.02,\"filled\":false}}"
+    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":-0.54,\"y\":0.0},\"size\":{\"width\":0.6,\"length\":0.305},\"borderRadius\":0.002,\"strokeWidth\":0.02,\"filled\":false}}"
   ]
 }
