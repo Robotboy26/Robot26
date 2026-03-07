@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5999999999999996,
+        "x": 2.26,
         "y": 4.03
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.01,
-        "y": 4.0317578125
+        "x": 3.0508405172413795,
+        "y": 4.040535888671875
       },
       "isLocked": false,
-      "linkedName": "CS"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.26,
+        "x": 3.6,
         "y": 4.03
       },
       "prevControl": {
-        "x": 2.95,
-        "y": 4.0417578125
+        "x": 2.982424568965518,
+        "y": 4.050309595568427
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CS"
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": "S-Shoot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

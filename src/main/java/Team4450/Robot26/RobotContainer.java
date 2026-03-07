@@ -376,6 +376,9 @@ public class RobotContainer {
     new Trigger(() -> driverController.getPOV() == 90) // Rich
         .onTrue(new InstantCommand(drivebase::setX));
 
+    new Trigger(() -> driverController.getPOV() == 0) // Up D-pad
+        .onTrue(new InstantCommand(shooter::toggleDisableAutomaticDistance));
+
     // -------- Utility controller buttons ----------
     //
     new Trigger(() -> driverController.getRightBumperButton())
@@ -396,7 +399,9 @@ public class RobotContainer {
 
     new Trigger(() -> driverController.getYButton())
         .onTrue(new InstantCommand(shooter::reverseInfeed))
-        .onFalse(new InstantCommand(shooter::stopInfeed));
+        .onTrue(new InstantCommand(intake::reverseIntake))
+        .onFalse(new InstantCommand(shooter::stopInfeed))
+        .onFalse(new InstantCommand(intake::stopIntake));
 
     new Trigger(() -> driverController.getXButton())
         .onTrue(new InstantCommand(drivebase::toggleHubTracking));

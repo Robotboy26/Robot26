@@ -37,7 +37,8 @@ public class Intake extends SubsystemBase {
     // The format of this value is in rotations of the pivit motor
     private double pivitCurrentPositionMotorPosition;
 
-    private boolean runIntake;
+    private boolean runIntake = false; 
+    private boolean reverseIntake = false;
 
     private RobotContainer robotContainer;
 
@@ -113,7 +114,11 @@ public class Intake extends SubsystemBase {
         }
 
         if (this.runIntake) {
-            setIntakeRPM(SmartDashboard.getNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM));
+            if (this.reverseIntake) {
+                setIntakeRPM(-SmartDashboard.getNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM));
+            } else {
+                setIntakeRPM(SmartDashboard.getNumber("Intake Target RPM", Constants.INTAKE_DEFAULT_TARGET_RPM));
+            }
         }
 
     }
@@ -138,6 +143,13 @@ public class Intake extends SubsystemBase {
     public void startIntake() {
         if (canSpin) {
             this.runIntake = true;
+        }
+    }
+
+    public void reverseIntake() {
+        if (canSpin) {
+            this.runIntake = true;
+            this.reverseIntake = true;
         }
     }
 

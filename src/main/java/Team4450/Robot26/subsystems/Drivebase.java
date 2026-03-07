@@ -486,13 +486,13 @@ public class Drivebase extends SubsystemBase {
       } else {
         airTime = FUEL_AIR_TIME_TABLE_SEC[i];
 
-        double xVelocityOffset = fieldRelativeVelocityX * airTime;
-        double yVelocityOffset = fieldRelativeVelocityY * airTime;
+        // double xVelocityOffset = fieldRelativeVelocityX * airTime;
+        // double yVelocityOffset = fieldRelativeVelocityY * airTime;
 
-        offsetTargetPose = new Pose2d(targetPose.getX() - xVelocityOffset, targetPose.getY() - yVelocityOffset,
-            targetPose.getRotation());
+        // offsetTargetPose = new Pose2d(targetPose.getX() - xVelocityOffset, targetPose.getY() - yVelocityOffset,
+            // targetPose.getRotation());
 
-        return offsetTargetPose;
+        return targetPose;
       }
     }
 
@@ -505,13 +505,14 @@ public class Drivebase extends SubsystemBase {
       airTime = lowerTime + ((higherTime - lowerTime) * (distance - lowerPoint) / (higherPoint - lowerPoint));
     }
 
-    double xVelocityOffset = fieldRelativeVelocityX * airTime;
-    double yVelocityOffset = fieldRelativeVelocityY * airTime;
+    // double xVelocityOffset = fieldRelativeVelocityX * airTime;
+    // double yVelocityOffset = fieldRelativeVelocityY * airTime;
 
-    offsetTargetPose = new Pose2d(targetPose.getX() - xVelocityOffset, targetPose.getY() - yVelocityOffset,
-        targetPose.getRotation());
+    // offsetTargetPose = new Pose2d(targetPose.getX() - xVelocityOffset, targetPose.getY() - yVelocityOffset,
+    //     targetPose.getRotation());
 
-    return offsetTargetPose;
+    // return offsetTargetPose;
+    return targetPose;
   }
 
   // Get the distance in meters between the current robot position and the target
