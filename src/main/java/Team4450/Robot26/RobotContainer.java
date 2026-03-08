@@ -379,6 +379,9 @@ public class RobotContainer {
     new Trigger(() -> driverController.getPOV() == 0) // Up D-pad
         .onTrue(new InstantCommand(shooter::toggleDisableAutomaticDistance));
 
+    new Trigger(() -> driverController.getPOV() == 270)
+        .onTrue(new InstantCommand(shooter::toggleDisableAutomaticDistanceTwo));
+
     // -------- Utility controller buttons ----------
     //
     new Trigger(() -> driverController.getRightBumperButton())

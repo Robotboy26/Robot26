@@ -158,8 +158,8 @@ public class Drivebase extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("velocityX", fieldRelativeVelocityX);
-    SmartDashboard.putNumber("velocityY", fieldRelativeVelocityY);
+    updateVelocity(Constants.ROBOT_PERIOD_SEC);
+
     sdsDrivebase.periodic();
 
     // update 3d simulation: look in AdvantageScope.java for more
@@ -760,8 +760,8 @@ public class Drivebase extends SubsystemBase {
       fieldRelativeVelocityY = sumY / velocityCountY;
     }
 
-    SmartDashboard.putNumber("Rolling Velocity X", fieldRelativeVelocityX);
-    SmartDashboard.putNumber("Rolling Velocity Y", fieldRelativeVelocityY);
+    SmartDashboard.putNumber("VelocityX", fieldRelativeVelocityX);
+    SmartDashboard.putNumber("VelocityY", fieldRelativeVelocityY);
 
     lastRawVelocityX = rawVelocityX;
     lastRawVelocityY = rawVelocityY;

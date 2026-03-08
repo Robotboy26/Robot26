@@ -114,10 +114,6 @@ public class VisionSubsystem extends SubsystemBase {
                 useLeftLimelight = false;
             }
 
-            if (SmartDashboard.getNumber("velocityX", 0)  > 0.2 || SmartDashboard.getNumber("velocityY", 0) > 0.2) {
-                useLeftLimelight = false;
-            }
-
             double numTags = front_mt2.rawFiducials.length;
             for (LimelightHelpers.RawFiducial tag : front_mt2.rawFiducials) {
                 if (Math.abs(tag.txnc) > 20) { // TODO: Convert 20 to a constants value
@@ -148,10 +144,6 @@ public class VisionSubsystem extends SubsystemBase {
             }
 
             if (Math.abs(right_mt2.pose.getY()) > Constants.FIELD_MAX_Y) {
-                useRightLimelight = false;
-            }
-
-            if (SmartDashboard.getNumber("velocityX", 0)  > 0.2 || SmartDashboard.getNumber("velocityY", 0) > 0.2) {
                 useRightLimelight = false;
             }
 
