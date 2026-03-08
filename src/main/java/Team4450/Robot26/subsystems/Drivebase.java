@@ -219,6 +219,14 @@ public class Drivebase extends SubsystemBase {
     SmartDashboard.putNumber("Drive Rot Rate", driveField.RotationalRate);
   }
 
+  public void driveRobotOriented(double throttle, double strafe, double rotation) {
+      sdsDrivebase.setControl(
+              driveRobot.withVelocityX(throttle * maxSpeed)
+              .withVelocityY(strafe * maxSpeed)
+              .withRotationalRate(rotation * maxRotRate));
+
+  }
+
   public void driveToNearestOpening() {
     double targetY = robotPose.getY();
     if (robotPose.getY() >= 1.7 && robotPose.getY() <= 4) {

@@ -74,7 +74,7 @@ public class RobotContainer {
   public static Shooter shooter;
   // public TestSubsystem testSubsystem;
 
-  private final Hopper hopper = new Hopper();
+  public static Hopper hopper = new Hopper();
 
   // General todo list for Cole Pearson
   //

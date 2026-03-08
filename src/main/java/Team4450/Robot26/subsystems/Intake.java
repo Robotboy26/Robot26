@@ -167,6 +167,7 @@ public class Intake extends SubsystemBase {
 
     public void stopIntake() {
         this.runIntake = false;
+        this.reverseIntake = false;
         this.intakeMotorLeft.set(0);
         this.intakeMotorRight.setControl(new Follower(this.intakeMotorLeft.getDeviceID(), MotorAlignmentValue.Opposed));
     }

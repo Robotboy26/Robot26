@@ -6,6 +6,8 @@ import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
+import Team4450.Robot26.commands.Shoot;
+
 import Team4450.Lib.*;
 import Team4450.Robot26.utility.RobotOrientation;
 import Team4450.Robot26.wpilib.TimedRobot;
@@ -200,6 +202,11 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
     }
 
+    public long driveStart;
+    public long shootStart;
+
+    public Shoot command;
+
     /**
      * This function is called once at the start of autonomous mode and schedules
      * the autonomous command selected by your {@link RobotContainer} class.
@@ -223,12 +230,18 @@ public class Robot extends TimedRobot {
 
         // schedule the autonomous command (example)
 
-        try {
-            if (autonomousCommand != null) CommandScheduler.getInstance().schedule(autonomousCommand);
-        } catch (Exception e) {
-            Util.logException(e);
-            this.endCompetition();
-        }
+        // try {
+        //     if (autonomousCommand != null) CommandScheduler.getInstance().schedule(autonomousCommand);
+        // } catch (Exception e) {
+        //     Util.logException(e);
+        //     this.endCompetition();
+        // }
+        driveStart = System.currentTimeMillis();
+        RobotContainer.drivebase.driveRobotOriented(-0.2, 0, 0);
+
+        shootStart = System.currentTimeMillis();
+        command = new Shoot(RobotContainer.drivebase, RobotContainer.shooter, RobotContainer.hopper);
+        CommandScheduler.getInstance().schedule(command);
 
         Util.consoleLog(functionMarker);
     }
@@ -239,6 +252,13 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
+        if (System.currentTimeMillis() - driveStart > 3000) {
+            RobotContainer.drivebase.drive(0, 0, 0);
+        }
+
+        if (System.currentTimeMillis() - shootStart > 10000) {
+            command.end(true);
+        }
     }
 
     /**
