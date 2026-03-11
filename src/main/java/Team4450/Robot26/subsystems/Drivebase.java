@@ -169,7 +169,7 @@ public class Drivebase extends SubsystemBase {
 
         SmartDashboard.putString("Limelight Pose Estimate", this.limelightPoseEstimate.toString());
         // Basic telemetry
-        SmartDashboard.putNumber("Gyro angle", getYaw());
+        SmartDashboard.putNumber("Gyro Heading", pigeonWrapper.getHeading());
         SmartDashboard.putString("Robot od pose", getODPose().toString());
         if (robotPose != null) {
             SmartDashboard.putString("Robot pose", robotPose.toString());
@@ -354,7 +354,7 @@ public class Drivebase extends SubsystemBase {
             || SmartDashboard.getBoolean("overrideQuestForRobotPose", this.overrideQuestForRobotPose)) {
       SmartDashboard.putBoolean("Trying to send current robotPose", true);
       return new Pose2d(robotPose.getX(), robotPose.getY(),
-          new Rotation2d(getYaw()));
+          new Rotation2d(pigeonWrapper.getHeading()));
     } else {
       SmartDashboard.putBoolean("Trying to send current robotPose", false);
       return new Pose2d(0, 0, new Rotation2d(0));
