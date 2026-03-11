@@ -11,6 +11,7 @@ import Team4450.Robot26.commands.DisableHubTracking;
 import Team4450.Robot26.commands.DriveCommand;
 import Team4450.Robot26.commands.EnableHubTracking;
 import Team4450.Robot26.commands.Shoot;
+import Team4450.Robot26.commands.ShootWithX;
 import Team4450.Robot26.commands.StartIntake;
 import Team4450.Robot26.commands.StopIntake;
 import Team4450.Robot26.commands.StopShoot;
@@ -388,7 +389,7 @@ public class RobotContainer {
         .toggleOnTrue(new InstantCommand(intake::togglePivit));
 
     new Trigger(() -> driverController.getLeftTrigger())
-        .whileTrue(new Shoot(drivebase, shooter, hopper));
+        .whileTrue(new ShootWithX(drivebase, shooter, hopper));
 
     new Trigger(() -> driverController.getRightTrigger())
         .onTrue(new InstantCommand(shooter::startInfeed))
