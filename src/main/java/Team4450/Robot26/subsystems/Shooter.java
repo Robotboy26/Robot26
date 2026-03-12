@@ -112,18 +112,18 @@ public class Shooter extends SubsystemBase {
         this.hoodMotorPosition = 0;
         this.hoodLeft.setPosition(this.hoodMotorPosition);
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.HOOD_POSITION, 0);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.HOOD_POSITION, 0);
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_TARGET_RPM, Constants.FLYWHEEL_TARGET_RPM);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_TARGET_RPM, Constants.FLYWHEEL_TARGET_RPM);
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_KP, Constants.FLYWHEEL_kP);
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_KI, Constants.FLYWHEEL_kI);
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_KD, Constants.FLYWHEEL_kD);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_KP, Constants.FLYWHEEL_kP);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_KI, Constants.FLYWHEEL_kI);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_KD, Constants.FLYWHEEL_kD);
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_KS, Constants.FLYWHEEL_kS);
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_KV, Constants.FLYWHEEL_kV);
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_KA, Constants.FLYWHEEL_kA);
-        SmartDashboard.putNumber(Constants.ShooterKeys.HOOD_POSITION, hoodMotorPosition);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_KS, Constants.FLYWHEEL_kS);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_KV, Constants.FLYWHEEL_kV);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_KA, Constants.FLYWHEEL_kA);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.HOOD_POSITION, hoodMotorPosition);
 
         sd_kP = Constants.FLYWHEEL_kP;
         sd_kI = Constants.FLYWHEEL_kI;
@@ -135,11 +135,11 @@ public class Shooter extends SubsystemBase {
 
         sdInit = true;
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.HOOD_POWER, 0.05);
-        SmartDashboard.putNumber(Constants.ShooterKeys.INFEED_TARGET_RPM, Constants.INFEED_DEFAULT_TARGET_RPM);
-        SmartDashboard.putBoolean(Constants.ShooterKeys.DISABLE_AUTO_FLYWHEEL_UPDATE, this.disableAutomaticFlywheelUpdate);
-        SmartDashboard.putBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE, this.disableAutomaticDistanceUpdate);
-        SmartDashboard.putBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, this.disableAutomaticDistanceUpdateTwo);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.HOOD_POWER, 0.05);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.INFEED_TARGET_RPM, Constants.INFEED_DEFAULT_TARGET_RPM);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_FLYWHEEL_UPDATE, this.disableAutomaticFlywheelUpdate);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE, this.disableAutomaticDistanceUpdate);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, this.disableAutomaticDistanceUpdateTwo);
 
         SmartDashboard.putNumber("Hood Voltage Test", 0);
         this.enabledHood = false;
@@ -153,18 +153,18 @@ public class Shooter extends SubsystemBase {
         updateLaunchValues(true);
 
         // Update the beam break sensors
-        SmartDashboard.putBoolean(Constants.ShooterKeys.BEAM_BREAK, beamBreak.get());
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.BEAM_BREAK, beamBreak.get());
 
         hoodMotorPosition = hoodLeft.getPosition().getValueAsDouble();
 
         if (this.enabledHood) {
-            updateHoodPosition(SmartDashboard.getNumber(Constants.ShooterKeys.HOOD_TARGET_POSITION, 0));
+            updateHoodPosition(SmartDashboard.getNumber(Constants.SmartDashboardKeys.HOOD_TARGET_POSITION, 0));
         } else {
             updateHoodPosition(0);
         }
         
-        SmartDashboard.putNumber(Constants.ShooterKeys.HOOD_ANGLE, getHoodMotorAngleRadians());
-        SmartDashboard.putNumber(Constants.ShooterKeys.HOOD_MOTOR_POSITION, getHoodMotorPosition());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.HOOD_ANGLE, getHoodMotorAngleRadians());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.HOOD_MOTOR_POSITION, getHoodMotorPosition());
 
         double measuredRps =
                 flywheelMotorTopLeft.getRotorVelocity()
@@ -172,17 +172,17 @@ public class Shooter extends SubsystemBase {
                         .getValueAsDouble();
 
         currentRPM = measuredRps * 60.0;
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_MEASURED_RPM_LEGACY, currentRPM);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_MEASURED_RPM_LEGACY, currentRPM);
 
         // -------- Shuffleboard tuning --------
 
-        double kP = SmartDashboard.getNumber(Constants.ShooterKeys.FLYWHEEL_KP, sd_kP);
-        double kI = SmartDashboard.getNumber(Constants.ShooterKeys.FLYWHEEL_KI, sd_kI);
-        double kD = SmartDashboard.getNumber(Constants.ShooterKeys.FLYWHEEL_KD, sd_kD);
+        double kP = SmartDashboard.getNumber(Constants.SmartDashboardKeys.FLYWHEEL_KP, sd_kP);
+        double kI = SmartDashboard.getNumber(Constants.SmartDashboardKeys.FLYWHEEL_KI, sd_kI);
+        double kD = SmartDashboard.getNumber(Constants.SmartDashboardKeys.FLYWHEEL_KD, sd_kD);
 
-        double kS = SmartDashboard.getNumber(Constants.ShooterKeys.FLYWHEEL_KS, sd_kS);
-        double kV = SmartDashboard.getNumber(Constants.ShooterKeys.FLYWHEEL_KV, sd_kV);
-        double kA = SmartDashboard.getNumber(Constants.ShooterKeys.FLYWHEEL_KA, sd_kA);
+        double kS = SmartDashboard.getNumber(Constants.SmartDashboardKeys.FLYWHEEL_KS, sd_kS);
+        double kV = SmartDashboard.getNumber(Constants.SmartDashboardKeys.FLYWHEEL_KV, sd_kV);
+        double kA = SmartDashboard.getNumber(Constants.SmartDashboardKeys.FLYWHEEL_KA, sd_kA);
 
         // Apply only if changed
         if (!sdInit ||
@@ -227,28 +227,28 @@ public class Shooter extends SubsystemBase {
 
         double percent = currentRPM / maxRpm;
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_MEASURED_RPM, currentRPM);
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_PERCENT_OUT, percent);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_MEASURED_RPM, currentRPM);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_PERCENT_OUT, percent);
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.INFEED_RPM, getInfeedRPM());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.INFEED_RPM, getInfeedRPM());
 
         if (this.runInfeed) {
             if (this.reverseInfeed) {
-                setInfeedRPM(-SmartDashboard.getNumber(Constants.ShooterKeys.INFEED_TARGET_RPM, Constants.INFEED_DEFAULT_TARGET_RPM));
+                setInfeedRPM(-SmartDashboard.getNumber(Constants.SmartDashboardKeys.INFEED_TARGET_RPM, Constants.INFEED_DEFAULT_TARGET_RPM));
             } else {
-                setInfeedRPM(SmartDashboard.getNumber(Constants.ShooterKeys.INFEED_TARGET_RPM, Constants.INFEED_DEFAULT_TARGET_RPM));
+                setInfeedRPM(SmartDashboard.getNumber(Constants.SmartDashboardKeys.INFEED_TARGET_RPM, Constants.INFEED_DEFAULT_TARGET_RPM));
             }
         }
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_CURRENT_DRAW, getFlywheelCurrent());
-        SmartDashboard.putNumber(Constants.ShooterKeys.INFEED_CURRENT_DRAW, getInfeedCurrent());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_CURRENT_DRAW, getFlywheelCurrent());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.INFEED_CURRENT_DRAW, getInfeedCurrent());
    }
 
     public void updateLaunchValues(boolean interpolate) {
         double distToGoal = 0;
-        if (SmartDashboard.getBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE, this.disableAutomaticDistanceUpdate)) {
+        if (SmartDashboard.getBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE, this.disableAutomaticDistanceUpdate)) {
             distToGoal = 2.5;
-        } else if (SmartDashboard.getBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, this.disableAutomaticDistanceUpdateTwo)) {
+        } else if (SmartDashboard.getBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, this.disableAutomaticDistanceUpdateTwo)) {
             distToGoal = 4.5;
         } else {
             // Calculate distance to goal & diffs
@@ -258,48 +258,48 @@ public class Shooter extends SubsystemBase {
             distToGoal = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
         }
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.ROBOT_LAUNCH_X, drivebase.getPose().getX());
-        SmartDashboard.putNumber(Constants.ShooterKeys.ROBOT_LAUNCH_Y, drivebase.getPose().getY());
-        SmartDashboard.putString(Constants.ShooterKeys.GOAL_POSE, getGoalPose().toString());
-        SmartDashboard.putNumber(Constants.ShooterKeys.ROBOT_DISTANCE, distToGoal);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.ROBOT_LAUNCH_X, drivebase.getPose().getX());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.ROBOT_LAUNCH_Y, drivebase.getPose().getY());
+        SmartDashboard.putString(Constants.SmartDashboardKeys.GOAL_POSE, getGoalPose().toString());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.ROBOT_DISTANCE, distToGoal);
 
         if (interpolate) {
-            if (!SmartDashboard.getBoolean(Constants.ShooterKeys.DISABLE_AUTO_FLYWHEEL_UPDATE, this.disableAutomaticFlywheelUpdate)) {
+            if (!SmartDashboard.getBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_FLYWHEEL_UPDATE, this.disableAutomaticFlywheelUpdate)) {
                 this.targetRPM = interpolateTableByDistance(distToGoal, Constants.FLYWHEEL_SPEED_TABLE);
-                SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_TARGET_RPM, this.targetRPM);
-                SmartDashboard.putNumber(Constants.ShooterKeys.HOOD_TARGET_POSITION, interpolateTableByDistance(distToGoal, Constants.HOOD_ARC_TABLE));
+                SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_TARGET_RPM, this.targetRPM);
+                SmartDashboard.putNumber(Constants.SmartDashboardKeys.HOOD_TARGET_POSITION, interpolateTableByDistance(distToGoal, Constants.HOOD_ARC_TABLE));
             } else {
-                this.targetRPM = SmartDashboard.getNumber(Constants.ShooterKeys.FLYWHEEL_TARGET_RPM, targetRPM);
+                this.targetRPM = SmartDashboard.getNumber(Constants.SmartDashboardKeys.FLYWHEEL_TARGET_RPM, targetRPM);
             }
         }   
     }
 
     public void toggleDisableAutomaticDistance() {
-        this.disableAutomaticDistanceUpdate = SmartDashboard.getBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE, this.disableAutomaticDistanceUpdate);
+        this.disableAutomaticDistanceUpdate = SmartDashboard.getBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE, this.disableAutomaticDistanceUpdate);
         this.disableAutomaticDistanceUpdate = !this.disableAutomaticDistanceUpdate;
-        SmartDashboard.putBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE, this.disableAutomaticDistanceUpdate);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE, this.disableAutomaticDistanceUpdate);
     }
 
     public void toggleDisableAutomaticDistanceTwo() {
-        this.disableAutomaticDistanceUpdateTwo = SmartDashboard.getBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, this.disableAutomaticDistanceUpdateTwo);
+        this.disableAutomaticDistanceUpdateTwo = SmartDashboard.getBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, this.disableAutomaticDistanceUpdateTwo);
         this.disableAutomaticDistanceUpdateTwo = !this.disableAutomaticDistanceUpdateTwo;
-        SmartDashboard.putBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, this.disableAutomaticDistanceUpdateTwo);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, this.disableAutomaticDistanceUpdateTwo);
     }
 
     public void disableAutomaticDistance() {
-        SmartDashboard.putBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE, true);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE, true);
     }
 
     public void enableAutomaticDistance() {
-        SmartDashboard.putBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE, false);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE, false);
     }
 
     public void disableAutomaticDistanceTwo() {
-        SmartDashboard.putBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, true);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, true);
     }
 
     public void enableAutomaticDistanceTwo() {
-        SmartDashboard.putBoolean(Constants.ShooterKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, false);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, false);
     }
 
     public boolean flywheelAtSpeed() {
@@ -350,8 +350,8 @@ public class Shooter extends SubsystemBase {
 
     public void nameThisBetter() {
         this.targetRPM = interpolateTableByDistance(3, FLYWHEEL_SPEED_TABLE);
-        SmartDashboard.putNumber(Constants.ShooterKeys.FLYWHEEL_TARGET_RPM, this.targetRPM);
-        SmartDashboard.putNumber(Constants.ShooterKeys.HOOD_TARGET_POSITION, interpolateTableByDistance(3, HOOD_ARC_TABLE));
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_TARGET_RPM, this.targetRPM);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.HOOD_TARGET_POSITION, interpolateTableByDistance(3, HOOD_ARC_TABLE));
     }
 
     public double getAngleToFaceGoalDegrees(Pose2d robotPosition) {
@@ -589,7 +589,7 @@ public class Shooter extends SubsystemBase {
         double deltaY = hubPose.getY() - robotPose.getY();
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-        SmartDashboard.putNumber(Constants.ShooterKeys.ROBOT_DISTANCE, distance);
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.ROBOT_DISTANCE, distance);
 
         double rpmMath = calculateRPM(robotPose, hubPose, hoodAngle);
         double interpolatedRPM = interpolateRPM(distance);

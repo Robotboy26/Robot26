@@ -23,12 +23,14 @@ public class Hopper extends SubsystemBase {
 
         // Neutral + inversion
         hopperCFG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        hopperCFG.CurrentLimits = new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.HOPPER_CURRENT_LIMIT);
+        hopperCFG.CurrentLimits = new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.LOWER_ROLLERS_CURRENT_LIMIT);
         hopperCFG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         this.hopperMotor.getConfigurator().apply(hopperCFG);
 
         hopperMotor.set(0);
+
+        SmartDashboard.putNumber("Lower Rollers Current Draw", getLowerRollersCurrent());
     }
 
     public void start() {
@@ -47,7 +49,7 @@ public class Hopper extends SubsystemBase {
         hopperMotor.set(0);
     }
 
-    public double getHooperCurrent() {
+    public double getLowerRollersCurrent() { // TODO: FIX
         return hopperMotor.getSupplyCurrent(true).getValueAsDouble();
     }
 }

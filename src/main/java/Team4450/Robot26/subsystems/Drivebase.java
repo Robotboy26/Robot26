@@ -145,6 +145,8 @@ public class Drivebase extends SubsystemBase {
         SmartDashboard.putNumber("Drivebase Y velocity", this.getYVelocity());
         SmartDashboard.putNumber("Drivebase Rot velocity", this.getRotVelocity());
 
+        SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
+
         // update 3d simulation: look in AdvantageScope.java for more
         // AdvantageScope.getInstance().setRobotPose(getPose());
         // AdvantageScope.getInstance().update();
