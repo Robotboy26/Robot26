@@ -37,7 +37,7 @@ public class Shooter extends SubsystemBase {
     // This motor is a Kraken x60
     private final TalonFX hoodLeft = new TalonFX(Constants.HOOD_MOTOR_LEFT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x60
-    private final TalonFX hoodRight = new TalonFX(Constants.HOOD_MOTOR_RIGHT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
+    // private final TalonFX hoodRight = new TalonFX(Constants.HOOD_MOTOR_RIGHT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x44
     private final TalonFX infeedMotorLeft = new TalonFX(Constants.INFEED_MOTOR_LEFT_CAN_ID, new CANBus(Constants.CANIVORE_NAME));
     // This motor is a Kraken x44
@@ -92,7 +92,8 @@ public class Shooter extends SubsystemBase {
         this.drivebase = drivebase;
 
         this.canFlywheel = flywheelMotorTopLeft.isConnected() && flywheelMotorTopRight.isConnected() && flywheelMotorBottomLeft.isConnected() && flywheelMotorBottomRight.isConnected();
-        this.canHood = hoodLeft.isConnected() && hoodRight.isConnected();
+        // this.canHood = hoodLeft.isConnected() && hoodRight.isConnected();
+        this.canHood = hoodLeft.isConnected();
         this.canInfeed = infeedMotorLeft.isConnected() && infeedMotorRight.isConnected();
 
         this.hoodMotorPosition = 0;
@@ -141,7 +142,6 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE, this.disableAutomaticDistanceUpdate);
         SmartDashboard.putBoolean(Constants.SmartDashboardKeys.DISABLE_AUTO_DISTANCE_UPDATE_TWO, this.disableAutomaticDistanceUpdateTwo);
 
-        SmartDashboard.putNumber("Hood Voltage Test", 0);
         this.enabledHood = false;
     }
 
@@ -225,10 +225,7 @@ public class Shooter extends SubsystemBase {
             this.flywheelMotorBottomRight.setControl(new Follower(flywheelMotorTopLeft.getDeviceID(), MotorAlignmentValue.Opposed));
         }
 
-        double percent = currentRPM / maxRpm;
-
         SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_MEASURED_RPM, currentRPM);
-        SmartDashboard.putNumber(Constants.SmartDashboardKeys.FLYWHEEL_PERCENT_OUT, percent);
 
         SmartDashboard.putNumber(Constants.SmartDashboardKeys.INFEED_RPM, getInfeedRPM());
 
@@ -408,7 +405,7 @@ public class Shooter extends SubsystemBase {
         PositionVoltage req = new PositionVoltage(Math.min(pos, Constants.HOOD_ARC_TABLE[HOOD_ARC_TABLE.length - 1]));
 
         this.hoodLeft.setControl(req);
-        this.hoodRight.setControl(new Follower(this.hoodLeft.getDeviceID(), MotorAlignmentValue.Opposed));
+        // this.hoodRight.setControl(new Follower(this.hoodLeft.getDeviceID(), MotorAlignmentValue.Opposed));
     }
 
     public void startFlywheel() {
@@ -510,16 +507,17 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getHoodCurrent() {
-        return hoodLeft.getSupplyCurrent(true).getValueAsDouble() + hoodRight.getSupplyCurrent(true).getValueAsDouble();
+        // return hoodLeft.getSupplyCurrent(true).getValueAsDouble() + hoodRight.getSupplyCurrent(true).getValueAsDouble();
+        return hoodLeft.getSupplyCurrent(true).getValueAsDouble();
     }
 
     public double getHoodLeftMotorCurrent() {
         return hoodLeft.getSupplyCurrent(true).getValueAsDouble();
     }
 
-    public double getHoodRightMotorCurrent() {
-        return hoodRight.getSupplyCurrent(true).getValueAsDouble();
-    }
+    // public double getHoodRightMotorCurrent() {
+    //     return hoodRight.getSupplyCurrent(true).getValueAsDouble();
+    // }
 
     /**
      * Calculates the RPM for the flywheel based on the robot's pose and the hub's pose.
@@ -662,7 +660,7 @@ public class Shooter extends SubsystemBase {
         hoodCFG.MotionMagic.MotionMagicJerk = Constants.HOOD_MOTION_JERK;
 
         this.hoodLeft.getConfigurator().apply(hoodCFG);
-        this.hoodRight.getConfigurator().apply(hoodCFG);
+        // this.hoodRight.getConfigurator().apply(hoodCFG);
     }
 
     /**

@@ -98,7 +98,7 @@ public class QuestNavSubsystem extends SubsystemBase {
         if (questNav.isConnected()) {
             hasQuest = true;
             // If the x or y difference from the robots current pose to the limelight estimate pose update the current quest estimate for the position
-            SmartDashboard.putBoolean("Quest Connected", true);
+            SmartDashboard.putBoolean(Constants.SmartDashboardKeys.QUEST_CONNECTED, true);
             // 5000 miliseconds is 5 seconds
             if (System.currentTimeMillis() - this.lastResetTime > 1500) {
                 if (RobotContainer.visionSubsystem.frontLimelightSee || RobotContainer.visionSubsystem.rightLimelightSee) { // One of the limelight must be seeing tags
@@ -116,13 +116,13 @@ public class QuestNavSubsystem extends SubsystemBase {
             hasQuest = false;
             limelightWarnLogger.update("The Questnav is not found, force updating pose with limelight pose!");
             drivebase.forceAddLimelightMeasurement(drivebase.limelightPoseEstimate);
-            SmartDashboard.putBoolean("Quest Connected", false);
+            SmartDashboard.putBoolean(Constants.SmartDashboardKeys.QUEST_CONNECTED, false);
         }
 
         if (questNav.isTracking()) {
-            SmartDashboard.putBoolean("Quest Tracking", true);
+            SmartDashboard.putBoolean(Constants.SmartDashboardKeys.QUEST_TRACKING, true);
         } else {
-            SmartDashboard.putBoolean("Quest Tracking", false);
+            SmartDashboard.putBoolean(Constants.SmartDashboardKeys.QUEST_TRACKING, false);
         }
 
         questTestLogger.update("Quest periodic");

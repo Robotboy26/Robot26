@@ -120,7 +120,6 @@ public class VisionSubsystem extends SubsystemBase {
                 }
             }
 
-            SmartDashboard.putNumber("Front Limelight numTags", numTags);
             if (numTags < 2) {
                 useFrontLimelight = false;
             }
@@ -130,11 +129,11 @@ public class VisionSubsystem extends SubsystemBase {
             }
 
             if (useFrontLimelight) {
-                SmartDashboard.putBoolean("Send Front Limelight info", true);
+                SmartDashboard.putBoolean(Constants.SmartDashboardKeys.SEND_FRONT_LIMELIGHT_INFO, true);
                 drivebase.addLimelightMeasurement(front_mt2.pose, front_mt2.timestampSeconds);
                 this.frontLimelightSee = true;
             } else {
-                SmartDashboard.putBoolean("Send Front Limelight info", false);
+                SmartDashboard.putBoolean(Constants.SmartDashboardKeys.SEND_FRONT_LIMELIGHT_INFO, false);
                 this.frontLimelightSee = false;
             }
         }
@@ -166,11 +165,11 @@ public class VisionSubsystem extends SubsystemBase {
             }
 
             if (useRightLimelight) {
-                SmartDashboard.putBoolean("Send Right Limelight info", true);
+                SmartDashboard.putBoolean(Constants.SmartDashboardKeys.SEND_RIGHT_LIMELIGHT_INFO, true);
                 drivebase.addLimelightMeasurement(right_mt2.pose, right_mt2.timestampSeconds);
                 this.rightLimelightSee = true;
             } else {
-                SmartDashboard.putBoolean("Send Right Limelight info", false);
+                SmartDashboard.putBoolean(Constants.SmartDashboardKeys.SEND_RIGHT_LIMELIGHT_INFO, false);
                 this.rightLimelightSee = false;
             }
         }

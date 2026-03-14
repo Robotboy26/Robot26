@@ -87,12 +87,12 @@ public class Drivebase extends SubsystemBase {
         Util.consoleLog();
 
         this.overrideQuestForRobotPose = false;
-        SmartDashboard.putBoolean("overrideQuestForRobotPose", this.overrideQuestForRobotPose);
+        SmartDashboard.putBoolean(Constants.SmartDashboardKeys.OVERRIDE_QUEST_FOR_ROBOT_POSE, this.overrideQuestForRobotPose);
 
         // Add pigeon gyro as a Sendable. Updates the dashboard heading indicator
         // automatically.
-        SmartDashboard.putData("Pigeon Gyro", pigeonWrapper);
-        SmartDashboard.putData("Field2d", field2d);
+        SmartDashboard.putData(Constants.SmartDashboardKeys.PIGEON_GYRO, pigeonWrapper);
+        SmartDashboard.putData(Constants.SmartDashboardKeys.FIELD2D, field2d);
 
         // Check Gyro.
         if (pigeonWrapper.getPigeon().isConnected())
@@ -141,11 +141,7 @@ public class Drivebase extends SubsystemBase {
     public void periodic() {
         sdsDrivebase.periodic();
 
-        SmartDashboard.putNumber("Drivebase X velocity", this.getXVelocity());
-        SmartDashboard.putNumber("Drivebase Y velocity", this.getYVelocity());
-        SmartDashboard.putNumber("Drivebase Rot velocity", this.getRotVelocity());
-
-        SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.BATTERY_VOLTAGE, RobotController.getBatteryVoltage());
 
         // update 3d simulation: look in AdvantageScope.java for more
         // AdvantageScope.getInstance().setRobotPose(getPose());
@@ -155,17 +151,16 @@ public class Drivebase extends SubsystemBase {
         // See this function for more information.
         updateModulePoses(sdsDrivebase);
 
-        SmartDashboard.putString("Limelight Pose Estimate", this.limelightPoseEstimate.toString());
         // Basic telemetry
-        SmartDashboard.putNumber("Gyro angle", getYaw());
-        SmartDashboard.putString("Robot od pose", getODPose().toString());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.GYRO_ANGLE, getYaw());
+        SmartDashboard.putString(Constants.SmartDashboardKeys.ROBOT_OD_POSE, getODPose().toString());
         if (robotPose != null) {
-            SmartDashboard.putString("Robot pose", robotPose.toString());
+            SmartDashboard.putString(Constants.SmartDashboardKeys.ROBOT_POSE, robotPose.toString());
         }
-        SmartDashboard.putNumber("DriveBase Current", getDrivetrainCurrent());
+        SmartDashboard.putNumber(Constants.SmartDashboardKeys.DRIVEBASE_CURRENT, getDrivebaseCurrent());
     }
 
-    public double getDrivetrainCurrent() {
+    public double getDrivebaseCurrent() {
         return sdsDrivebase.getModule(0).getDriveMotor().getSupplyCurrent().getValueAsDouble()
             + sdsDrivebase.getModule(0).getSteerMotor().getSupplyCurrent().getValueAsDouble()
             + sdsDrivebase.getModule(1).getDriveMotor().getSupplyCurrent().getValueAsDouble()

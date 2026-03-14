@@ -72,14 +72,11 @@ public final class Constants {
     public static int SHOOTER_HOOD_CURRENT_LIMIT = 5;
     public static int INTAKE_CURRENT_LIMIT = 20;
     public static int INTAKE_PIVIT_CURRENT_LIMIT = 5;
-    public static int LOWER_ROLLERS_CURRENT_LIMIT = 60;
+    public static int LOWER_ROLLERS_CURRENT_LIMIT = 30;
 
-    public static double HOOD_TOLERENCE_MOTOR_ROTATIONS = 0.02;
-    public static double HOOD_TOLERENCE_DEGREES = 5;
     public static double HOOD_GEAR_RATIO = 3.0/8.0;
     public static double HOOD_DOWN_ANGLE_DEGREES = 15;
     public static double HOOD_MOTOR_POWER = 0.1;
-    public static double SHOOTER_HOOD_TOLERENCE_MOTOR_RAIDIANS = 2;
 
 
     // Hood PID / Feedforward / MotionMagic
@@ -242,7 +239,6 @@ public final class Constants {
         public static final String FLYWHEEL_TARGET_RPM      = "Flywheel/TargetRPM";
         public static final String FLYWHEEL_MEASURED_RPM    = "Flywheel/MeasuredRPM";
         public static final String FLYWHEEL_MEASURED_RPM_LEGACY = "Flywheel measured RPM";
-        public static final String FLYWHEEL_PERCENT_OUT     = "Flywheel/PercentOutApprox";
         public static final String FLYWHEEL_CURRENT_DRAW    = "Flywheel Current Draw";
 
         // Flywheel PID / FF tuning
@@ -267,6 +263,43 @@ public final class Constants {
         public static final String ROBOT_LAUNCH_Y                   = "RobotLaunchY";
         public static final String GOAL_POSE                        = "Goal Pose";
         public static final String ROBOT_DISTANCE                   = "Robot Distance";
+
+        // Heading
+        public static final String HEADING_P = "Heading P";
+        public static final String HEADING_I = "Heading I";
+        public static final String HEADING_D = "Heading D";
+        public static final String HEADING_PID_TOGGLE = "Heading PID Toggle";
+        public static final String TARGET_HEADING = "Target Heading";
+        public static final String HEADING_ERROR = "Heading Error";
+
+        // Pivit
+        public static final String PIVIT_POSiTION = "Pivit Position";
+
+        // Control Flow
+        public static final String DISABLED = "Disabled";
+        public static final String AUTO_MODE = "Auto Mode";
+        public static final String TELEOP_MODE = "Teleop Mode";
+        public static final String PROGRAM = "Program";
+        public static final String FMS = "FMS";
+        public static final String AUTONOMOUS_ACTIVE = "Autonomous Active";
+
+        // Quest
+        public static final String QUEST_CONNECTED = "Quest Connected";
+        public static final String QUEST_TRACKING = "Quest Tracking";
+
+        // Vision
+        public static final String SEND_FRONT_LIMELIGHT_INFO = "Send Front Limelight info";
+        public static final String SEND_RIGHT_LIMELIGHT_INFO = "Send Right Limelight info";
+
+        // Drivebase
+        public static final String OVERRIDE_QUEST_FOR_ROBOT_POSE = "overrideQuestForRobotPose";
+        public static final String PIGEON_GYRO = "Pigeon Gyro";
+        public static final String FIELD2D = "Field2d";
+        public static final String BATTERY_VOLTAGE = "Battery Voltage";
+        public static final String GYRO_ANGLE = "Gyro angle";
+        public static final String ROBOT_OD_POSE = "Robot od pose";
+        public static final String ROBOT_POSE = "Robot pose";
+        public static final String DRIVEBASE_CURRENT = "Drivebase Current";
     }
 
     public static final class DriveConstants {

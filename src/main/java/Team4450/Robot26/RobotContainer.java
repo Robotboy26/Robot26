@@ -30,7 +30,6 @@ import Team4450.Robot26.commands.DriveCommand;
 import Team4450.Robot26.subsystems.Drivebase;
 import Team4450.Robot26.subsystems.QuestNavSubsystem;
 import Team4450.Robot26.subsystems.ShuffleBoard;
-import Team4450.Robot26.subsystems.TestSubsystem;
 import Team4450.Robot26.subsystems.VisionSubsystem;
 import Team4450.Robot26.subsystems.Hopper;
 import edu.wpi.first.math.controller.PIDController;
@@ -166,10 +165,10 @@ public class RobotContainer {
     shooter = new Shooter(drivebase);
 
     headingPID = new PIDController(Constants.ROBOT_HEADING_KP, Constants.ROBOT_HEADING_KI, Constants.ROBOT_HEADING_KD);
-    SmartDashboard.putNumber("Heading P", Constants.ROBOT_HEADING_KP);
-    SmartDashboard.putNumber("Heading I", Constants.ROBOT_HEADING_KI);
-    SmartDashboard.putNumber("Heading D", Constants.ROBOT_HEADING_KD);
-    SmartDashboard.putBoolean("Heading PID Toggle", Constants.HUB_TRACKING);
+    SmartDashboard.putNumber(Constants.SmartDashboardKeys.HEADING_P, Constants.ROBOT_HEADING_KP);
+    SmartDashboard.putNumber(Constants.SmartDashboardKeys.HEADING_D, Constants.ROBOT_HEADING_KI);
+    SmartDashboard.putNumber(Constants.SmartDashboardKeys.HEADING_I, Constants.ROBOT_HEADING_KD);
+    SmartDashboard.putBoolean(Constants.SmartDashboardKeys.HEADING_PID_TOGGLE, Constants.HUB_TRACKING);
 
     // Create any persistent commands.
 
@@ -245,8 +244,6 @@ public class RobotContainer {
 
     drivebase.setDefaultCommand(driveCommand);
 
-    SmartDashboard.putNumber("Test Motor Power", 0);
-
     monitorPowerThread = MonitorPower.getInstance();
     monitorPowerThread.start();
 
@@ -261,9 +258,6 @@ public class RobotContainer {
       } catch (Exception e) {
       }
     }).start();
-
-    // Configure autonomous routines and send to dashboard.
-    setAutoChoices();
 
     // Configure the button bindings.
     configureButtonBindings();
@@ -350,6 +344,10 @@ public class RobotContainer {
         .onTrue(new InstantCommand(shooter::startInfeed))
         .onFalse(new InstantCommand(shooter::stopInfeed));
 
+    // new Trigger(() -> driverController.getRightTrigger())
+    //     .onTrue(new InstantCommand(hopper::startSlow))
+    //     .onFalse(new InstantCommand(hopper::stop));
+
     new Trigger(() -> driverController.getAButton())
         .onTrue(new InstantCommand(intake::startIntake));
 
@@ -384,12 +382,6 @@ public class RobotContainer {
   // Configure SendableChooser (drop down list on dashboard) with auto program
   // choices and
   // send them to SmartDashboard/ShuffleBoard.
-
-  private void setAutoChoices() {
-    // autoChooser = AutoBuilder.buildAutoChooser();
-
-    // SmartDashboard.putData("Auto Program", autoChooser);
-  }
 
   /**
    * Get and log information about the current match from the FMS or DS.

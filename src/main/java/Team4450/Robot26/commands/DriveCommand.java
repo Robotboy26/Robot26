@@ -22,10 +22,7 @@ public class DriveCommand extends Command {
   private final DoubleSupplier rotationXSupplier;
   private final DoubleSupplier rotationYSupplier;
   private final XboxController controller;
-
   public final PIDController headingPID;
-
-  private double delayCounter;
 
   public DriveCommand(Drivebase driveBase,
       DoubleSupplier throttleSupplier,
@@ -68,10 +65,9 @@ public class DriveCommand extends Command {
     // program completed. The if
     // statment below prevents this.
 
-    if (robot.isAutonomous())
-      return;
+    if (robot.isAutonomous()) return; // We do not want to run the drive command if we are in auto
 
-        if (Constants.HUB_TRACKING && (SmartDashboard.putBoolean("Send Front Limelight info", true) || SmartDashboard.putBoolean("Send Right Limelight info", true))) {
+        if (Constants.HUB_TRACKING && (SmartDashboard.putBoolean(Constants.SmartDashboardKeys.SEND_FRONT_LIMELIGHT_INFO, true) || SmartDashboard.putBoolean(Constants.SmartDashboardKeys.SEND_RIGHT_LIMELIGHT_INFO, true))) {
 
         // This finds where the correct hub position is
         Pose2d hubPosition;
@@ -86,7 +82,6 @@ public class DriveCommand extends Command {
         // Decides where to track
         // If both inputs are zero and the alliance is blue then
         if (rotationXSupplier.getAsDouble() == 0 && rotationYSupplier.getAsDouble() == 0 && alliance == DriverStation.Alliance.Blue) {
-            delayCounter = 0;
             // Checks if robot is currently in the Alliance Zone then aims at the hub
             if (drivebase.getPose().getX() < NEUTRAL_BLUE_ZONE_BARRIER_X) {
                 targetHeading = drivebase.getAngleToAim(drivebase.getPoseToAim(hubPosition));
@@ -115,11 +110,11 @@ public class DriveCommand extends Command {
         }
         
         
-        SmartDashboard.putNumber("Target Heading", targetHeading);
+      SmartDashboard.putNumber(Constants.SmartDashboardKeys.TARGET_HEADING, targetHeading);
 
       double error = -targetHeading + Math.toDegrees(drivebase.getPose().getRotation().getDegrees());
 
-      SmartDashboard.putNumber("Heading Error", error);
+      SmartDashboard.putNumber(Constants.SmartDashboardKeys.HEADING_ERROR, error);
 
       // Uses a PID and the previous assigned target heading to rotate there
       double rotation = -headingPID.calculate(-Math.toDegrees(drivebase.getPose().getRotation().getDegrees()),
@@ -130,9 +125,9 @@ public class DriveCommand extends Command {
       throttle = Util.squareInput(throttle);
       strafe = Util.squareInput(strafe);
 
-      headingPID.setP(SmartDashboard.getNumber("Heading P", Constants.ROBOT_HEADING_KP));
-      headingPID.setI(SmartDashboard.getNumber("Heading I", Constants.ROBOT_HEADING_KI));
-      headingPID.setD(SmartDashboard.getNumber("Heading D", Constants.ROBOT_HEADING_KD));
+      headingPID.setP(SmartDashboard.getNumber(Constants.SmartDashboardKeys.HEADING_P, Constants.ROBOT_HEADING_KP));
+      headingPID.setI(SmartDashboard.getNumber(Constants.SmartDashboardKeys.HEADING_I, Constants.ROBOT_HEADING_KI));
+      headingPID.setD(SmartDashboard.getNumber(Constants.SmartDashboardKeys.HEADING_D, Constants.ROBOT_HEADING_KD));
 
       drivebase.drive(throttle, strafe, rotation);
 
